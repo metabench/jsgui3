@@ -1,0 +1,64 @@
+/**
+ * Created by James on 16/09/2016.
+ */
+
+// Standard control set
+
+// Addon projects?
+//  Control projects?
+//  Control repos
+//  Control packages?
+
+// Package is the right terminology
+
+// Standard control package
+// Flexiboard control package
+
+// Control packages can be chained so they add to each other, add to jsgui?
+//  Or may be worth breaking out of that object to store controls at some points?
+
+// Get jsgui2 into a more stable core, with useful controls, and then also build control packages.
+// In many cases, it makes sense for controls to be registered with jsgui, but it may be best not to require it when not necessary.
+
+// Could add a lot of controls to the jsgui object here.
+
+var controls = {
+	Audio_Player: require('./audio-player'),
+	Audio_Volume: require('./audio-volume'),
+	Button: require('./button'),
+	Context_Menu: require('./context-menu'),
+	File_Upload: require('./file-upload'),
+	Grid: require('./grid'),
+	Horizontal_Menu: require('./horizontal-menu'),
+	Horizontal_Slider: require('./horizontal-slider'),
+	Item: require('./item'),
+	Item_View: require('./item-view'),
+	//Vector: require('./vector'),
+	Line_Chart: require('./line-chart'),
+	List: require('./list'),
+	Login: require('./login'),
+	Media_Scrubber: require('./media-scrubber'),
+	Menu_Node: require('./menu-node'),
+	//Multi_Document_Interface: require('./multi-document-interface'),
+	Multi_Layout_Mode: require('./multi-layout-mode'),
+	Object_Editor: require('./editor/object'),
+	Panel: require('./panel'),
+	Plus_Minus_Toggle_Button: require('./plus-minus-toggle-button'),
+	Popup_Menu_Button: require('./popup-menu-button'),
+	Radio_Button: require('./radio-button'),
+	Radio_Button_Group: require('./radio-button-group'),
+	Scroll_View: require('./scroll-view'),
+	Scrollbar: require('./scrollbar'),
+	Single_Line: require('./single-line'),
+	Start_Stop_Toggle_Button: require('./start-stop-toggle-button'),
+	Tabs: require('./tabs'),
+	Text_Field: require('./text-field'),
+	Title_Bar: require('./title-bar'),
+	Titled_Panel: require('./titled-panel'),
+	Toggle_Button: require('./toggle-button'),
+	Tree_Node: require('./tree-node'),
+	Vertical_Expander: require('./vertical-expander'),
+	Window: require('./window')
+}
+
+module.exports = controls;
