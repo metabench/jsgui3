@@ -12,7 +12,7 @@
 //
 
 var jsgui = require('../server/server');
-var Start_Stop_Toggle_Button = require('../controls/start-stop-toggle-button');
+var Combo_Box = jsgui.Combo_Box;
 
 var Server = jsgui.Server;
 var port = 80;
@@ -74,7 +74,7 @@ routing_tree.set('/', function(req, res) {
 	hd.include_client_css();
 	hd.include_js('/js/app-bundle.js');
 	var body = hd.body;
-	var ctrl = new Start_Stop_Toggle_Button({
+    var ctrl = new Combo_Box({
 		'context': server_page_context
 	});
 	//var ctrl2 = new jsgui.Control({});

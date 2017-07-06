@@ -1,6 +1,6 @@
 
 
-var jsgui = require('jsgui2-html');
+var jsgui = require('../server/server');
 
 var ctrl = new jsgui.Control({});
 var ctrl2 = new jsgui.Control({});
@@ -11,8 +11,6 @@ ctrl.add_class('example');
 ctrl2.add('Hello');
 
 var html = ctrl.all_html_render();
-
-
 
 console.log('ctrl', ctrl);
 console.log('ctrl.content._arr', ctrl.content._arr);

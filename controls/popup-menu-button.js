@@ -41,6 +41,26 @@ class Popup_Menu_Button extends Button {
 
         // Use Stateful mixin?
 
+        // Mixins may be a bit tricky in terms of adding both composition and activation stages.
+        //  Mixins would need to be loaded in order, and applied with care.
+        //  ._mixin_compose
+        //  ._mixin_activate
+        //  ._arr_mixin_names
+
+        //  These two would also need to be made as properties of the Control, so that they can be added to by the mixins.
+        //  ._active_fields
+        //  ._ctrl_fields
+
+
+
+
+        var setup_mixins = function () {
+            this.mixin(
+                ['open_closed', 'closed'],
+                ['item_container']
+            )
+        }
+
         this.states = ['closed', 'open'];
         this.state = new Data_Value('closed');
         this.i_state = 0;

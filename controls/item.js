@@ -171,10 +171,8 @@ class Item extends Control {
                     if (has_id && has_key && !has_name) {
                         id = value.id;
                         key = value.key;
-
                         //console.log('id', id);
                         //c/onsole.log('key', key);
-
                         var ctrl_id = new Control({
                             'context': this.context
                         });
@@ -185,15 +183,12 @@ class Item extends Control {
                         });
                         //ctrl_key.set('dom.attributes.class', 'key');
                         ctrl_id.add_class('key');
-
                         // Will possibly have more code to do with rendering Data_Values as HTML, as Control content.
-
                         ctrl_id.add(id.value);
                         ctrl_key.add(key.value);
 
                         ctrl_primary.add(ctrl_id);
                         ctrl_primary.add(ctrl_key);
-
                     }
                 }
 
@@ -203,14 +198,6 @@ class Item extends Control {
             //var ctrl_secondary = new Control({
             //    'context': this.context
             //})
-            
-        
-        
-
-
-
-
-             
 
             this.inner = new Control({
                 'context': this.context,

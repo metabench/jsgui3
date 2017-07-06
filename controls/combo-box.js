@@ -10,13 +10,24 @@
 
 
 
-
-
-
-
 class Combo_Box extends Control {
     'constructor'(spec) {
         super(spec);
+
+        // Has various items.
+        // At the top is a control that either shows the item selected, or search text.
+
+
+        //  
+        //  Could use Items_Container mixin.
+        //  Open_Closed mixin
+
+        // Run-time mixins for the moment.
+
+
+
+        // Maybe contain a single main area and a drop-down box
+
     }
 
 }
