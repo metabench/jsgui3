@@ -1,7 +1,8 @@
 
 
 
-var sockjs = require('sockjs'), jsgui = require('../html/html'),
+//var sockjs = require('sockjs'), jsgui = require('../html/html'),
+var jsgui = require('../html/html'),
     os = require('os'), http = require('http'),
     Resource = require('../resource/resource'),
     Server_Resource_Pool = require('./server-resource-pool'),
@@ -110,7 +111,7 @@ class JSGUI_Server extends jsgui.Data_Object {
                 var app = new Website_Resource(app_spec);
 
 
-                console.log('app', app);
+                //console.log('app', app);
                 //throw 'stop';
                 resource_pool.add(app);
                 server_router.set_route(route, app, app.process);
@@ -124,7 +125,7 @@ class JSGUI_Server extends jsgui.Data_Object {
         // The resource_pool is not just a Data_Value. need to fix some get or create new field value code.
         //console.log('start');
         var rp = this.resource_pool;
-        console.log('rp', rp);
+        //console.log('rp', rp);
         //console.log('resource_pool ' + stringify(resource_pool));
         //throw 'stop';
         var that = this;
@@ -140,7 +141,7 @@ class JSGUI_Server extends jsgui.Data_Object {
                 //console.log('rp', rp);
 
                 var resource_names = rp.get_resource_names();
-                console.log('resource_names', resource_names);
+                //console.log('resource_names', resource_names);
 
                 //throw 'stop';
 

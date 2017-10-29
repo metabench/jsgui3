@@ -50,7 +50,7 @@ class Single_Control_Server extends Server {
         });
 
 
-        console.log('app', app);
+        //console.log('app', app);
         //throw 'stop';
         this.resource_pool.add(app);
         this.server_router.set_route('*', app, app.process);

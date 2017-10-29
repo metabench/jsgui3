@@ -61,13 +61,11 @@ class Selection_Scope extends jsgui.Data_Object {
 					v.trigger('deselect');
 					count_deselected++;
 				}
-
 				//console.log('should have deselcted ' + v._id())
 			}
 			if (v === ctrl) {
 				currently_selected = v.get('selected').value();
 			}
-
 		});
 
 		this.map_selected_controls = {};
@@ -85,14 +83,9 @@ class Selection_Scope extends jsgui.Data_Object {
 			ctrl.add_class('selected');
 		}
 
-
 		if (count_deselected > 0 &! currently_selected) {
 			this.trigger('change');
 		}
-
-
-
-
 
 	}
 
@@ -127,43 +120,29 @@ class Selection_Scope extends jsgui.Data_Object {
 		//throw 'stop';
 	}
 
-
-
 	'select_toggle'(ctrl) {
 		//console.log('');
 		//console.log('select_toggle');
 		var sel = ctrl.get('selected').value();
 		//console.log('tof(sel) ' + tof(sel));
-
 		var msc = this.map_selected_controls;
 		var id = ctrl._id();
 		if (!sel) {
-
-
 			var sel_anc = ctrl.find_selected_ancestor_in_scope();
 
 			if (sel_anc) {
 				console.log('1) not selecting because a selected ancestor in the selection scope has been found.');
 			} else {
-
-
 				ctrl.set('selected', true);
 				// Check for a selected ancestor control in the scope.
-
 				this.deselect_ctrl_content(ctrl);
-
 				//  can try an iterate_ancestors function.
-
 				//  iterate_ancestors_in_selection_scope
 				//   looking for selected ancestor.
-
 				// find_selected_ancestor_in_scope
-
 				ctrl.add_class('selected');
 				msc[id] = ctrl;
 			}
-
-
 		} else {
 			var tsel = tof(sel);
 			//console.log('tsel ' + (tsel))
@@ -184,10 +163,8 @@ class Selection_Scope extends jsgui.Data_Object {
 						// Check for a selected ancestor control in the scope.
 						this.deselect_ctrl_content(ctrl);
 						//  can try an iterate_ancestors function.
-
 						//  iterate_ancestors_in_selection_scope
 						//   looking for selected ancestor.
-
 						// find_selected_ancestor_in_scope
 
 						ctrl.add_class('selected');
@@ -204,7 +181,6 @@ class Selection_Scope extends jsgui.Data_Object {
 					msc[id] = false;
 				} else {
 					var sel_anc = ctrl.find_selected_ancestor_in_scope();
-
 					if (sel_anc) {
 						console.log('2) not selecting because a selected ancestor in the selection scope has been found.');
 					} else {
@@ -214,10 +190,8 @@ class Selection_Scope extends jsgui.Data_Object {
 						// Check for a selected ancestor control in the scope.
 
 						//  can try an iterate_ancestors function.
-
 						//  iterate_ancestors_in_selection_scope
 						//   looking for selected ancestor.
-
 						// find_selected_ancestor_in_scope
 
 						ctrl.add_class('selected');

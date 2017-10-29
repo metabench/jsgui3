@@ -72,7 +72,7 @@ class Routing_Tree {
                 var isWildcard = strLevel == '*';
                 if (isVariable) {
                     var variableName = strLevel.substr(1);
-                    console.log('variableName', variableName);
+                    //console.log('variableName', variableName);
                     if (!currentNode.variableChild) {
                         currentNode.variableChild = new Variable_Routing_Tree_Node({'name': variableName});
                         if (c == splitRoute.length - 1) {
@@ -153,7 +153,7 @@ class Routing_Tree {
                 if (currentNode) {
                     var next_level_node = currentNode.mapNormalPathChildren[strLevel];
                     if (next_level_node) {
-                        console.log('no next level node');
+                        console.log('no next level node'); //???
                     } else {
                         if (currentNode.variableChild) {
                             next_level_node = currentNode.variableChild;

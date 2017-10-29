@@ -13,7 +13,7 @@ var Sorted_KVS = require('./sorted-kvs');
 // util...
 
 var util = require('./util');
-
+jsgui.util = util;
 
 
 

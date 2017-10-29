@@ -11,15 +11,10 @@ var tof = jsgui.tof;
 var map_Controls = jsgui.map_Controls = {};
 
 var core_extension = str_arr_mapify(function (tagName) {
-
-
-
     jsgui[tagName] = class extends Control {
         'constructor'(spec) {
             //spec.tagName = tagName;
-
             //console.log('core extension tagName ' + tagName);
-
             super(spec);
 
             //this.get('dom').set('tagName', tagName);
@@ -189,7 +184,7 @@ var activate = function(context) {
             //var cstr = jsgui.constructor_from_type(type);
 
             //var cstr = jsgui.constructor_from_type(type);
-            console.log('!!map_controls[jsgui_id]', !!map_controls[jsgui_id]);
+            //console.log('!!map_controls[jsgui_id]', !!map_controls[jsgui_id]);
 
             //console.log('cstr ' + cstr);
 
@@ -200,12 +195,14 @@ var activate = function(context) {
 
             //if (!)
 
-            console.log('map_controls', map_controls);
+            //console.log('map_controls', map_controls);
 
             if (!map_controls[jsgui_id]) {
                 // Only construct it if it does not exist already.
 
                 var Cstr = context.map_Controls[type];
+                //console.log('type', type);
+                //console.log('!!Cstr', !!Cstr);
 
                 if (Cstr) {
                     //console.log('arr_controls.length', arr_controls.length);
@@ -213,7 +210,7 @@ var activate = function(context) {
 
                     //console.log('3) jsgui_id', jsgui_id);
 
-                    console.log('creating constructor of type', type, 'jsgui_id', jsgui_id);
+                    //console.log('creating constructor of type', type, 'jsgui_id', jsgui_id);
 
                     // Would re-apply the constructors?
 
@@ -256,7 +253,7 @@ var activate = function(context) {
 
 
             } else {
-                console.log('found control in map', jsgui_id);
+                //console.log('found control in map', jsgui_id);
                 var ctrl = map_controls[jsgui_id];
                 ctrl.dom.el = el;
 
@@ -293,6 +290,7 @@ var activate = function(context) {
                 //console.log('map_controls', map_controls);
 
                 var ctrl = map_controls[jsgui_id];
+                //console.log('!!ctrl', !!ctrl);
                 ctrl.__activating = true;
 
 

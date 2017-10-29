@@ -3602,8 +3602,8 @@
         }
         module.exports = Client_Resource_Pool;
     }, {
-        "../html/html": 85,
-        "../resource/pool": 102
+        "../html/html": 89,
+        "../resource/pool": 106
     } ],
     29: [ function(require, module, exports) {
         var jsgui = require("../html/html");
@@ -3612,7 +3612,7 @@
         jsgui.Selection_Scope = require("./selection-scope");
         module.exports = jsgui;
     }, {
-        "../html/html": 85,
+        "../html/html": 89,
         "./client-resource-pool": 28,
         "./page-context": 30,
         "./selection-scope": 31
@@ -3654,15 +3654,26 @@
             }
             body() {
                 var doc = this.document;
-                var bod = doc.childNodes[0].childNodes[1];
-                var bod_id = bod.getAttribute("data-jsgui-id");
-                var res = this.map_controls[bod_id];
-                return res;
+                var bod = doc.body;
+                console.log("bod", bod);
+                if (!this._body) {
+                    var existing_jsgui_id = bod.getAttribute("jsgui-id");
+                    if (!existing_jsgui_id) {
+                        var ctrl_body = new jsgui.body({
+                            el: document.body,
+                            context: this
+                        });
+                        ctrl_body.dom.el.setAttribute("jsgui-id", ctrl_body._id());
+                        this.register_control(ctrl_body);
+                        this._body = ctrl_body;
+                    }
+                } else {}
+                return this._body;
             }
         }
         module.exports = Client_Page_Context;
     }, {
-        "../html/html": 85,
+        "../html/html": 89,
         "./client-resource-pool": 28,
         "./selection-scope": 31
     } ],
@@ -3779,7 +3790,7 @@
         }
         module.exports = Selection_Scope;
     }, {
-        "../html-core/html-core": 83
+        "../html-core/html-core": 87
     } ],
     32: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
@@ -4049,9 +4060,9 @@
         }
         module.exports = Audio_Player;
     }, {
-        "../html-core/html-core": 83,
+        "../html-core/html-core": 87,
         "./audio-volume": 33,
-        "./media-scrubber": 52
+        "./media-scrubber": 53
     } ],
     33: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
@@ -4084,25 +4095,27 @@
         }
         module.exports = Audio_Volume;
     }, {
-        "../html-core/html-core": 83,
-        "./horizontal-slider": 46
+        "../html-core/html-core": 87,
+        "./horizontal-slider": 47
     } ],
     34: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var Control = jsgui.Control;
         class Button extends Control {
             constructor(spec, add, make) {
+                spec["class"] = spec["class"] || "button";
                 super(spec);
                 var that = this;
                 this.__type_name = "button";
                 this.add_class("button");
-                if (spec.text) {
-                    this.text = spec.text;
+                if (spec.text || spec.label) {
+                    this.text = spec.text || spec.label;
                 }
                 if (!spec.no_compose) {
-                    if (!this._abstract && !spec.el) {
-                        if (spec.text) {
-                            this.add(spec.text);
+                    if (!this._abstract) {
+                        if (this.text) {
+                            console.log("pre add text to button", this.text);
+                            this.add(this.text);
                         }
                     }
                 }
@@ -4113,9 +4126,596 @@
         }
         module.exports = Button;
     }, {
-        "../html-core/html-core": 83
+        "../html-core/html-core": 87
     } ],
     35: [ function(require, module, exports) {
+        var jsgui = require("../html-core/html-core-enh");
+        var Grid = require("./grid");
+        var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
+        var Control = jsgui.Control;
+        var v_subtract = jsgui.util.v_subtract;
+        var pal_crayola = [ {
+            hex: "#EFDECD",
+            name: "Almond",
+            rgb: "(239, 222, 205)"
+        }, {
+            hex: "#CD9575",
+            name: "Antique Brass",
+            rgb: "(205, 149, 117)"
+        }, {
+            hex: "#FDD9B5",
+            name: "Apricot",
+            rgb: "(253, 217, 181)"
+        }, {
+            hex: "#78DBE2",
+            name: "Aquamarine",
+            rgb: "(120, 219, 226)"
+        }, {
+            hex: "#87A96B",
+            name: "Asparagus",
+            rgb: "(135, 169, 107)"
+        }, {
+            hex: "#FFA474",
+            name: "Atomic Tangerine",
+            rgb: "(255, 164, 116)"
+        }, {
+            hex: "#FAE7B5",
+            name: "Banana Mania",
+            rgb: "(250, 231, 181)"
+        }, {
+            hex: "#9F8170",
+            name: "Beaver",
+            rgb: "(159, 129, 112)"
+        }, {
+            hex: "#FD7C6E",
+            name: "Bittersweet",
+            rgb: "(253, 124, 110)"
+        }, {
+            hex: "#000000",
+            name: "Black",
+            rgb: "(0,0,0)"
+        }, {
+            hex: "#ACE5EE",
+            name: "Blizzard Blue",
+            rgb: "(172, 229, 238)"
+        }, {
+            hex: "#1F75FE",
+            name: "Blue",
+            rgb: "(31, 117, 254)"
+        }, {
+            hex: "#A2A2D0",
+            name: "Blue Bell",
+            rgb: "(162, 162, 208)"
+        }, {
+            hex: "#6699CC",
+            name: "Blue Gray",
+            rgb: "(102, 153, 204)"
+        }, {
+            hex: "#0D98BA",
+            name: "Blue Green",
+            rgb: "(13, 152, 186)"
+        }, {
+            hex: "#7366BD",
+            name: "Blue Violet",
+            rgb: "(115, 102, 189)"
+        }, {
+            hex: "#DE5D83",
+            name: "Blush",
+            rgb: "(222, 93, 131)"
+        }, {
+            hex: "#CB4154",
+            name: "Brick Red",
+            rgb: "(203, 65, 84)"
+        }, {
+            hex: "#B4674D",
+            name: "Brown",
+            rgb: "(180, 103, 77)"
+        }, {
+            hex: "#FF7F49",
+            name: "Burnt Orange",
+            rgb: "(255, 127, 73)"
+        }, {
+            hex: "#EA7E5D",
+            name: "Burnt Sienna",
+            rgb: "(234, 126, 93)"
+        }, {
+            hex: "#B0B7C6",
+            name: "Cadet Blue",
+            rgb: "(176, 183, 198)"
+        }, {
+            hex: "#FFFF99",
+            name: "Canary",
+            rgb: "(255, 255, 153)"
+        }, {
+            hex: "#1CD3A2",
+            name: "Caribbean Green",
+            rgb: "(28, 211, 162)"
+        }, {
+            hex: "#FFAACC",
+            name: "Carnation Pink",
+            rgb: "(255, 170, 204)"
+        }, {
+            hex: "#DD4492",
+            name: "Cerise",
+            rgb: "(221, 68, 146)"
+        }, {
+            hex: "#1DACD6",
+            name: "Cerulean",
+            rgb: "(29, 172, 214)"
+        }, {
+            hex: "#BC5D58",
+            name: "Chestnut",
+            rgb: "(188, 93, 88)"
+        }, {
+            hex: "#DD9475",
+            name: "Copper",
+            rgb: "(221, 148, 117)"
+        }, {
+            hex: "#9ACEEB",
+            name: "Cornflower",
+            rgb: "(154, 206, 235)"
+        }, {
+            hex: "#FFBCD9",
+            name: "Cotton Candy",
+            rgb: "(255, 188, 217)"
+        }, {
+            hex: "#FDDB6D",
+            name: "Dandelion",
+            rgb: "(253, 219, 109)"
+        }, {
+            hex: "#2B6CC4",
+            name: "Denim",
+            rgb: "(43, 108, 196)"
+        }, {
+            hex: "#EFCDB8",
+            name: "Desert Sand",
+            rgb: "(239, 205, 184)"
+        }, {
+            hex: "#6E5160",
+            name: "Eggplant",
+            rgb: "(110, 81, 96)"
+        }, {
+            hex: "#CEFF1D",
+            name: "Electric Lime",
+            rgb: "(206, 255, 29)"
+        }, {
+            hex: "#71BC78",
+            name: "Fern",
+            rgb: "(113, 188, 120)"
+        }, {
+            hex: "#6DAE81",
+            name: "Forest Green",
+            rgb: "(109, 174, 129)"
+        }, {
+            hex: "#C364C5",
+            name: "Fuchsia",
+            rgb: "(195, 100, 197)"
+        }, {
+            hex: "#CC6666",
+            name: "Fuzzy Wuzzy",
+            rgb: "(204, 102, 102)"
+        }, {
+            hex: "#E7C697",
+            name: "Gold",
+            rgb: "(231, 198, 151)"
+        }, {
+            hex: "#FCD975",
+            name: "Goldenrod",
+            rgb: "(252, 217, 117)"
+        }, {
+            hex: "#A8E4A0",
+            name: "Granny Smith Apple",
+            rgb: "(168, 228, 160)"
+        }, {
+            hex: "#95918C",
+            name: "Gray",
+            rgb: "(149, 145, 140)"
+        }, {
+            hex: "#1CAC78",
+            name: "Green",
+            rgb: "(28, 172, 120)"
+        }, {
+            hex: "#1164B4",
+            name: "Green Blue",
+            rgb: "(17, 100, 180)"
+        }, {
+            hex: "#F0E891",
+            name: "Green Yellow",
+            rgb: "(240, 232, 145)"
+        }, {
+            hex: "#FF1DCE",
+            name: "Hot Magenta",
+            rgb: "(255, 29, 206)"
+        }, {
+            hex: "#B2EC5D",
+            name: "Inchworm",
+            rgb: "(178, 236, 93)"
+        }, {
+            hex: "#5D76CB",
+            name: "Indigo",
+            rgb: "(93, 118, 203)"
+        }, {
+            hex: "#CA3767",
+            name: "Jazzberry Jam",
+            rgb: "(202, 55, 103)"
+        }, {
+            hex: "#3BB08F",
+            name: "Jungle Green",
+            rgb: "(59, 176, 143)"
+        }, {
+            hex: "#FEFE22",
+            name: "Laser Lemon",
+            rgb: "(254, 254, 34)"
+        }, {
+            hex: "#FCB4D5",
+            name: "Lavender",
+            rgb: "(252, 180, 213)"
+        }, {
+            hex: "#FFF44F",
+            name: "Lemon Yellow",
+            rgb: "(255, 244, 79)"
+        }, {
+            hex: "#FFBD88",
+            name: "Macaroni and Cheese",
+            rgb: "(255, 189, 136)"
+        }, {
+            hex: "#F664AF",
+            name: "Magenta",
+            rgb: "(246, 100, 175)"
+        }, {
+            hex: "#AAF0D1",
+            name: "Magic Mint",
+            rgb: "(170, 240, 209)"
+        }, {
+            hex: "#CD4A4C",
+            name: "Mahogany",
+            rgb: "(205, 74, 76)"
+        }, {
+            hex: "#EDD19C",
+            name: "Maize",
+            rgb: "(237, 209, 156)"
+        }, {
+            hex: "#979AAA",
+            name: "Manatee",
+            rgb: "(151, 154, 170)"
+        }, {
+            hex: "#FF8243",
+            name: "Mango Tango",
+            rgb: "(255, 130, 67)"
+        }, {
+            hex: "#C8385A",
+            name: "Maroon",
+            rgb: "(200, 56, 90)"
+        }, {
+            hex: "#EF98AA",
+            name: "Mauvelous",
+            rgb: "(239, 152, 170)"
+        }, {
+            hex: "#FDBCB4",
+            name: "Melon",
+            rgb: "(253, 188, 180)"
+        }, {
+            hex: "#1A4876",
+            name: "Midnight Blue",
+            rgb: "(26, 72, 118)"
+        }, {
+            hex: "#30BA8F",
+            name: "Mountain Meadow",
+            rgb: "(48, 186, 143)"
+        }, {
+            hex: "#C54B8C",
+            name: "Mulberry",
+            rgb: "(197, 75, 140)"
+        }, {
+            hex: "#1974D2",
+            name: "Navy Blue",
+            rgb: "(25, 116, 210)"
+        }, {
+            hex: "#FFA343",
+            name: "Neon Carrot",
+            rgb: "(255, 163, 67)"
+        }, {
+            hex: "#BAB86C",
+            name: "Olive Green",
+            rgb: "(186, 184, 108)"
+        }, {
+            hex: "#FF7538",
+            name: "Orange",
+            rgb: "(255, 117, 56)"
+        }, {
+            hex: "#FF2B2B",
+            name: "Orange Red",
+            rgb: "(255, 43, 43)"
+        }, {
+            hex: "#F8D568",
+            name: "Orange Yellow",
+            rgb: "(248, 213, 104)"
+        }, {
+            hex: "#E6A8D7",
+            name: "Orchid",
+            rgb: "(230, 168, 215)"
+        }, {
+            hex: "#414A4C",
+            name: "Outer Space",
+            rgb: "(65, 74, 76)"
+        }, {
+            hex: "#FF6E4A",
+            name: "Outrageous Orange",
+            rgb: "(255, 110, 74)"
+        }, {
+            hex: "#1CA9C9",
+            name: "Pacific Blue",
+            rgb: "(28, 169, 201)"
+        }, {
+            hex: "#FFCFAB",
+            name: "Peach",
+            rgb: "(255, 207, 171)"
+        }, {
+            hex: "#C5D0E6",
+            name: "Periwinkle",
+            rgb: "(197, 208, 230)"
+        }, {
+            hex: "#FDDDE6",
+            name: "Piggy Pink",
+            rgb: "(253, 221, 230)"
+        }, {
+            hex: "#158078",
+            name: "Pine Green",
+            rgb: "(21, 128, 120)"
+        }, {
+            hex: "#FC74FD",
+            name: "Pink Flamingo",
+            rgb: "(252, 116, 253)"
+        }, {
+            hex: "#F78FA7",
+            name: "Pink Sherbet",
+            rgb: "(247, 143, 167)"
+        }, {
+            hex: "#8E4585",
+            name: "Plum",
+            rgb: "(142, 69, 133)"
+        }, {
+            hex: "#7442C8",
+            name: "Purple Heart",
+            rgb: "(116, 66, 200)"
+        }, {
+            hex: "#9D81BA",
+            name: "Purple Mountain's Majesty",
+            rgb: "(157, 129, 186)"
+        }, {
+            hex: "#FE4EDA",
+            name: "Purple Pizzazz",
+            rgb: "(254, 78, 218)"
+        }, {
+            hex: "#FF496C",
+            name: "Radical Red",
+            rgb: "(255, 73, 108)"
+        }, {
+            hex: "#D68A59",
+            name: "Raw Sienna",
+            rgb: "(214, 138, 89)"
+        }, {
+            hex: "#714B23",
+            name: "Raw Umber",
+            rgb: "(113, 75, 35)"
+        }, {
+            hex: "#FF48D0",
+            name: "Razzle Dazzle Rose",
+            rgb: "(255, 72, 208)"
+        }, {
+            hex: "#E3256B",
+            name: "Razzmatazz",
+            rgb: "(227, 37, 107)"
+        }, {
+            hex: "#EE204D",
+            name: "Red",
+            rgb: "(238,32 ,77 )"
+        }, {
+            hex: "#FF5349",
+            name: "Red Orange",
+            rgb: "(255, 83, 73)"
+        }, {
+            hex: "#C0448F",
+            name: "Red Violet",
+            rgb: "(192, 68, 143)"
+        }, {
+            hex: "#1FCECB",
+            name: "Robin's Egg Blue",
+            rgb: "(31, 206, 203)"
+        }, {
+            hex: "#7851A9",
+            name: "Royal Purple",
+            rgb: "(120, 81, 169)"
+        }, {
+            hex: "#FF9BAA",
+            name: "Salmon",
+            rgb: "(255, 155, 170)"
+        }, {
+            hex: "#FC2847",
+            name: "Scarlet",
+            rgb: "(252, 40, 71)"
+        }, {
+            hex: "#76FF7A",
+            name: "Screamin' Green",
+            rgb: "(118, 255, 122)"
+        }, {
+            hex: "#9FE2BF",
+            name: "Sea Green",
+            rgb: "(159, 226, 191)"
+        }, {
+            hex: "#A5694F",
+            name: "Sepia",
+            rgb: "(165, 105, 79)"
+        }, {
+            hex: "#8A795D",
+            name: "Shadow",
+            rgb: "(138, 121, 93)"
+        }, {
+            hex: "#45CEA2",
+            name: "Shamrock",
+            rgb: "(69, 206, 162)"
+        }, {
+            hex: "#FB7EFD",
+            name: "Shocking Pink",
+            rgb: "(251, 126, 253)"
+        }, {
+            hex: "#CDC5C2",
+            name: "Silver",
+            rgb: "(205, 197, 194)"
+        }, {
+            hex: "#80DAEB",
+            name: "Sky Blue",
+            rgb: "(128, 218, 235)"
+        }, {
+            hex: "#ECEABE",
+            name: "Spring Green",
+            rgb: "(236, 234, 190)"
+        }, {
+            hex: "#FFCF48",
+            name: "Sunglow",
+            rgb: "(255, 207, 72)"
+        }, {
+            hex: "#FD5E53",
+            name: "Sunset Orange",
+            rgb: "(253, 94, 83)"
+        }, {
+            hex: "#FAA76C",
+            name: "Tan",
+            rgb: "(250, 167, 108)"
+        }, {
+            hex: "#18A7B5",
+            name: "Teal Blue",
+            rgb: "(24, 167, 181)"
+        }, {
+            hex: "#EBC7DF",
+            name: "Thistle",
+            rgb: "(235, 199, 223)"
+        }, {
+            hex: "#FC89AC",
+            name: "Tickle Me Pink",
+            rgb: "(252, 137, 172)"
+        }, {
+            hex: "#DBD7D2",
+            name: "Timberwolf",
+            rgb: "(219, 215, 210)"
+        }, {
+            hex: "#17806D",
+            name: "Tropical Rain Forest",
+            rgb: "(23, 128, 109)"
+        }, {
+            hex: "#DEAA88",
+            name: "Tumbleweed",
+            rgb: "(222, 170, 136)"
+        }, {
+            hex: "#77DDE7",
+            name: "Turquoise Blue",
+            rgb: "(119, 221, 231)"
+        }, {
+            hex: "#FFFF66",
+            name: "Unmellow Yellow",
+            rgb: "(255, 255, 102)"
+        }, {
+            hex: "#926EAE",
+            name: "Violet (Purple)",
+            rgb: "(146, 110, 174)"
+        }, {
+            hex: "#324AB2",
+            name: "Violet Blue",
+            rgb: "(50, 74, 178)"
+        }, {
+            hex: "#F75394",
+            name: "Violet Red",
+            rgb: "(247, 83, 148)"
+        }, {
+            hex: "#FFA089",
+            name: "Vivid Tangerine",
+            rgb: "(255, 160, 137)"
+        }, {
+            hex: "#8F509D",
+            name: "Vivid Violet",
+            rgb: "(143, 80, 157)"
+        }, {
+            hex: "#FFFFFF",
+            name: "White",
+            rgb: "(255, 255, 255)"
+        }, {
+            hex: "#A2ADD0",
+            name: "Wild Blue Yonder",
+            rgb: "(162, 173, 208)"
+        }, {
+            hex: "#FF43A4",
+            name: "Wild Strawberry",
+            rgb: "(255, 67, 164)"
+        }, {
+            hex: "#FC6C85",
+            name: "Wild Watermelon",
+            rgb: "(252, 108, 133)"
+        }, {
+            hex: "#CDA4DE",
+            name: "Wisteria",
+            rgb: "(205, 164, 222)"
+        }, {
+            hex: "#FCE883",
+            name: "Yellow",
+            rgb: "(252, 232, 131)"
+        }, {
+            hex: "#C5E384",
+            name: "Yellow Green",
+            rgb: "(197, 227, 132)"
+        }, {
+            hex: "#FFAE42",
+            name: "Yellow Orange",
+            rgb: "(255, 174, 66)"
+        } ];
+        class Color_Palette extends Control {
+            constructor(spec) {
+                spec = spec || {};
+                spec.__type_name = spec.__type_name || "color_palette";
+                super(spec);
+                this.add_class("color-palette");
+                this.internal_relative_div = true;
+                if (!spec.abstract && !spec.el) {
+                    this.compose();
+                }
+                this.on("resize", e_resize => {
+                    if (this.grid) {
+                        var _2_padding = 12;
+                        var new_grid_size = v_subtract(e_resize.value, [ _2_padding, _2_padding ]);
+                        this.grid.size = new_grid_size;
+                    }
+                });
+            }
+            compose() {
+                var size = this.size;
+                var padding = 6;
+                this.grid = new Grid({
+                    context: this.context,
+                    grid_size: [ 12, 12 ],
+                    size: [ size[0] - padding * 2, size[1] - padding * 2 ]
+                });
+                this.add(this.grid);
+                var c = 0;
+                this.grid.each_cell(cell => {
+                    var item = pal_crayola[c++];
+                    if (item) {
+                        var hex = item.hex;
+                        cell.color = hex;
+                    }
+                });
+                this.dom.attributes["data-jsgui-ctrl-fields"] = stringify({
+                    grid: this.grid._id()
+                }).replace(/"/g, "'");
+            }
+        }
+        if (require.main === module) {
+            console.log("pal_crayola.length", pal_crayola.length);
+        } else {}
+        module.exports = Color_Palette;
+    }, {
+        "../html-core/html-core-enh": 86,
+        "./grid": 45
+    } ],
+    36: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var Menu_Node = require("./menu-node");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
@@ -4171,15 +4771,16 @@
         }
         module.exports = Context_Menu;
     }, {
-        "../html-core/html-core": 83,
-        "./menu-node": 53
+        "../html-core/html-core": 87,
+        "./menu-node": 54
     } ],
-    36: [ function(require, module, exports) {
+    37: [ function(require, module, exports) {
         var controls = {
             Audio_Player: require("./audio-player"),
             Audio_Volume: require("./audio-volume"),
             Button: require("./button"),
             Context_Menu: require("./context-menu"),
+            Color_Palette: require("./color-palette"),
             File_Upload: require("./file-upload"),
             Grid: require("./grid"),
             Horizontal_Menu: require("./horizontal-menu"),
@@ -4198,6 +4799,7 @@
             Popup_Menu_Button: require("./popup-menu-button"),
             Radio_Button: require("./radio-button"),
             Radio_Button_Group: require("./radio-button-group"),
+            Resize_Handle: require("./resize-handle"),
             Scroll_View: require("./scroll-view"),
             Scrollbar: require("./scrollbar"),
             Single_Line: require("./single-line"),
@@ -4216,39 +4818,41 @@
         "./audio-player": 32,
         "./audio-volume": 33,
         "./button": 34,
-        "./context-menu": 35,
-        "./editor/object": 41,
-        "./file-upload": 43,
-        "./grid": 44,
-        "./horizontal-menu": 45,
-        "./horizontal-slider": 46,
-        "./item": 48,
-        "./item-view": 47,
-        "./line-chart": 49,
-        "./list": 50,
-        "./login": 51,
-        "./media-scrubber": 52,
-        "./menu-node": 53,
-        "./multi-layout-mode": 54,
-        "./panel": 55,
-        "./plus-minus-toggle-button": 56,
-        "./popup-menu-button": 57,
-        "./radio-button": 59,
-        "./radio-button-group": 58,
-        "./scroll-view": 60,
-        "./scrollbar": 61,
-        "./single-line": 62,
-        "./start-stop-toggle-button": 63,
-        "./tabs": 64,
-        "./text-field": 65,
-        "./title-bar": 67,
-        "./titled-panel": 68,
-        "./toggle-button": 69,
-        "./tree-node": 70,
-        "./vertical-expander": 72,
-        "./window": 79
+        "./color-palette": 35,
+        "./context-menu": 36,
+        "./editor/object": 42,
+        "./file-upload": 44,
+        "./grid": 45,
+        "./horizontal-menu": 46,
+        "./horizontal-slider": 47,
+        "./item": 49,
+        "./item-view": 48,
+        "./line-chart": 50,
+        "./list": 51,
+        "./login": 52,
+        "./media-scrubber": 53,
+        "./menu-node": 54,
+        "./multi-layout-mode": 55,
+        "./panel": 56,
+        "./plus-minus-toggle-button": 57,
+        "./popup-menu-button": 58,
+        "./radio-button": 60,
+        "./radio-button-group": 59,
+        "./resize-handle": 61,
+        "./scroll-view": 62,
+        "./scrollbar": 63,
+        "./single-line": 64,
+        "./start-stop-toggle-button": 65,
+        "./tabs": 66,
+        "./text-field": 67,
+        "./title-bar": 69,
+        "./titled-panel": 70,
+        "./toggle-button": 71,
+        "./tree-node": 72,
+        "./vertical-expander": 74,
+        "./window": 81
     } ],
-    37: [ function(require, module, exports) {
+    38: [ function(require, module, exports) {
         var jsgui = require("../../html-core/html-core");
         var Array_Viewer = require("../viewer/array");
         var factory = require("./factory");
@@ -4268,11 +4872,11 @@
         }
         module.exports = Array_Editor;
     }, {
-        "../../html-core/html-core": 83,
-        "../viewer/array": 73,
-        "./factory": 38
+        "../../html-core/html-core": 87,
+        "../viewer/array": 75,
+        "./factory": 39
     } ],
-    38: [ function(require, module, exports) {
+    39: [ function(require, module, exports) {
         var jsgui = require("../../html-core/html-core");
         var Object_Editor = require("./object");
         var Array_Editor = require("./array");
@@ -4333,13 +4937,13 @@
         };
         module.exports = create;
     }, {
-        "../../html-core/html-core": 83,
-        "./array": 37,
-        "./number": 39,
-        "./object": 41,
-        "./string": 42
+        "../../html-core/html-core": 87,
+        "./array": 38,
+        "./number": 40,
+        "./object": 42,
+        "./string": 43
     } ],
-    39: [ function(require, module, exports) {
+    40: [ function(require, module, exports) {
         var jsgui = require("../../lang/lang");
         var Number_Viewer = require("../viewer/number");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
@@ -4373,11 +4977,11 @@
         }
         module.exports = Number_Editor;
     }, {
-        "../../lang/lang": 94,
-        "../up-down-arrow-buttons": 71,
-        "../viewer/number": 75
+        "../../lang/lang": 98,
+        "../up-down-arrow-buttons": 73,
+        "../viewer/number": 77
     } ],
-    40: [ function(require, module, exports) {
+    41: [ function(require, module, exports) {
         var jsgui = require("../../lang/lang");
         var Object_KVP_Viewer = require("../viewer/object-kvp");
         var factory = require("./factory");
@@ -4404,13 +5008,13 @@
         }
         module.exports = Object_KVP_Editor;
     }, {
-        "../../lang/lang": 94,
-        "../viewer/object-kvp": 76,
-        "./factory": 38,
-        "./number": 39,
-        "./string": 42
+        "../../lang/lang": 98,
+        "../viewer/object-kvp": 78,
+        "./factory": 39,
+        "./number": 40,
+        "./string": 43
     } ],
-    41: [ function(require, module, exports) {
+    42: [ function(require, module, exports) {
         var jsgui = require("../../html-core/html-core");
         var Object_Viewer = require("../viewer/object");
         var Object_KVP_Editor = require("./object-kvp");
@@ -4432,12 +5036,12 @@
         }
         module.exports = Object_Editor;
     }, {
-        "../../html-core/html-core": 83,
-        "../viewer/object": 77,
-        "./factory": 38,
-        "./object-kvp": 40
+        "../../html-core/html-core": 87,
+        "../viewer/object": 79,
+        "./factory": 39,
+        "./object-kvp": 41
     } ],
-    42: [ function(require, module, exports) {
+    43: [ function(require, module, exports) {
         var jsgui = require("../../html-core/html-core");
         var String_Viewer = require("../viewer/string");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
@@ -4543,10 +5147,10 @@
         }
         module.exports = String_Editor;
     }, {
-        "../../html-core/html-core": 83,
-        "../viewer/string": 78
+        "../../html-core/html-core": 87,
+        "../viewer/string": 80
     } ],
-    43: [ function(require, module, exports) {
+    44: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var Text_Field = require("./text-field");
         var Button = require("./button");
@@ -4614,24 +5218,82 @@
         }
         module.exports = File_Upload;
     }, {
-        "../html-core/html-core": 83,
+        "../html-core/html-core": 87,
         "./button": 34,
-        "./text-field": 65
+        "./text-field": 67
     } ],
-    44: [ function(require, module, exports) {
-        var jsgui = require("../html-core/html-core");
+    45: [ function(require, module, exports) {
+        var jsgui = require("../html-core/html-core-enh");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
         var Control = jsgui.Control;
         var group = jsgui.group;
         class Grid extends Control {
             constructor(spec, add, make) {
+                spec = spec || {};
+                spec.__type_name = spec.__type_name || "grid";
                 super(spec);
-                this.__type_name = "grid";
                 this.add_class("grid");
                 var spec_data = spec.data;
+                this._arr_rows = [];
+                var composition_mode = "divs";
+                if (spec.grid_size) this.grid_size = spec.grid_size;
                 if (!spec.abstract && !spec.el) {
                     var data;
-                    this.full_compose_as_table();
+                    this.full_compose_as_divs();
+                    this._fields = {
+                        composition_mode: composition_mode,
+                        grid_size: this.grid_size
+                    };
+                }
+                this.on("resize", e_resize => {
+                    if (this.composition_mode === "divs") {
+                        var num_columns = this.grid_size[0];
+                        var num_rows = this.grid_size[1];
+                        var cell_border_thickness = 1;
+                        var _2_cell_border_thickness = cell_border_thickness * 2;
+                        var cell_size = [ Math.floor(this.size[0] / num_columns) - _2_cell_border_thickness, Math.floor(this.size[1] / num_rows) - _2_cell_border_thickness ];
+                        var that = this;
+                        var cell_v_border_thickness = 2;
+                        this.each_row(row => {
+                            row.size = [ that.size[0], cell_size[1] + cell_v_border_thickness ];
+                        });
+                        this.each_cell(cell => {
+                            cell.size = cell_size;
+                        });
+                    }
+                });
+            }
+            each_row(cb_row) {
+                each(this._arr_rows, cb_row);
+            }
+            each_cell(cb_cell) {
+                each(this._arr_rows, row => {
+                    row.content.each(cb_cell);
+                });
+            }
+            full_compose_as_divs() {
+                var num_columns = this.grid_size[0];
+                var num_rows = this.grid_size[1];
+                var cell_border_thickness = 1;
+                var _2_cell_border_thickness = cell_border_thickness * 2;
+                var cell_size = [ Math.floor(this.size[0] / num_columns) - _2_cell_border_thickness, Math.floor(this.size[1] / num_rows) - _2_cell_border_thickness ];
+                var x, y;
+                for (y = 0; y < num_rows; y++) {
+                    var row_container = new Control({
+                        context: this.context
+                    });
+                    row_container.style("height", Math.floor(this.size[1] / num_rows));
+                    row_container.add_class("row");
+                    this._arr_rows.push(row_container);
+                    this.add(row_container);
+                    for (x = 0; x < num_columns; x++) {
+                        var cell = new Control({
+                            context: this.context
+                        });
+                        cell.add_class("cell");
+                        cell.size = cell_size;
+                        row_container.add(cell);
+                    }
                 }
             }
             full_compose_as_table() {
@@ -4673,14 +5335,25 @@
             activate() {
                 if (!this.__active) {
                     super.activate();
+                    console.log("activate Grid");
+                    var _arr_rows;
+                    var load_rows = () => {
+                        console.log("load_rows");
+                        console.log("this.content.length()", this.content.length());
+                        var _arr_rows = this._arr_rows = [];
+                        this.content.each(v => {
+                            _arr_rows.push(v);
+                        });
+                    };
+                    load_rows();
                 }
             }
         }
         module.exports = Grid;
     }, {
-        "../html-core/html-core": 83
+        "../html-core/html-core-enh": 86
     } ],
-    45: [ function(require, module, exports) {
+    46: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var Menu_Node = require("./menu-node");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
@@ -4734,10 +5407,10 @@
         }
         module.exports = Horizontal_Menu;
     }, {
-        "../html-core/html-core": 83,
-        "./menu-node": 53
+        "../html-core/html-core": 87,
+        "./menu-node": 54
     } ],
-    46: [ function(require, module, exports) {
+    47: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
         var Control = jsgui.Control;
@@ -4887,9 +5560,9 @@
         }
         module.exports = Horizontal_Slider;
     }, {
-        "../html-core/html-core": 83
+        "../html-core/html-core": 87
     } ],
-    47: [ function(require, module, exports) {
+    48: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var Plus_Minus_Toggle_Button = require("./plus-minus-toggle-button");
         var Vertical_Expander = require("./vertical-expander");
@@ -4973,17 +5646,18 @@
         }
         module.exports = Item_View;
     }, {
-        "../html-core/html-core": 83,
-        "./plus-minus-toggle-button": 56,
-        "./vertical-expander": 72
+        "../html-core/html-core": 87,
+        "./plus-minus-toggle-button": 57,
+        "./vertical-expander": 74
     } ],
-    48: [ function(require, module, exports) {
+    49: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
         var Control = jsgui.Control;
         var Data_Value = jsgui.Data_Value;
         class Item extends Control {
             constructor(spec, add, make) {
+                spec["class"] = "item";
                 super(spec);
                 this.__type_name = "item";
                 this.add_class("item");
@@ -5088,9 +5762,9 @@
         }
         module.exports = Item;
     }, {
-        "../html-core/html-core": 83
+        "../html-core/html-core": 87
     } ],
-    49: [ function(require, module, exports) {
+    50: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, extend = jsgui.extend;
         var Control = jsgui.Control;
@@ -5546,9 +6220,9 @@
         }
         module.exports = Line_Chart;
     }, {
-        "../html-core/html-core": 83
+        "../html-core/html-core": 87
     } ],
-    50: [ function(require, module, exports) {
+    51: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var Item = require("./item");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
@@ -5597,10 +6271,10 @@
         }
         module.exports = List;
     }, {
-        "../html-core/html-core": 83,
-        "./item": 48
+        "../html-core/html-core": 87,
+        "./item": 49
     } ],
-    51: [ function(require, module, exports) {
+    52: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core"), Text_Field = require("./text-field");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
         var Control = jsgui.Control;
@@ -5683,10 +6357,10 @@
         }
         module.exports = Login;
     }, {
-        "../html-core/html-core": 83,
-        "./text-field": 65
+        "../html-core/html-core": 87,
+        "./text-field": 67
     } ],
-    52: [ function(require, module, exports) {
+    53: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var Horizontal_Slider = require("./horizontal-slider");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
@@ -5800,10 +6474,10 @@
         }
         module.exports = Media_Scrubber;
     }, {
-        "../html-core/html-core": 83,
-        "./horizontal-slider": 46
+        "../html-core/html-core": 87,
+        "./horizontal-slider": 47
     } ],
-    53: [ function(require, module, exports) {
+    54: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
         var Control = jsgui.Control;
@@ -5904,9 +6578,9 @@
         }
         module.exports = Menu_Node;
     }, {
-        "../html-core/html-core": 83
+        "../html-core/html-core": 87
     } ],
-    54: [ function(require, module, exports) {
+    55: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var Panel = require("./panel");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
@@ -6000,10 +6674,10 @@
         }
         module.exports = Multi_Layout_Mode;
     }, {
-        "../html-core/html-core": 83,
-        "./panel": 55
+        "../html-core/html-core": 87,
+        "./panel": 56
     } ],
-    55: [ function(require, module, exports) {
+    56: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
         var Control = jsgui.Control;
@@ -6023,9 +6697,9 @@
         }
         module.exports = Panel;
     }, {
-        "../html-core/html-core": 83
+        "../html-core/html-core": 87
     } ],
-    56: [ function(require, module, exports) {
+    57: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var Toggle_Button = require("./toggle-button");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
@@ -6041,10 +6715,10 @@
         }
         module.exports = Plus_Minus_Toggle_Button;
     }, {
-        "../html-core/html-core": 83,
-        "./toggle-button": 69
+        "../html-core/html-core": 87,
+        "./toggle-button": 71
     } ],
-    57: [ function(require, module, exports) {
+    58: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
         var Control = jsgui.Control;
@@ -6055,11 +6729,14 @@
         class Popup_Menu_Button extends Button {
             constructor(spec, add, make) {
                 spec.no_compose = true;
+                spec["class"] = "popup-menu-button";
                 super(spec);
                 this.__type_name = "popup_menu_button";
-                this.add_class("popup-menu-button");
                 var context = this.context;
                 var that = this;
+                var setup_mixins = function() {
+                    this.mixin([ "open_closed", "closed" ], [ "item_container" ]);
+                };
                 this.states = [ "closed", "open" ];
                 this.state = new Data_Value("closed");
                 this.i_state = 0;
@@ -6073,7 +6750,9 @@
                         context: context,
                         item: this.text
                     });
+                    root_menu_item.add_class("popup-menu");
                     that.add(root_menu_item);
+                    root_menu_item.inner.add_class("popup-menu");
                     that.root_menu_item = root_menu_item;
                     if (spec.items) {
                         this.items = new Collection(spec.items);
@@ -6082,6 +6761,7 @@
                                 context: context,
                                 item: item
                             });
+                            menu_item.add_class("popup-menu");
                             root_menu_item.inner.add(menu_item);
                         });
                     }
@@ -6102,10 +6782,19 @@
                 if (!this.__active) {
                     super.activate();
                     var root_menu_item = this.root_menu_item;
-                    console.log("Popup_Menu_Button activate");
                     var that = this;
                     this.state.on("change", function(e_change) {
                         var val = e_change.value;
+                        if (val == "open") {
+                            root_menu_item.inner.pop_into_body();
+                            that.one_mousedown_elsewhere(e_mousedown_elsewhere => {
+                                console.log("e_mousedown_elsewhere", e_mousedown_elsewhere);
+                                setTimeout(function() {
+                                    that.i_state = 0;
+                                    that.state.set("closed");
+                                }, 300);
+                            });
+                        }
                         root_menu_item.state.set(val);
                     });
                     root_menu_item.on("click", function(e_click) {
@@ -6116,16 +6805,22 @@
                         that.i_state = new_i_state;
                         that.state.set(that.states[new_i_state]);
                     });
+                    root_menu_item.inner.content.each(inner_menu_item => {
+                        inner_menu_item.on("click", function(e_click) {
+                            root_menu_item.state.set("closed");
+                            that.i_state = 0;
+                        });
+                    });
                 }
             }
         }
         module.exports = Popup_Menu_Button;
     }, {
-        "../html-core/html-core": 83,
+        "../html-core/html-core": 87,
         "./button": 34,
-        "./item": 48
+        "./item": 49
     } ],
-    58: [ function(require, module, exports) {
+    59: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
         var Control = jsgui.Control;
@@ -6172,10 +6867,10 @@
         }
         module.exports = Radio_Button_Group;
     }, {
-        "../html-core/html-core": 83,
-        "./radio-button": 59
+        "../html-core/html-core": 87,
+        "./radio-button": 60
     } ],
-    59: [ function(require, module, exports) {
+    60: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
         var Control = jsgui.Control;
@@ -6237,9 +6932,66 @@
         }
         module.exports = Radio_Button;
     }, {
-        "../html-core/html-core": 83
+        "../html-core/html-core": 87
     } ],
-    60: [ function(require, module, exports) {
+    61: [ function(require, module, exports) {
+        var jsgui = require("../html-core/html-core");
+        var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
+        var Control = require("../html-core/control-enh");
+        var v_subtract = jsgui.util.v_subtract;
+        var v_add = jsgui.util.v_add;
+        class Resize_Handle extends Control {
+            constructor(spec, add, make) {
+                spec = spec || {};
+                spec.__type_name = spec.__type_name || "resize_handle";
+                super(spec);
+                var that = this;
+                var context = this.context;
+                this.target = spec.target;
+                this.position = spec.position;
+                if (!spec.abstract && !spec.el) {
+                    this.add_class("resize-handle");
+                    this.dom.attributes["data-jsgui-ctrl-fields"] = stringify({
+                        target: this.target._id()
+                    }).replace(/"/g, "'");
+                }
+            }
+            activate() {
+                if (!this.__active) {
+                    super.activate();
+                    var that = this;
+                    var context = this.context;
+                    var body = context.body();
+                    var target = this.target;
+                    this.add_event_listener("mousedown", e_mousedown => {
+                        var md_page_pos = [ e_mousedown.pageX, e_mousedown.pageY ];
+                        target.begin_resize();
+                        var fn_mousemove = e_mousemove => {
+                            var mm_page_pos = [ e_mousemove.pageX, e_mousemove.pageY ];
+                            var offset = v_subtract(mm_page_pos, md_page_pos);
+                            target.mid_resize(offset);
+                        };
+                        var fn_mouseup = e_mouseup => {
+                            console.log("e_mouseup", e_mouseup);
+                            var mu_page_pos = [ e_mouseup.pageX, e_mouseup.pageY ];
+                            var offset = v_subtract(mu_page_pos, md_page_pos);
+                            console.log("mu offset", offset);
+                            body.remove_event_listener("mousemove", fn_mousemove);
+                            body.remove_event_listener("mouseup", fn_mouseup);
+                            target.end_resize(offset);
+                        };
+                        body.add_event_listener("mousemove", fn_mousemove);
+                        body.add_event_listener("mouseup", fn_mouseup);
+                    });
+                }
+            }
+        }
+        module.exports = Resize_Handle;
+    }, {
+        "../html-core/control-enh": 85,
+        "../html-core/html-core": 87
+    } ],
+    62: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
         var Control = jsgui.Control;
@@ -6276,10 +7028,10 @@
         }
         module.exports = Scroll_View;
     }, {
-        "../html-core/html-core": 83,
-        "./scrollbar": 61
+        "../html-core/html-core": 87,
+        "./scrollbar": 63
     } ],
-    61: [ function(require, module, exports) {
+    63: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
         var Control = jsgui.Control;
@@ -6334,10 +7086,10 @@
         Scrollbar.V = Scrollbar.Vertical = Vertical_Scrollbar;
         module.exports = Scrollbar;
     }, {
-        "../html-core/html-core": 83,
+        "../html-core/html-core": 87,
         "./button": 34
     } ],
-    62: [ function(require, module, exports) {
+    64: [ function(require, module, exports) {
         var fields = [ [ "value", Object ], [ "field", String ], [ "meta_field", String ] ];
         var jsgui = require("../html-core/html-core");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
@@ -6375,9 +7127,9 @@
         }
         module.exports = Single_Line;
     }, {
-        "../html-core/html-core": 83
+        "../html-core/html-core": 87
     } ],
-    63: [ function(require, module, exports) {
+    65: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var Toggle_Button = require("./toggle-button");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
@@ -6413,10 +7165,10 @@
         }
         module.exports = Start_Stop_Toggle_Button;
     }, {
-        "../html-core/html-core": 83,
-        "./toggle-button": 69
+        "../html-core/html-core": 87,
+        "./toggle-button": 71
     } ],
-    64: [ function(require, module, exports) {
+    66: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var Radio_Button_Group = require("./radio-button-group");
         var Panel = require("./panel");
@@ -6483,11 +7235,11 @@
         }
         module.exports = Tabs;
     }, {
-        "../html-core/html-core": 83,
-        "./panel": 55,
-        "./radio-button-group": 58
+        "../html-core/html-core": 87,
+        "./panel": 56,
+        "./radio-button-group": 59
     } ],
-    65: [ function(require, module, exports) {
+    67: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var Text_Input = require("./text-input");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
@@ -6531,10 +7283,10 @@
         }
         module.exports = Text_Field;
     }, {
-        "../html-core/html-core": 83,
-        "./text-input": 66
+        "../html-core/html-core": 87,
+        "./text-input": 68
     } ],
-    66: [ function(require, module, exports) {
+    68: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
         var Control = jsgui.Control;
@@ -6548,9 +7300,9 @@
         }
         module.exports = Text_Input;
     }, {
-        "../html-core/html-core": 83
+        "../html-core/html-core": 87
     } ],
-    67: [ function(require, module, exports) {
+    69: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
         var Control = jsgui.Control;
@@ -6568,9 +7320,9 @@
         }
         module.exports = Title_Bar;
     }, {
-        "../html-core/html-core": 83
+        "../html-core/html-core": 87
     } ],
-    68: [ function(require, module, exports) {
+    70: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
         var Control = jsgui.Control;
@@ -6607,11 +7359,11 @@
         }
         module.exports = Titled_Panel;
     }, {
-        "../html-core/html-core": 83,
-        "./panel": 55,
-        "./title-bar": 67
+        "../html-core/html-core": 87,
+        "./panel": 56,
+        "./title-bar": 69
     } ],
-    69: [ function(require, module, exports) {
+    71: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
         var Control = jsgui.Control;
@@ -6698,9 +7450,9 @@
         }
         module.exports = Toggle_Button;
     }, {
-        "../html-core/html-core": 83
+        "../html-core/html-core": 87
     } ],
-    70: [ function(require, module, exports) {
+    72: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var Plus_Minus_Toggle_Button = require("./plus-minus-toggle-button");
         var Vertical_Expander = require("./vertical-expander");
@@ -6785,11 +7537,11 @@
         }
         module.exports = Tree_Node;
     }, {
-        "../html-core/html-core": 83,
-        "./plus-minus-toggle-button": 56,
-        "./vertical-expander": 72
+        "../html-core/html-core": 87,
+        "./plus-minus-toggle-button": 57,
+        "./vertical-expander": 74
     } ],
-    71: [ function(require, module, exports) {
+    73: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
         var Control = jsgui.Control;
@@ -6831,10 +7583,10 @@
         }
         module.exports = Up_Down_Arrow_Buttons;
     }, {
-        "../html-core/html-core": 83,
+        "../html-core/html-core": 87,
         "./button": 34
     } ],
-    72: [ function(require, module, exports) {
+    74: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
         var Control = jsgui.Control;
@@ -6899,9 +7651,9 @@
         }
         module.exports = Vertical_Expander;
     }, {
-        "../html-core/html-core": 83
+        "../html-core/html-core": 87
     } ],
-    73: [ function(require, module, exports) {
+    75: [ function(require, module, exports) {
         var jsgui = require("../../html-core/html-core");
         var factory = require("./factory");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
@@ -6991,10 +7743,10 @@
         }
         module.exports = Array_Viewer;
     }, {
-        "../../html-core/html-core": 83,
-        "./factory": 74
+        "../../html-core/html-core": 87,
+        "./factory": 76
     } ],
-    74: [ function(require, module, exports) {
+    76: [ function(require, module, exports) {
         var jsgui = require("../../html-core/html-core");
         var Object_Viewer = require("./object");
         var Array_Viewer = require("./array");
@@ -7043,13 +7795,13 @@
         };
         module.exports = create;
     }, {
-        "../../html-core/html-core": 83,
-        "./array": 73,
-        "./number": 75,
-        "./object": 77,
-        "./string": 78
+        "../../html-core/html-core": 87,
+        "./array": 75,
+        "./number": 77,
+        "./object": 79,
+        "./string": 80
     } ],
-    75: [ function(require, module, exports) {
+    77: [ function(require, module, exports) {
         var jsgui = require("../../html-core/html-core");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
         var Control = jsgui.Control;
@@ -7101,9 +7853,9 @@
         }
         module.exports = Number_Viewer;
     }, {
-        "../../html-core/html-core": 83
+        "../../html-core/html-core": 87
     } ],
-    76: [ function(require, module, exports) {
+    78: [ function(require, module, exports) {
         var jsgui = require("../../html-core/html-core");
         var factory = require("./factory");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
@@ -7238,10 +7990,10 @@
         }
         module.exports = Object_KVP_Viewer;
     }, {
-        "../../html-core/html-core": 83,
-        "./factory": 74
+        "../../html-core/html-core": 87,
+        "./factory": 76
     } ],
-    77: [ function(require, module, exports) {
+    79: [ function(require, module, exports) {
         var jsgui = require("../../html-core/html-core");
         var Object_KVP_Viewer = require("./object-kvp");
         var factory = require("./factory");
@@ -7346,11 +8098,11 @@
         }
         module.exports = Object_Viewer;
     }, {
-        "../../html-core/html-core": 83,
-        "./factory": 74,
-        "./object-kvp": 76
+        "../../html-core/html-core": 87,
+        "./factory": 76,
+        "./object-kvp": 78
     } ],
-    78: [ function(require, module, exports) {
+    80: [ function(require, module, exports) {
         var jsgui = require("../../html-core/html-core");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
         var Control = jsgui.Control;
@@ -7446,9 +8198,9 @@
         }
         module.exports = String_Viewer;
     }, {
-        "../../html-core/html-core": 83
+        "../../html-core/html-core": 87
     } ],
-    79: [ function(require, module, exports) {
+    81: [ function(require, module, exports) {
         var jsgui = require("../html-core/html-core");
         var Horizontal_Menu = require("./horizontal-menu");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
@@ -7527,10 +8279,10 @@
         }
         module.exports = Window;
     }, {
-        "../html-core/html-core": 83,
-        "./horizontal-menu": 45
+        "../html-core/html-core": 87,
+        "./horizontal-menu": 46
     } ],
-    80: [ function(require, module, exports) {
+    82: [ function(require, module, exports) {
         jsgui = require("../../client/client");
         page_context = new jsgui.Client_Page_Context({
             document: document
@@ -7548,7 +8300,7 @@
     }, {
         "../../client/client": 29
     } ],
-    81: [ function(require, module, exports) {
+    83: [ function(require, module, exports) {
         var jsgui = require("../lang/lang");
         var get_a_sig = jsgui.get_a_sig;
         var remove_sig_from_arr_shell = jsgui.remove_sig_from_arr_shell;
@@ -7560,23 +8312,105 @@
         var Collection = jsgui.Collection;
         var tof = jsgui.tof;
         var stringify = jsgui.stringify;
+        var px_handler = (target, property, value, receiver) => {
+            var t_val = tof(value);
+            if (t_val === "number") {
+                target[property] = value + "px";
+            } else if (t_val === "string") {
+                var match = value.match(/(\d*\.?\d*)(.*)/);
+                if (match.length === 2) {
+                    target[property] = value + "px";
+                } else {
+                    target[property] = value;
+                }
+            }
+            return true;
+        };
+        var style_input_handlers = {
+            width: px_handler,
+            height: px_handler
+        };
+        var new_obj_style = () => {
+            var style = {};
+            style.__empty = true;
+            style.toString = (() => {
+                var res = [];
+                var first = true;
+                each(style, (value, key) => {
+                    if (key !== "toString" && key !== "__empty" && key !== "_bound_events" && key !== "raise" && key != {}) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            res.push(" ");
+                        }
+                        res.push(key + ": " + value + ";");
+                    }
+                });
+                return res.join("");
+            });
+            var res = new Proxy(style, {
+                set: function(target, property, value, receiver) {
+                    target["__empty"] = false;
+                    var old_value = target[property];
+                    if (style_input_handlers[property]) {
+                        return style_input_handlers[property](target, property, value, receiver);
+                    } else {
+                        target[property] = value;
+                    }
+                    return true;
+                },
+                get: function(target, property, receiver) {
+                    return target[property];
+                }
+            });
+            return res;
+        };
         class DOM_Attributes extends Evented_Class {
             constructor(spec) {
                 super(spec);
-            }
-            set(key, value) {
-                var old = this[key];
-                this[key] = value;
-                this.raise("change", {
-                    key: key,
-                    old: old,
-                    new: value
-                });
+                this.style = new_obj_style();
             }
         }
-        class Control_DOM {
+        class Control_DOM extends Evented_Class {
             constructor() {
-                this.attrs = this.attributes = new DOM_Attributes();
+                super();
+                var dom_attributes = new DOM_Attributes();
+                var that = this;
+                var attrs = this.attrs = this.attributes = new Proxy(dom_attributes, {
+                    set: (target, property, value, receiver) => {
+                        if (property === "style") {
+                            var t_value = tof(value);
+                            if (t_value === "string") {
+                                var s_values = value.trim().split(";");
+                                var kv;
+                                each(s_values, s_value => {
+                                    kv = s_value.split(":");
+                                    if (kv.length === 2) {
+                                        kv[0] = kv[0].trim();
+                                        kv[1] = kv[1].trim();
+                                        target.style[kv[0]] = kv[1];
+                                    }
+                                });
+                                dom_attributes.raise("change", {
+                                    property: property
+                                });
+                            }
+                        } else {
+                            var old_value = target[property];
+                            target[property] = value;
+                            dom_attributes.raise("change", {
+                                key: property,
+                                old: old_value,
+                                new: value,
+                                value: value
+                            });
+                        }
+                        return true;
+                    },
+                    get: function(target, property, receiver) {
+                        return target[property];
+                    }
+                });
             }
         }
         var fields = [ [ "content", "collection" ], [ "dom", "control_dom" ], [ "size", "size" ], [ "color", "color" ] ];
@@ -7606,23 +8440,19 @@
                         this.dom.el = spec.el;
                     }
                     var that = this;
-                    var context = this.context;
+                    var context = this.context || spec.context;
                     if (context) {
                         if (context.register_control) context.register_control(this);
                     } else {}
                     if (spec["class"]) {
-                        this.dom.attrs.set("class", spec["class"]);
+                        this.add_class(spec["class"]);
+                        this.dom.attrs["class"] = spec["class"];
                     }
                     var content = this.content = new Collection({});
                     var that = this;
-                    var set_dom_size = function(size) {
-                        var width = size[0].join("");
-                        var height = size[1].join("");
-                        that.style({
-                            width: width,
-                            height: height
-                        });
-                    };
+                    if (spec.size) {
+                        this.size = spec.size;
+                    }
                     var set_dom_color = function(color) {
                         var color_css_property = "background-color";
                         var out_color = output_processors["color"](color);
@@ -7630,10 +8460,37 @@
                     };
                 }
             }
-            get size() {}
-            set size(value) {}
-            get color() {}
-            set color(value) {}
+            get size() {
+                return this._size;
+            }
+            set size(value) {
+                this._size = value;
+                var width = value[0];
+                var height = value[1];
+                this.style({
+                    width: width,
+                    height: height
+                });
+                this.raise("resize", {
+                    value: value
+                });
+            }
+            get internal_relative_div() {
+                return this._internal_relative_div || false;
+            }
+            set internal_relative_div(value) {
+                var old_value = this._internal_relative_div;
+                this._internal_relative_div = value;
+                if (value === true) {}
+            }
+            get color() {
+                return _color;
+            }
+            set color(value) {
+                this._color = value;
+                var color_property_name = this.color_property_name || "background-color";
+                this.style(color_property_name, value);
+            }
             post_init(spec) {
                 if (spec && spec.id === true) {
                     this.set("dom.attributes.id", this._id());
@@ -7692,14 +8549,19 @@
                         dom_attrs.set("data-jsgui-ctrl-fields", stringify(obj_ctrl_fields).replace(/"/g, "'"));
                     }
                     if (this._fields) {
-                        dom_attrs.set("data-jsgui-fields", stringify(this._fields).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]"));
+                        dom_attrs["data-jsgui-fields"] = stringify(this._fields).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]");
                     }
                     var arr = [];
                     var dom_attrs_keys = Object.keys(dom_attrs);
                     var key, item;
                     for (var c = 0, l = dom_attrs_keys.length; c < l; c++) {
                         key = dom_attrs_keys[c];
-                        if (key !== "_bound_events") {
+                        if (key == "_bound_events") {} else if (key === "style") {
+                            item = dom_attrs[key];
+                            if (!item.__empty) {
+                                arr.push(" ", key, '="', item, '"');
+                            }
+                        } else {
                             item = dom_attrs[key];
                             arr.push(" ", key, '="', item, '"');
                         }
@@ -7817,7 +8679,11 @@
                         }
                     }
                 }
-                return res.join("");
+                if (this._internal_relative_div === true) {
+                    return '<div class="relative">' + res.join("") + "</div>";
+                } else {
+                    return res.join("");
+                }
             }
             all_html_render_internal_controls() {
                 return this.render_content();
@@ -8011,6 +8877,15 @@
                 if (sig == "[s,s]" || sig == "[s,n]") {
                     var styleName = a[0];
                     var styleValue = a[1];
+                    if (this.dom.el) this.dom.el.style[styleName] = styleValue;
+                    if (this.dom.attrs.style) {
+                        this.dom.attrs.style[styleName] = styleValue;
+                        this.dom.attrs.raise("change", {
+                            property: "style",
+                            name: "style",
+                            value: this.dom.attrs.style + ""
+                        });
+                    } else {}
                 }
                 if (styleName && typeof styleValue !== "undefined") {
                     this._icss[styleName] = styleValue;
@@ -8023,13 +8898,8 @@
                 var that = this;
                 if (sig == "[o]") {
                     each(a[0], function(v, i) {
-                        that.style(i, v, false);
+                        that.style(i, v);
                     });
-                    var style = this.dom.attributes.style;
-                    var el = this.value("dom.el");
-                    if (el) {
-                        el.style.cssText = style;
-                    }
                 }
             }
             active() {
@@ -8080,10 +8950,10 @@
                 });
             }
             add_class(class_name) {
-                var cls = this.dom.attrs.class;
+                var cls = this.dom.attrs["class"];
                 var el = this.dom.el;
                 if (!cls) {
-                    this.dom.attrs.set("class", str_cls);
+                    this.dom.attrs["class"] = class_name;
                 } else {
                     var tCls = tof(cls);
                     if (tCls == "object") {
@@ -8093,7 +8963,7 @@
                             if (v) arr_class.push(i);
                         });
                         var str_class = arr_class.join(" ");
-                        this.dom.attrs.set("class", str_cls);
+                        this.dom.attrs["class"] = str_cls;
                     } else if (tCls == "data_value") {
                         var val = cls.value();
                         var arr_classes = val.split(" ");
@@ -8108,7 +8978,7 @@
                             arr_classes.push(class_name);
                         }
                         var str_cls = arr_classes.join(" ");
-                        this.dom.attrs.set("class", str_cls);
+                        this.dom.attrs["class"] = str_cls;
                     } else if (tCls == "string") {
                         var arr_classes = cls.split(" ");
                         var already_has_class = false, l = arr_classes.length, c = 0;
@@ -8122,7 +8992,7 @@
                             arr_classes.push(class_name);
                         }
                         var str_cls = arr_classes.join(" ");
-                        this.dom.attrs.set("class", str_cls);
+                        this.dom.attrs["class"] = str_cls;
                     }
                 }
             }
@@ -8145,14 +9015,12 @@
                         var arr_res = [];
                         var l = arr_classes.length, c = 0;
                         while (c < l) {
-                            console.log("arr_classes[c]", arr_classes[c]);
                             if (arr_classes[c] != class_name) {
                                 arr_res.push(arr_classes[c]);
                             }
                             c++;
                         }
                         var str_cls = arr_res.join(" ");
-                        console.log("str_cls", str_cls);
                         this.dom.attrs.set("class", str_cls);
                     }
                     if (tCls == "data_value") {
@@ -8224,7 +9092,6 @@
                 }
             }
             shallow_copy() {
-                console.log("Control shallow_copy");
                 var res = new Control({
                     context: this.context
                 });
@@ -8247,16 +9114,6 @@
                 });
                 return res;
             }
-            get color() {}
-            set color(value) {
-                var input_processor = jsgui.input_processors["color"];
-                var output_processor = jsgui.output_processors["color"];
-                var processed = input_processor(value);
-                this.set("color", processed, false);
-                var html_color = output_processor(processed);
-                var color_property_name = this.color_property_name || "background-color";
-                this.style(color_property_name, html_color);
-            }
             get offset() {
                 var el = this.dom.el;
                 var res = [ el.offsetLeft, el.offsetTop ];
@@ -8277,9 +9134,327 @@
         p.connect_fields = true;
         module.exports = Control_Core;
     }, {
-        "../lang/lang": 94
+        "../lang/lang": 98
     } ],
-    82: [ function(require, module, exports) {
+    84: [ function(require, module, exports) {
+        var jsgui = require("../lang/lang");
+        var is_ctrl = jsgui.is_ctrl;
+        var get_a_sig = jsgui.get_a_sig, fp = jsgui.fp, each = jsgui.each;
+        var Control_Enh = require("./control-enh");
+        var Resize_Handle = require("../controls/resize-handle");
+        var tof = jsgui.tof;
+        var v_subtract = jsgui.util.v_subtract;
+        var v_add = jsgui.util.v_add;
+        class Control_Enh_2 extends Control_Enh {
+            constructor(spec) {
+                super(spec);
+            }
+            absolute_ghost_clone() {
+                var type_name = this.__type_name;
+                var id = this._id();
+                var context = this.context;
+                console.log("context", context);
+                var ctrl_document = context.ctrl_document;
+                console.log("ctrl_document", ctrl_document);
+                console.log("type_name", type_name);
+                var Cstr = context.map_Controls[type_name];
+                console.log("Cstr", Cstr);
+                var new_id = id + "_clone";
+                var map_controls = context.map_controls;
+                if (!map_controls[new_id]) {
+                    var new_ctrl = new Cstr({
+                        context: context,
+                        id: new_id
+                    });
+                    console.log("new_ctrl", new_ctrl);
+                    var body = ctrl_document.content().get(1);
+                    var css_class = this.get("dom.attributes.class");
+                    new_ctrl.set("dom.attributes.class", css_class);
+                    var my_contents = this.content;
+                    each(my_contents, function(v, i) {
+                        var v_clone = v.clone();
+                        if (v_clone instanceof jsgui.Data_Value) {
+                            new_ctrl.add(v_clone.value());
+                        } else {
+                            new_ctrl.add(v_clone);
+                        }
+                    });
+                    var my_bcr = this.bcr();
+                    var my_padding = this.padding();
+                    my_bcr[2][0] = my_bcr[2][0] - my_padding[0];
+                    my_bcr[2][1] = my_bcr[2][1] - my_padding[1];
+                    my_bcr[2][0] = my_bcr[2][0] - my_padding[2];
+                    my_bcr[2][1] = my_bcr[2][1] - my_padding[3];
+                    var my_border_thickness = this.border_thickness();
+                    var t_my_border_thickness = tof(my_border_thickness);
+                    if (t_my_border_thickness == "number") {
+                        my_bcr[2][0] = my_bcr[2][0] - 2 * my_border_thickness;
+                        my_bcr[2][1] = my_bcr[2][1] - 2 * my_border_thickness;
+                    }
+                    new_ctrl.bcr(my_bcr);
+                    body.add(new_ctrl);
+                    var new_el = new_ctrl.dom.el;
+                }
+            }
+            pop_into_body() {
+                this.show();
+                var bcr = this.bcr();
+                var pos = bcr[0];
+                var left = pos[0];
+                var top = pos[1];
+                this.style({
+                    position: "absolute",
+                    left: left + "px",
+                    top: top + "px",
+                    "z-index": 1e4
+                });
+                document.body.appendChild(this.dom.el);
+            }
+            hide() {
+                this.add_class("hidden");
+            }
+            show() {
+                this.remove_class("hidden");
+            }
+            get resizable() {
+                return this._resizable || false;
+            }
+            set resizable(value) {
+                this._resizable = value;
+                if (value === true) {
+                    this._internal_relative_div = true;
+                    var br_only = true;
+                    if (!br_only) {
+                        if (!this.resize_tl) {
+                            this.resize_tl = new Resize_Handle({
+                                context: this.context,
+                                target: this,
+                                position: "tl"
+                            });
+                            this.resize_tl.add_class("top-left");
+                            this.add(this.resize_tl);
+                        }
+                        if (!this.resize_tr) {
+                            this.resize_tr = new Resize_Handle({
+                                context: this.context,
+                                target: this,
+                                position: "tr"
+                            });
+                            this.resize_tr.add_class("top-right");
+                            this.add(this.resize_tr);
+                        }
+                        if (!this.resize_bl) {
+                            this.resize_bl = new Resize_Handle({
+                                context: this.context,
+                                target: this,
+                                position: "bl"
+                            });
+                            this.resize_bl.add_class("bottom-left");
+                            this.add(this.resize_bl);
+                        }
+                    } else {}
+                    if (!this.resize_br) {
+                        this.resize_br = new Resize_Handle({
+                            context: this.context,
+                            target: this,
+                            position: "br"
+                        });
+                        this.resize_br.add_class("bottom-right");
+                        this.add(this.resize_br);
+                    }
+                }
+            }
+            begin_resize() {
+                this._resizing = {
+                    orig_size: this.size
+                };
+            }
+            mid_resize(offset) {
+                if (this._resizing) {
+                    var new_size = v_add(this._resizing.orig_size, offset);
+                    this.size = new_size;
+                }
+            }
+            end_resize(offset) {}
+            draggable() {
+                var a = arguments;
+                a.l = arguments.length;
+                var sig = get_a_sig(a, 1);
+                var that = this;
+                var options = {}, mode, drag_start_distance = 4;
+                var fn_mousedown, fn_dragstart, fn_dragmove, fn_dragend;
+                var handle_mousedown, handle_dragstart, handle_dragmove, handle_dragend;
+                if (sig == "[o]") {
+                    options = a[0];
+                }
+                if (sig == "[f,f,f,f]") {
+                    handle_mousedown = a[0];
+                    handle_dragstart = a[1];
+                    handle_dragmove = a[2];
+                    handle_dragend = a[3];
+                }
+                if (options.mode) mode = options.mode;
+                if (options.move) handle_dragmove = options.move;
+                if (options.start) handle_dragstart = options.start;
+                if (mode == "ghost-copy") {
+                    console.log("ghost-copy drag");
+                }
+                var body = that.context.body();
+                var is_dragging;
+                var pos_mousedown;
+                var ghost_clone;
+                var fn_mousemove = function(e_mousemove) {
+                    var pos = [ e_mousemove.pageX, e_mousemove.pageY ];
+                    var pos_offset = [ pos[0] - pos_mousedown[0], pos[1] - pos_mousedown[1] ];
+                    if (!is_dragging) {
+                        var dist = Math.round(Math.sqrt(pos_offset[0] * pos_offset[0] + pos_offset[1] * pos_offset[1]));
+                        if (dist >= drag_start_distance) {
+                            is_dragging = true;
+                            if (mode == "ghost-copy") {
+                                ghost_clone = that.absolute_ghost_clone();
+                            }
+                            if (handle_dragstart) {
+                                e_mousemove.control = that;
+                                body.add_class("no-text-select");
+                                body.add_class("default-cursor");
+                                handle_dragstart(e_mousemove);
+                            }
+                        }
+                    }
+                    if (is_dragging) {
+                        if (handle_dragmove) {
+                            e_mousemove.control = that;
+                            handle_dragmove(e_mousemove);
+                        }
+                    }
+                };
+                var fn_mouseup = function(e_mouseup) {
+                    body.off("mousemove", fn_mousemove);
+                    body.off("mouseup", fn_mouseup);
+                    body.remove_class("no-text-select");
+                    body.remove_class("default-cursor");
+                };
+                this.on("mousedown", function(e_mousedown) {
+                    pos_mousedown = [ e_mousedown.pageX, e_mousedown.pageY ];
+                    body.on("mousemove", fn_mousemove);
+                    body.on("mouseup", fn_mouseup);
+                    body.add_class("no-text-select");
+                    is_dragging = false;
+                    if (handle_mousedown) {
+                        handle_mousedown(e_mousedown);
+                    }
+                });
+            }
+            drag_handle_to(ctrl) {
+                var mousedown_offset_from_ctrl_lt;
+                var ctrl_el = ctrl.dom.el;
+                this.draggable(function(e_mousedown) {
+                    var target = e_mousedown.target;
+                    var targetPos = findPos(target);
+                    var el_ctrl = ctrl.value("dom.el");
+                    var ctrl_el_pos = findPos(el_ctrl);
+                    var e_pos_on_page = [ e_mousedown.pageX, e_mousedown.pageY ];
+                    mousedown_offset_from_ctrl_lt = jsgui.v_subtract(e_pos_on_page, ctrl_el_pos);
+                }, function(e_begin) {
+                    var ctrlSize = ctrl.size();
+                    var anchored_to = ctrl.anchored_to;
+                    if (!anchored_to) {} else {
+                        ctrl.unanchor();
+                    }
+                }, function(e_move) {
+                    var clientX = e_move.clientX;
+                    var clientY = e_move.clientY;
+                    var window_size = get_window_size();
+                    var ctrl_pos = jsgui.v_subtract([ clientX, clientY ], mousedown_offset_from_ctrl_lt);
+                    var offset_adjustment = ctrl.offset_adjustment;
+                    if (offset_adjustment) {
+                        ctrl_pos = jsgui.v_add(ctrl_pos, offset_adjustment);
+                    }
+                    if (ctrl_pos[0] < 0) ctrl_pos[0] = 0;
+                    if (ctrl_pos[1] < 0) ctrl_pos[1] = 0;
+                    var ow = ctrl_el.offsetWidth;
+                    var oh = ctrl_el.offsetHeight;
+                    if (ctrl_pos[0] > window_size[0] - ow) ctrl_pos[0] = window_size[0] - ow;
+                    if (ctrl_pos[1] > window_size[1] - oh) ctrl_pos[1] = window_size[1] - oh;
+                    var style_vals = {
+                        left: ctrl_pos[0] + "px",
+                        top: ctrl_pos[1] + "px"
+                    };
+                    ctrl.style(style_vals);
+                    ctrl.context.move_drag_ctrl(e_move, ctrl);
+                }, function(e_end) {
+                    var uo1 = ctrl.unanchored_offset;
+                    ctrl.context.end_drag_ctrl(e_end, ctrl);
+                    var uo2 = ctrl.unanchored_offset;
+                    if (uo1 && uo2) {
+                        ctrl.unanchored_offset = null;
+                    }
+                    ctrl.offset_adjustment = null;
+                });
+            }
+            resize_handle_to(ctrl, handle_position) {
+                if (handle_position == "right-bottom") {
+                    var doc = ctrl.context.ctrl_document;
+                    var fn_move = function(e_move) {};
+                    var fn_up = function(e_up) {
+                        doc.off("mousemove", fn_move);
+                        doc.off("mouseup", fn_up);
+                    };
+                    ctrl.on("mousedown", function(e_mousedown) {
+                        doc.on("mousemove", fn_move);
+                        doc.on("mouseup", fn_up);
+                    });
+                }
+            }
+            selectable(ctrl) {
+                var that = this;
+                ctrl = ctrl || this;
+                if (typeof document === "undefined") {
+                    that.is_selectable = true;
+                } else {
+                    that.click(function(e) {
+                        var ctrl_key = e.ctrlKey;
+                        var meta_key = e.metaKey;
+                        if (ctrl_key || meta_key) {
+                            ctrl.action_select_toggle();
+                        } else {
+                            ctrl.action_select_only();
+                        }
+                    });
+                }
+            }
+            action_select_only() {
+                var ss = this.find_selection_scope();
+                ss.select_only(this);
+            }
+            action_select_toggle() {
+                this.find_selection_scope().select_toggle(this);
+            }
+            find_selection_scope() {
+                var res = this.selection_scope;
+                if (res) return res;
+                if (this.parent) return this.parent.find_selection_scope();
+            }
+            make_full_height() {
+                var el = this.dom.el;
+                var viewportHeight = document.documentElement.clientHeight;
+                var rect = el.getBoundingClientRect();
+                console.log(rect.top, rect.right, rect.bottom, rect.left);
+                var h = viewportHeight - rect.top;
+                this.style("height", h + "px", true);
+            }
+            unanchor() {
+                var anchored_to = this.get("anchored_to");
+                anchored_to[0].unanchor_ctrl(this);
+            }
+        }
+        module.exports = Control_Enh_2;
+    }, {
+        "../controls/resize-handle": 61,
+        "../lang/lang": 98,
+        "./control-enh": 85
+    } ],
+    85: [ function(require, module, exports) {
         var jsgui = require("../lang/lang");
         var is_ctrl = jsgui.is_ctrl;
         var get_a_sig = jsgui.get_a_sig, fp = jsgui.fp, each = jsgui.each;
@@ -8354,20 +9529,19 @@
         };
         class Control extends Control_Core {
             constructor(spec) {
+                super(spec);
                 if (spec.el) {
                     var jgf = spec.el.getAttribute("data-jsgui-fields");
                     if (jgf) {
                         var s_pre_parse = jgf.replace(/\[DBL_QT\]/g, '"').replace(/\[SNG_QT\]/g, "'");
                         s_pre_parse = s_pre_parse.replace(/\'/g, '"');
                         var props = JSON.parse(s_pre_parse);
-                        Object.assign(spec, props);
+                        Object.assign(this, props);
                     }
                 }
-                super(spec);
                 if (typeof spec.selection_scope !== "undefined") {
                     this.selection_scope = selection_scope;
                     var scrollbars = this.scrollbars;
-                    console.log("scrollbars", scrollbars);
                     var active_scroll = false;
                     if (scrollbars === "both" || scrollbars === "horizontal" || scrollbars === "vertical") {
                         active_scroll = true;
@@ -8392,7 +9566,6 @@
                     return res;
                 }
                 if (sig == "[a]") {
-                    console.log("bcr sig arr");
                     var bcr_def = a[0];
                     var pos = bcr_def[0];
                     var br_pos = bcr_def[1];
@@ -8405,6 +9578,19 @@
                         height: size[1] + "px"
                     });
                 }
+            }
+            get size() {
+                if (this._size) {
+                    return this._size;
+                } else {
+                    if (this.dom.el) {
+                        var bcr = this.dom.el.getBoundingClientRect();
+                        return [ bcr.width, bcr.height ];
+                    }
+                }
+            }
+            set size(value) {
+                super.size = value;
             }
             add_text(value) {
                 var tn = new Text_Node({
@@ -8460,72 +9646,14 @@
                 if (sig == "[]") {
                     var left, top, right, bottom;
                     var c_border = this.computed_style("border");
-                    console.log("c_border", c_border);
                     var b2 = c_border.split(", ").join("");
                     var s_c_border = b2.split(" ");
-                    console.log("s_c_border", s_c_border);
                     var thickness = parseInt(s_c_border[0], 10);
                     return thickness;
                 }
             }
             cover() {}
             ghost() {}
-            absolute_ghost_clone() {
-                var type_name = this.__type_name;
-                var id = this._id();
-                var context = this.context;
-                console.log("context", context);
-                var ctrl_document = context.ctrl_document;
-                console.log("ctrl_document", ctrl_document);
-                console.log("type_name", type_name);
-                var Cstr = context.map_Controls[type_name];
-                console.log("Cstr", Cstr);
-                var new_id = id + "_clone";
-                var map_controls = context.map_controls;
-                if (!map_controls[new_id]) {
-                    var new_ctrl = new Cstr({
-                        context: context,
-                        id: new_id
-                    });
-                    console.log("new_ctrl", new_ctrl);
-                    var body = ctrl_document.content().get(1);
-                    var css_class = this.get("dom.attributes.class");
-                    new_ctrl.set("dom.attributes.class", css_class);
-                    var my_contents = this.content;
-                    each(my_contents, function(v, i) {
-                        console.log("i", i);
-                        console.log("v", v);
-                        var v_clone = v.clone();
-                        console.log("v_clone", v_clone);
-                        if (v_clone instanceof jsgui.Data_Value) {
-                            new_ctrl.add(v_clone.value());
-                        } else {
-                            new_ctrl.add(v_clone);
-                        }
-                    });
-                    console.log("this", this);
-                    var my_bcr = this.bcr();
-                    console.log("my_bcr", my_bcr);
-                    var my_padding = this.padding();
-                    console.log("my_padding", my_padding);
-                    my_bcr[2][0] = my_bcr[2][0] - my_padding[0];
-                    my_bcr[2][1] = my_bcr[2][1] - my_padding[1];
-                    my_bcr[2][0] = my_bcr[2][0] - my_padding[2];
-                    my_bcr[2][1] = my_bcr[2][1] - my_padding[3];
-                    var my_border_thickness = this.border_thickness();
-                    console.log("my_border_thickness", my_border_thickness);
-                    var t_my_border_thickness = tof(my_border_thickness);
-                    if (t_my_border_thickness == "number") {
-                        my_bcr[2][0] = my_bcr[2][0] - 2 * my_border_thickness;
-                        my_bcr[2][1] = my_bcr[2][1] - 2 * my_border_thickness;
-                    }
-                    new_ctrl.bcr(my_bcr);
-                    console.log("new_ctrl", new_ctrl);
-                    body.add(new_ctrl);
-                    var new_el = new_ctrl.dom.el;
-                    console.log("new_el", new_el);
-                }
-            }
             set(name, value) {
                 if (typeof value !== "undefined") {
                     if (is_ctrl(value)) {
@@ -8536,6 +9664,23 @@
                 } else {
                     Control_Core.prototype.set.call(this, name);
                 }
+            }
+            one_mousedown_elsewhere(callback) {
+                var body = this.context.body();
+                var that = this;
+                var fn_mousedown = function(e_mousedown) {
+                    var el = that.dom.el;
+                    var e_el = e_mousedown.srcElement || e_mousedown.target;
+                    var iao = that.is_ancestor_of(e_el);
+                    console.log("iao", iao);
+                    e_mousedown.within_this = iao;
+                    if (!iao) {
+                        console.log("pre body off");
+                        body.off("mousedown", fn_mousedown);
+                        callback(e_mousedown);
+                    }
+                };
+                body.on("mousedown", fn_mousedown);
             }
             one_mousedown_anywhere(callback) {
                 var body = this.context.body();
@@ -8568,19 +9713,12 @@
                 });
             }
             add_dom_event_listener(event_name, fn_handler) {
-                console.log("add_dom_event_listener", event_name, this.__id);
                 var listener = this._bound_events[event_name];
                 var that = this;
                 var el = this.dom.el;
-                console.log("el", el);
-                console.trace();
                 if (el) {
-                    console.log("listener", listener);
                     var t_listener = tof(listener);
-                    console.log("t_listener", t_listener);
-                    console.log("pre el addEventListener");
                     if (t_listener === "array") {
-                        console.log("listener.length", listener.length);
                         each(listener, listener => {
                             el.addEventListener(event_name, listener, false);
                         });
@@ -8589,10 +9727,38 @@
                     }
                 }
             }
+            remove_dom_event_listener(event_name, fn_handler) {
+                var listener = this._bound_events[event_name];
+                var that = this;
+                var el = this.dom.el;
+                if (el) {
+                    var t_listener = tof(listener);
+                    if (t_listener === "array") {
+                        each(listener, listener => {
+                            el.removeEventListener(event_name, listener, false);
+                        });
+                    } else {
+                        el.removeEventListener(event_name, listener, false);
+                    }
+                }
+            }
+            remove_event_listener() {
+                var a = arguments;
+                a.l = arguments.length;
+                var sig = get_a_sig(a, 1), that = this;
+                if (sig === "[s,f]") {
+                    var event_name = a[0];
+                    var fn_handler = a[1];
+                    if (mapDomEventNames[a[0]]) {
+                        this.remove_dom_event_listener(event_name, fn_handler);
+                    }
+                }
+                Control_Core.prototype.remove_event_listener.apply(this, arguments);
+            }
             add_event_listener() {
                 var a = arguments;
                 a.l = arguments.length;
-                var sig = get_a_sig(a, 1);
+                var sig = get_a_sig(a, 1), that = this;
                 console.log("control-enh add_event_listener sig", sig);
                 if (a.l === 2) {
                     super.add_event_listener(a[0], a[1]);
@@ -8607,12 +9773,25 @@
                     var fn_handler;
                     if (a.l === 2) fn_handler = a[1];
                     if (a.l === 3) fn_handler = a[2];
+                    console.log("using_dom", using_dom);
                     if (mapDomEventNames[a[0]] && using_dom) {
-                        console.log("pre call add_dom_event_listener from add_event_listener");
-                        console.log("this.dom.el", !!this.dom.el);
                         this.add_dom_event_listener(event_name, fn_handler);
                     }
                 }
+            }
+            pop_into_body() {
+                this.show();
+                var bcr = this.bcr();
+                var pos = bcr[0];
+                var left = pos[0];
+                var top = pos[1];
+                this.style({
+                    position: "absolute",
+                    left: left + "px",
+                    top: top + "px",
+                    "z-index": 1e4
+                });
+                document.body.appendChild(this.dom.el);
             }
             activate(el) {
                 if (!this.__active) {
@@ -8795,43 +9974,32 @@
                 var el = this.dom.el;
                 var that = this;
                 var dom_attributes = this.dom.attributes;
+                var item, name, value;
                 if (el) {
                     for (var i = 0, attrs = el.attributes, l = attrs.length; i < l; i++) {
-                        var item = attrs.item(i);
-                        var name = item.name;
-                        var value = item.value;
+                        item = attrs.item(i);
+                        name = item.name;
+                        value = item.value;
                         if (name == "data-jsgui-id") {} else if (name == "data-jsgui-type") {} else if (name == "style") {
-                            var map_inline_css = this._icss;
-                            var arr_style_items = value.split(";");
-                            for (var c = 0, l2 = arr_style_items.length; c < l2; c++) {
-                                var style_item = arr_style_items[c];
-                                var arr_style_item = style_item.split(":");
-                                if (arr_style_item[0]) {
-                                    map_inline_css[arr_style_item[0]] = arr_style_item[1];
-                                }
-                            }
-                        } else {
+                            dom_attributes[name] = value;
+                        } else if (name == "class") {} else {
                             dom_attributes[name] = value;
                         }
                     }
                 }
             }
             attach_dom_events() {
-                console.log("attach_dom_events");
                 var that = this;
                 each(this._bound_events, (handlers, name) => {
                     each(handlers, handler => {
-                        console.log("event name", name);
                         that.add_dom_event_listener(name, handler);
                     });
                 });
             }
             hide() {
-                console.log("hide");
                 this.add_class("hidden");
             }
             show() {
-                console.log("show");
                 this.remove_class("hidden");
             }
             descendants(search) {
@@ -8873,184 +10041,21 @@
                     return false;
                 }
             }
-            draggable() {
-                var a = arguments;
-                a.l = arguments.length;
-                var sig = get_a_sig(a, 1);
-                var that = this;
-                var options = {}, mode, drag_start_distance = 4;
-                var fn_mousedown, fn_dragstart, fn_dragmove, fn_dragend;
-                var handle_mousedown, handle_dragstart, handle_dragmove, handle_dragend;
-                if (sig == "[o]") {
-                    options = a[0];
-                }
-                if (sig == "[f,f,f,f]") {
-                    handle_mousedown = a[0];
-                    handle_dragstart = a[1];
-                    handle_dragmove = a[2];
-                    handle_dragend = a[3];
-                }
-                if (options.mode) mode = options.mode;
-                if (options.move) handle_dragmove = options.move;
-                if (options.start) handle_dragstart = options.start;
-                if (mode == "ghost-copy") {
-                    console.log("ghost-copy drag");
-                }
-                var body = that.context.body();
-                var is_dragging;
-                var pos_mousedown;
-                var ghost_clone;
-                var fn_mousemove = function(e_mousemove) {
-                    var pos = [ e_mousemove.pageX, e_mousemove.pageY ];
-                    var pos_offset = [ pos[0] - pos_mousedown[0], pos[1] - pos_mousedown[1] ];
-                    if (!is_dragging) {
-                        var dist = Math.round(Math.sqrt(pos_offset[0] * pos_offset[0] + pos_offset[1] * pos_offset[1]));
-                        if (dist >= drag_start_distance) {
-                            is_dragging = true;
-                            if (mode == "ghost-copy") {
-                                ghost_clone = that.absolute_ghost_clone();
-                            }
-                            if (handle_dragstart) {
-                                e_mousemove.control = that;
-                                body.add_class("no-text-select");
-                                body.add_class("default-cursor");
-                                handle_dragstart(e_mousemove);
-                            }
-                        }
-                    }
-                    if (is_dragging) {
-                        if (handle_dragmove) {
-                            e_mousemove.control = that;
-                            handle_dragmove(e_mousemove);
-                        }
-                    }
-                };
-                var fn_mouseup = function(e_mouseup) {
-                    body.off("mousemove", fn_mousemove);
-                    body.off("mouseup", fn_mouseup);
-                    body.remove_class("no-text-select");
-                    body.remove_class("default-cursor");
-                };
-                this.on("mousedown", function(e_mousedown) {
-                    pos_mousedown = [ e_mousedown.pageX, e_mousedown.pageY ];
-                    body.on("mousemove", fn_mousemove);
-                    body.on("mouseup", fn_mouseup);
-                    body.add_class("no-text-select");
-                    is_dragging = false;
-                    if (handle_mousedown) {
-                        handle_mousedown(e_mousedown);
-                    }
-                });
-            }
-            drag_handle_to(ctrl) {
-                var mousedown_offset_from_ctrl_lt;
-                var ctrl_el = ctrl.dom.el;
-                this.draggable(function(e_mousedown) {
-                    var target = e_mousedown.target;
-                    var targetPos = findPos(target);
-                    var el_ctrl = ctrl.value("dom.el");
-                    var ctrl_el_pos = findPos(el_ctrl);
-                    var e_pos_on_page = [ e_mousedown.pageX, e_mousedown.pageY ];
-                    mousedown_offset_from_ctrl_lt = jsgui.v_subtract(e_pos_on_page, ctrl_el_pos);
-                }, function(e_begin) {
-                    var ctrlSize = ctrl.size();
-                    var anchored_to = ctrl.anchored_to;
-                    if (!anchored_to) {} else {
-                        ctrl.unanchor();
-                    }
-                }, function(e_move) {
-                    var clientX = e_move.clientX;
-                    var clientY = e_move.clientY;
-                    var window_size = get_window_size();
-                    var ctrl_pos = jsgui.v_subtract([ clientX, clientY ], mousedown_offset_from_ctrl_lt);
-                    var offset_adjustment = ctrl.offset_adjustment;
-                    if (offset_adjustment) {
-                        ctrl_pos = jsgui.v_add(ctrl_pos, offset_adjustment);
-                    }
-                    if (ctrl_pos[0] < 0) ctrl_pos[0] = 0;
-                    if (ctrl_pos[1] < 0) ctrl_pos[1] = 0;
-                    var ow = ctrl_el.offsetWidth;
-                    var oh = ctrl_el.offsetHeight;
-                    if (ctrl_pos[0] > window_size[0] - ow) ctrl_pos[0] = window_size[0] - ow;
-                    if (ctrl_pos[1] > window_size[1] - oh) ctrl_pos[1] = window_size[1] - oh;
-                    var style_vals = {
-                        left: ctrl_pos[0] + "px",
-                        top: ctrl_pos[1] + "px"
-                    };
-                    ctrl.style(style_vals);
-                    ctrl.context.move_drag_ctrl(e_move, ctrl);
-                }, function(e_end) {
-                    var uo1 = ctrl.unanchored_offset;
-                    ctrl.context.end_drag_ctrl(e_end, ctrl);
-                    var uo2 = ctrl.unanchored_offset;
-                    if (uo1 && uo2) {
-                        ctrl.unanchored_offset = null;
-                    }
-                    ctrl.offset_adjustment = null;
-                });
-            }
-            resize_handle_to(ctrl, handle_position) {
-                if (handle_position == "right-bottom") {
-                    var doc = ctrl.context.ctrl_document;
-                    var fn_move = function(e_move) {};
-                    var fn_up = function(e_up) {
-                        doc.off("mousemove", fn_move);
-                        doc.off("mouseup", fn_up);
-                    };
-                    ctrl.on("mousedown", function(e_mousedown) {
-                        doc.on("mousemove", fn_move);
-                        doc.on("mouseup", fn_up);
-                    });
-                }
-            }
-            selectable(ctrl) {
-                var that = this;
-                ctrl = ctrl || this;
-                if (typeof document === "undefined") {
-                    that.is_selectable = true;
-                } else {
-                    that.click(function(e) {
-                        var ctrl_key = e.ctrlKey;
-                        var meta_key = e.metaKey;
-                        if (ctrl_key || meta_key) {
-                            ctrl.action_select_toggle();
-                        } else {
-                            ctrl.action_select_only();
-                        }
-                    });
-                }
-            }
-            action_select_only() {
-                var ss = this.find_selection_scope();
-                ss.select_only(this);
-            }
-            action_select_toggle() {
-                this.find_selection_scope().select_toggle(this);
-            }
-            find_selection_scope() {
-                var res = this.selection_scope;
-                if (res) return res;
-                if (this.parent) return this.parent.find_selection_scope();
-            }
-            make_full_height() {
-                var el = this.dom.el;
-                var viewportHeight = document.documentElement.clientHeight;
-                var rect = el.getBoundingClientRect();
-                console.log(rect.top, rect.right, rect.bottom, rect.left);
-                var h = viewportHeight - rect.top;
-                this.style("height", h + "px", true);
-            }
-            unanchor() {
-                var anchored_to = this.get("anchored_to");
-                anchored_to[0].unanchor_ctrl(this);
-            }
         }
         module.exports = Control;
     }, {
-        "../lang/lang": 94,
-        "./control-core": 81
+        "../lang/lang": 98,
+        "./control-core": 83
     } ],
-    83: [ function(require, module, exports) {
+    86: [ function(require, module, exports) {
+        var jsgui = require("./html-core");
+        jsgui.Control = require("./control-enh-2");
+        module.exports = jsgui;
+    }, {
+        "./control-enh-2": 84,
+        "./html-core": 87
+    } ],
+    87: [ function(require, module, exports) {
         var jsgui = require("../lang/lang");
         var str_arr_mapify = jsgui.str_arr_mapify;
         var get_a_sig = jsgui.get_a_sig;
@@ -9133,12 +10138,9 @@
                 var l_tag_name = el.tagName.toLowerCase();
                 if (jsgui_id) {
                     var type = map_jsgui_types[jsgui_id];
-                    console.log("!!map_controls[jsgui_id]", !!map_controls[jsgui_id]);
-                    console.log("map_controls", map_controls);
                     if (!map_controls[jsgui_id]) {
                         var Cstr = context.map_Controls[type];
                         if (Cstr) {
-                            console.log("creating constructor of type", type, "jsgui_id", jsgui_id);
                             var ctrl = new Cstr({
                                 context: context,
                                 _id: jsgui_id,
@@ -9161,7 +10163,6 @@
                             map_controls[jsgui_id] = ctrl;
                         }
                     } else {
-                        console.log("found control in map", jsgui_id);
                         var ctrl = map_controls[jsgui_id];
                         ctrl.dom.el = el;
                         if (ctrl.attach_dom_events) ctrl.attach_dom_events();
@@ -9338,11 +10339,11 @@
         jsgui.Page_Context = require("./../html-core/page-context");
         module.exports = jsgui;
     }, {
-        "../lang/lang": 94,
-        "./../html-core/page-context": 84,
-        "./control-enh": 82
+        "../lang/lang": 98,
+        "./../html-core/page-context": 88,
+        "./control-enh": 85
     } ],
-    84: [ function(require, module, exports) {
+    88: [ function(require, module, exports) {
         var jsgui = require("../lang/lang");
         var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
         var Control = jsgui.Control, Class = jsgui.Class;
@@ -9419,6 +10420,7 @@
                 }
             }
             register_control(control) {
+                control.context = this;
                 var id = control._id();
                 this.map_controls[id] = control;
             }
@@ -9512,10 +10514,10 @@
         }
         module.exports = Page_Context;
     }, {
-        "../lang/lang": 94
+        "../lang/lang": 98
     } ],
-    85: [ function(require, module, exports) {
-        var jsgui = require("../html-core/html-core");
+    89: [ function(require, module, exports) {
+        var jsgui = require("../html-core/html-core-enh");
         var str_arr_mapify = jsgui.str_arr_mapify;
         var get_a_sig = jsgui.get_a_sig;
         var each = jsgui.each;
@@ -9525,10 +10527,10 @@
         Object.assign(jsgui, Controls);
         module.exports = jsgui;
     }, {
-        "../controls/controls": 36,
-        "../html-core/html-core": 83
+        "../controls/controls": 37,
+        "../html-core/html-core-enh": 86
     } ],
-    86: [ function(require, module, exports) {
+    90: [ function(require, module, exports) {
         var StiffArray = require("./stiffarray");
         var B_Plus_Node = function(nodeCapacity) {
             var m_public = {
@@ -10207,9 +11209,9 @@
         B_Plus_Tree.FindInfo = FindInfo;
         module.exports = B_Plus_Tree;
     }, {
-        "./stiffarray": 87
+        "./stiffarray": 91
     } ],
-    87: [ function(require, module, exports) {
+    91: [ function(require, module, exports) {
         var StiffArray = function(capacity) {
             var m_public = {
                 items: new Array(capacity),
@@ -10344,7 +11346,7 @@
         };
         module.exports = StiffArray;
     }, {} ],
-    88: [ function(require, module, exports) {
+    92: [ function(require, module, exports) {
         var jsgui = require("./essentials");
         var Data_Value = require("./data-value");
         var Data_Object = require("./data-object");
@@ -10354,7 +11356,6 @@
         var j = jsgui;
         var Class = j.Class;
         var each = j.each;
-        var eac = j.eac;
         var is_array = j.is_array;
         var is_dom_node = j.is_dom_node;
         var is_ctrl = j.is_ctrl;
@@ -10718,7 +11719,18 @@
                     };
                     this.raise("change", e);
                 }
-                if (tv == "collection") {}
+                if (tv == "collection") {
+                    pos = this._arr.length;
+                    this._arr.push(value);
+                    this._arr_idx++;
+                    var e = {
+                        target: this,
+                        item: value,
+                        position: pos,
+                        type: "insert"
+                    };
+                    this.raise("change", e);
+                }
                 if (tv == "data_object" || tv == "control") {
                     pos = this._arr.length;
                     this._arr.push(value);
@@ -10733,7 +11745,6 @@
                 }
                 if (tv === "array") {
                     var new_coll = new Collection(value);
-                    console.log("new_coll", new_coll);
                     pos = this._arr.length;
                     this._arr.push(new_coll);
                     var e = {
@@ -10765,7 +11776,6 @@
             }
             load_array(arr) {
                 var that = this;
-                console.log("load_array arr ", arr);
                 for (var c = 0, l = arr.length; c < l; c++) {
                     that.push(arr[c]);
                 }
@@ -10798,12 +11808,12 @@
         p.add = p.push;
         module.exports = Collection;
     }, {
-        "./data-object": 89,
-        "./data-value": 90,
-        "./essentials": 92,
-        "./sorted-kvs": 97
+        "./data-object": 93,
+        "./data-value": 94,
+        "./essentials": 96,
+        "./sorted-kvs": 101
     } ],
-    89: [ function(require, module, exports) {
+    93: [ function(require, module, exports) {
         var jsgui = require("./essentials");
         var Evented_Class = require("./evented-class");
         var Data_Value = require("./data-value");
@@ -10979,6 +11989,7 @@
                     if (this._abstract) {
                         return undefined;
                     } else if (!is_defined(this.__id)) {
+                        console.trace();
                         throw "stop, currently unsupported.";
                         this.__id = new_data_object_id();
                         console.log("!!! no context __id " + this.__id);
@@ -11226,12 +12237,12 @@
         Data_Object.Mini_Context = Mini_Context;
         module.exports = Data_Object;
     }, {
-        "./data-value": 90,
-        "./essentials": 92,
-        "./evented-class": 93,
-        "./ordered-string-list": 96
+        "./data-value": 94,
+        "./essentials": 96,
+        "./evented-class": 97,
+        "./ordered-string-list": 100
     } ],
-    90: [ function(require, module, exports) {
+    94: [ function(require, module, exports) {
         var jsgui = require("./essentials");
         var Evented_Class = require("./evented-class");
         var j = jsgui;
@@ -11367,10 +12378,10 @@
         }
         module.exports = Data_Value;
     }, {
-        "./essentials": 92,
-        "./evented-class": 93
+        "./essentials": 96,
+        "./evented-class": 97
     } ],
-    91: [ function(require, module, exports) {
+    95: [ function(require, module, exports) {
         class Node {
             constructor(spec) {
                 this.neighbours = spec.neighbours || [];
@@ -11504,8 +12515,9 @@
         Doubly_Linked_List.Node = Node;
         module.exports = Doubly_Linked_List;
     }, {} ],
-    92: [ function(require, module, exports) {
+    96: [ function(require, module, exports) {
         (function(Buffer) {
+            var are_equal = require("deep-equal");
             if (typeof window === "undefined") {
                 var Stream = require("stream");
             } else {}
@@ -11591,6 +12603,8 @@
                         }
                         if (obj.__type) {
                             return obj.__type;
+                        } else if (obj.__type_name) {
+                            return obj.__type_name;
                         } else {
                             if (is_ctrl(obj)) {
                                 return "control";
@@ -11727,7 +12741,7 @@
                                         res = "G";
                                     }
                                 } else {
-                                    throw "Unexpected object type " + t;
+                                    res = "?";
                                 }
                             }
                         }
@@ -11809,6 +12823,7 @@
                                 });
                                 call_multiple_callback_functions(fns, num_parallel, delay, function(err, res) {
                                     if (err) {
+                                        console.trace();
                                         throw err;
                                     } else {
                                         var a = [];
@@ -11938,7 +12953,6 @@
                     return res;
                 }
             });
-            var are_equal = require("deep-equal");
             var set_vals = function(obj, map) {
                 each(map, function(v, i) {
                     obj[i] = v;
@@ -12266,6 +13280,21 @@
                 });
                 return res;
             };
+            var to_arr_strip_keys = obj => {
+                var res = [];
+                each(obj, v => {
+                    res.push(v);
+                });
+                return res;
+            };
+            var arr_objs_to_arr_keys_values_table = arr_objs => {
+                var keys = Object.keys(arr_objs[0]);
+                var arr_items = [], arr_values;
+                each(arr_objs, item => {
+                    arr_items.push(to_arr_strip_keys(item));
+                });
+                return [ keys, arr_items ];
+            };
             var jsgui = {
                 each: each,
                 is_array: is_array,
@@ -12305,17 +13334,19 @@
                 native_constructor_tof: native_constructor_tof,
                 Fns: Fns,
                 sig_match: sig_match,
-                remove_sig_from_arr_shell: remove_sig_from_arr_shell
+                remove_sig_from_arr_shell: remove_sig_from_arr_shell,
+                to_arr_strip_keys: to_arr_strip_keys,
+                arr_objs_to_arr_keys_values_table: arr_objs_to_arr_keys_values_table
             };
             jsgui.data_types_info = jsgui.data_types_info || {};
             module.exports = jsgui;
         }).call(this, require("buffer").Buffer);
     }, {
         buffer: 3,
-        "deep-equal": 99,
+        "deep-equal": 103,
         stream: 25
     } ],
-    93: [ function(require, module, exports) {
+    97: [ function(require, module, exports) {
         var jsgui = require("./essentials");
         var j = jsgui;
         var Class = j.Class;
@@ -12506,9 +13537,9 @@
         p.trigger = p.raise_event;
         module.exports = Evented_Class;
     }, {
-        "./essentials": 92
+        "./essentials": 96
     } ],
-    94: [ function(require, module, exports) {
+    98: [ function(require, module, exports) {
         var jsgui = require("./essentials");
         var B_Plus_Tree = require("./b-plus-tree/b-plus-tree");
         var Collection = require("./collection");
@@ -12520,6 +13551,7 @@
         var Ordered_String_List = require("./ordered-string-list");
         var Sorted_KVS = require("./sorted-kvs");
         var util = require("./util");
+        jsgui.util = util;
         jsgui.B_Plus_Tree = B_Plus_Tree;
         jsgui.Collection = Collection;
         jsgui.Data_Object = Data_Object;
@@ -12531,19 +13563,19 @@
         jsgui.Sorted_KVS = Sorted_KVS;
         module.exports = jsgui;
     }, {
-        "./b-plus-tree/b-plus-tree": 86,
-        "./collection": 88,
-        "./data-object": 89,
-        "./data-value": 90,
-        "./doubly-linked-list": 91,
-        "./essentials": 92,
-        "./evented-class": 93,
-        "./ordered-kvs": 95,
-        "./ordered-string-list": 96,
-        "./sorted-kvs": 97,
-        "./util": 98
+        "./b-plus-tree/b-plus-tree": 90,
+        "./collection": 92,
+        "./data-object": 93,
+        "./data-value": 94,
+        "./doubly-linked-list": 95,
+        "./essentials": 96,
+        "./evented-class": 97,
+        "./ordered-kvs": 99,
+        "./ordered-string-list": 100,
+        "./sorted-kvs": 101,
+        "./util": 102
     } ],
-    95: [ function(require, module, exports) {
+    99: [ function(require, module, exports) {
         var Doubly_Linked_List = require("./doubly-linked-list");
         class Ordered_KVS {
             constructor() {
@@ -12603,9 +13635,9 @@
         }
         module.exports = Ordered_KVS;
     }, {
-        "./doubly-linked-list": 91
+        "./doubly-linked-list": 95
     } ],
-    96: [ function(require, module, exports) {
+    100: [ function(require, module, exports) {
         class Ordered_String_List {
             constructor() {
                 var arr = [];
@@ -12689,7 +13721,7 @@
         }
         module.exports = Ordered_String_List;
     }, {} ],
-    97: [ function(require, module, exports) {
+    101: [ function(require, module, exports) {
         var jsgui = require("./essentials");
         var mapify = jsgui.mapify;
         var B_Plus_Tree = require("./b-plus-tree/b-plus-tree");
@@ -12740,10 +13772,10 @@
         });
         module.exports = Sorted_KVS;
     }, {
-        "./b-plus-tree/b-plus-tree": 86,
-        "./essentials": 92
+        "./b-plus-tree/b-plus-tree": 90,
+        "./essentials": 96
     } ],
-    98: [ function(require, module, exports) {
+    102: [ function(require, module, exports) {
         var jsgui = require("./essentials");
         var Collection = require("./collection");
         var j = jsgui;
@@ -12771,7 +13803,7 @@
                         if (ats[0] == "array") {
                             if (ats[1] == "number") {
                                 var res = [], n = a[1];
-                                each(a[0], function(i, v) {
+                                each(a[0], function(v, i) {
                                     res.push(fn_res(v, n));
                                 });
                                 return res;
@@ -12781,7 +13813,7 @@
                                     throw "vector array lengths mismatch";
                                 } else {
                                     var res = [], arr2 = a[1];
-                                    each(a[0], function(i, v) {
+                                    each(a[0], function(v, i) {
                                         res.push(fn_res(v, arr2[i]));
                                     });
                                     return res;
@@ -13120,10 +14152,10 @@
         };
         module.exports = util;
     }, {
-        "./collection": 88,
-        "./essentials": 92
+        "./collection": 92,
+        "./essentials": 96
     } ],
-    99: [ function(require, module, exports) {
+    103: [ function(require, module, exports) {
         var pSlice = Array.prototype.slice;
         var objectKeys = require("./lib/keys.js");
         var isArguments = require("./lib/is_arguments.js");
@@ -13190,10 +14222,10 @@
             return typeof a === typeof b;
         }
     }, {
-        "./lib/is_arguments.js": 100,
-        "./lib/keys.js": 101
+        "./lib/is_arguments.js": 104,
+        "./lib/keys.js": 105
     } ],
-    100: [ function(require, module, exports) {
+    104: [ function(require, module, exports) {
         var supportsArgumentsClass = function() {
             return Object.prototype.toString.call(arguments);
         }() == "[object Arguments]";
@@ -13207,7 +14239,7 @@
             return object && typeof object == "object" && typeof object.length == "number" && Object.prototype.hasOwnProperty.call(object, "callee") && !Object.prototype.propertyIsEnumerable.call(object, "callee") || false;
         }
     }, {} ],
-    101: [ function(require, module, exports) {
+    105: [ function(require, module, exports) {
         exports = module.exports = typeof Object.keys === "function" ? Object.keys : shim;
         exports.shim = shim;
         function shim(obj) {
@@ -13216,7 +14248,7 @@
             return keys;
         }
     }, {} ],
-    102: [ function(require, module, exports) {
+    106: [ function(require, module, exports) {
         var jsgui = require("../lang/lang");
         var stringify = jsgui.stringify, each = jsgui.each, arrayify = jsgui.arrayify, tof = jsgui.tof, get_a_sig = jsgui.get_a_sig;
         var filter_map_by_regex = jsgui.filter_map_by_regex;
@@ -13342,6 +14374,6 @@
         }
         module.exports = Resource_Pool;
     }, {
-        "../lang/lang": 94
+        "../lang/lang": 98
     } ]
-}, {}, [ 80 ]);
+}, {}, [ 82 ]);

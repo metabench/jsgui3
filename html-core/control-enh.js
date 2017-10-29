@@ -5,6 +5,7 @@ var jsgui = require('../lang/lang');
 var is_ctrl = jsgui.is_ctrl;
 var get_a_sig = jsgui.get_a_sig, fp = jsgui.fp, each = jsgui.each;
 var Control_Core = require('./control-core');
+//var Resize_Handle = require('../controls/resize-handle')
 var tof = jsgui.tof;
 // get_a_sig
 
@@ -112,7 +113,7 @@ class Control extends Control_Core {
 	'constructor'(spec) {
 		// The enhanced control can look at the element for data-jsgui-fields
 		//  Those fields will be fed back into the initialization.
-
+		super(spec);
 		if (spec.el) {
 			var jgf = spec.el.getAttribute('data-jsgui-fields');
 
@@ -120,12 +121,16 @@ class Control extends Control_Core {
 				var s_pre_parse = jgf.replace(/\[DBL_QT\]/g, '"').replace(/\[SNG_QT\]/g, '\'');
 				s_pre_parse = s_pre_parse.replace(/\'/g, '"');
 				var props = JSON.parse(s_pre_parse);
+				
 				//extend(spec, props);
-				Object.assign(spec, props);
+				//Object.assign(spec, props);
+				Object.assign(this, props);
 			}
 		}
 
-		super(spec);;
+		//super(spec);
+
+		
 
 		if (typeof spec.selection_scope !== 'undefined') {
 			//console.log('spec.selection_scope', spec.selection_scope);
@@ -136,7 +141,7 @@ class Control extends Control_Core {
 			this.selection_scope = selection_scope;
 			// then if we have the selection scope, we should set it up for the control.
 			var scrollbars = this.scrollbars;
-			console.log('scrollbars', scrollbars);
+			//console.log('scrollbars', scrollbars);
 
 
 			var active_scroll = false;
@@ -173,7 +178,7 @@ class Control extends Control_Core {
 			return res;
 		}
 		if (sig == '[a]') {
-			console.log('bcr sig arr');
+			//console.log('bcr sig arr');
 			var bcr_def = a[0];
 			var pos = bcr_def[0];
 			var br_pos = bcr_def[1];
@@ -188,6 +193,45 @@ class Control extends Control_Core {
 			});
 		}
 	}
+
+	
+	get size() {
+
+
+		if (this._size) {
+			return this._size;
+		} else {
+			// read it from the dom..
+			//console.log('this.dom.el', this.dom.el);
+			if (this.dom.el) {
+				var bcr = this.dom.el.getBoundingClientRect();
+				return [bcr.width, bcr.height];
+			}
+
+		}
+	}
+
+
+	set size(value) {
+
+		//this.super(value);
+
+		//Control_Core.prototype.
+		/*
+		this._size = value;
+		
+		this.style({
+			width: value[0],
+			height: value[1]
+		});
+		// need to raise a resize event, or that the style has been changed
+		//  or dom attributes changed
+		*/
+		super.size = value;
+
+
+	}
+
 	'add_text'(value) {
 		var tn = new Text_Node({
 			'context': this.context,
@@ -251,7 +295,7 @@ class Control extends Control_Core {
 			var left, top, right, bottom;
 
 			var c_border = this.computed_style('border');
-			console.log('c_border', c_border);
+			//console.log('c_border', c_border);
 
 			//var s_c_border = c_border.split(' ');
 			//console.log('s_c_border', s_c_border);
@@ -262,7 +306,7 @@ class Control extends Control_Core {
 
 			var b2 = c_border.split(', ').join('');
 			var s_c_border = b2.split(' ');
-			console.log('s_c_border', s_c_border);
+			//console.log('s_c_border', s_c_border);
 			// then can get the thickness from the first one.
 			var thickness = parseInt(s_c_border[0], 10);
 			// the 4 different thicknesses?
@@ -284,120 +328,8 @@ class Control extends Control_Core {
 
 	}
 
-	// absolute_ghost_clone
-	'absolute_ghost_clone'() {
-
-		var type_name = this.__type_name;
-		var id = this._id();
-		var context = this.context;
-
-		// spin up a new control, using they type of controls.
-
-		console.log('context', context);
-
-		var ctrl_document = context.ctrl_document;
-
-		console.log('ctrl_document', ctrl_document);
-		console.log('type_name', type_name);
-
-		var Cstr = context.map_Controls[type_name];
-		console.log('Cstr', Cstr);
-
-		// We can create a new one, with a new ID.
-
-		var new_id = id + '_clone';
-		var map_controls = context.map_controls;
-
-		// Want the body control as well.
-
-
-
-		if (!map_controls[new_id]) {
-			// create it.
-
-			var new_ctrl = new Cstr({
-				'context': context,
-				'id': new_id
-			})
-
-			console.log('new_ctrl', new_ctrl);
-
-			//var body = ctrl_document.body();
-
-			var body = ctrl_document.content().get(1);
-
-			var css_class = this.get('dom.attributes.class');
-			new_ctrl.set('dom.attributes.class', css_class);
-
-			// Should copy the controls inside the one being cloned.
-			var my_contents = this.content;
-
-			// should be able to clone a Data_Value too.
-
-
-
-			each(my_contents, function(v, i) {
-				console.log('i', i);
-				console.log('v', v);
-
-				// Adding a Data_Value not working?
-
-				var v_clone = v.clone();
-				console.log('v_clone', v_clone);
-
-				// could get the value if it's a Data_Value for the moment...
-				//  Adding a Data_Value to a
-
-				//if (v_clone.value) {
-				if (v_clone instanceof jsgui.Data_Value) {
-					new_ctrl.add(v_clone.value());
-				} else {
-					new_ctrl.add(v_clone);
-				}
-
-
-
-			})
-
-			console.log('this', this);
-			// could get the computed width?
-
-			// computed padding too?
-
-			var my_bcr = this.bcr();
-
-			console.log('my_bcr', my_bcr);
-
-			var my_padding = this.padding();
-			console.log('my_padding', my_padding);
-
-			my_bcr[2][0] = my_bcr[2][0] - my_padding[0];
-			my_bcr[2][1] = my_bcr[2][1] - my_padding[1];
-			my_bcr[2][0] = my_bcr[2][0] - my_padding[2];
-			my_bcr[2][1] = my_bcr[2][1] - my_padding[3];
-
-			var my_border_thickness = this.border_thickness();
-
-			console.log('my_border_thickness', my_border_thickness);
-
-			var t_my_border_thickness = tof(my_border_thickness);
-
-			if (t_my_border_thickness == 'number') {
-				my_bcr[2][0] = my_bcr[2][0] - 2 * my_border_thickness;
-				my_bcr[2][1] = my_bcr[2][1] - 2 * my_border_thickness;
-			}
-			new_ctrl.bcr(my_bcr);
-
-			console.log('new_ctrl', new_ctrl);
-			body.add(new_ctrl);
-
-			var new_el = new_ctrl.dom.el;
-			console.log('new_el', new_el);
-
-		}
-
-	}
-
+	
+	
 	// can have different monomorphic versions.
 
 	'set'(name, value) {
@@ -427,7 +359,67 @@ class Control extends Control_Core {
 			Control_Core.prototype.set.call(this, name);
 			//super(name);
 		}
-	}
+    }
+
+    // one mousedown elsewhere.
+
+    // Special case for when part of a control has been made into a popup?
+
+    // Need to trace back through the DOM and control heirachy to see if the click has occurred in a part that was moved to the document body.
+    //  Should be able to mark an inner control as belonging to a control. inner_to
+
+    // One mousedown elsewhere... needs to respond to all body events, while checking to see if the event originates from within this control.
+    //  Relies on tracing back through the DOM to see if a DOM node is connected to this control, or an inner part of it.
+
+    'one_mousedown_elsewhere'(callback) {
+        var body = this.context.body();
+
+        var that = this;
+
+        var fn_mousedown = function(e_mousedown) {
+            // Maybe see if it's internal or external to the control
+
+            // Would be good to have that in the event.
+
+            var el = that.dom.el;
+
+            var e_el = e_mousedown.srcElement || e_mousedown.target;
+
+
+
+
+
+            //console.log('one mousedown', e_mousedown);
+            //console.log('e_el', e_el);
+
+            // Want to see if the element clicked on is a descendant of this's el.
+
+            // is_contained_by
+
+
+            var iao = that.is_ancestor_of(e_el);
+
+            console.log('iao', iao);
+
+            e_mousedown.within_this = iao;
+
+            if (!iao) {
+                // raise the callback, disconnect the event.
+                console.log('pre body off');
+                body.off('mousedown', fn_mousedown);
+                callback(e_mousedown);
+            }
+        }
+        body.on('mousedown', fn_mousedown);
+    }
+
+
+
+
+
+
+    // one_click_anywhere
+
 
 	'one_mousedown_anywhere'(callback) {
 		//var ctrl_html_root = this.context.ctrl_document;
@@ -512,17 +504,17 @@ class Control extends Control_Core {
     }
 
     'add_dom_event_listener'(event_name, fn_handler) {
-        console.log('add_dom_event_listener', event_name, this.__id);
+        //console.log('add_dom_event_listener', event_name, this.__id);
         var listener = this._bound_events[event_name];
         var that = this;
 
         var el = this.dom.el;
 
-        console.log('el', el);
-        console.trace();
+        //console.log('el', el);
+        //console.trace();
 
         if (el) {
-            console.log('listener', listener);
+            //console.log('listener', listener);
 
             // The listener has been set up already.
             //  It looks like its an array.
@@ -578,11 +570,13 @@ class Control extends Control_Core {
 
                 */
             var t_listener = tof(listener);
-            console.log('t_listener', t_listener);
-            console.log('pre el addEventListener');
+            //console.log('t_listener', t_listener);
+            //console.log('pre el addEventListener');
+
+            // Can have an array of listeners for DOM events.
 
             if (t_listener === 'array') {
-                console.log('listener.length', listener.length);
+                //console.log('listener.length', listener.length);
                 each(listener, (listener) => {
                     el.addEventListener(event_name, listener, false);
                 });
@@ -592,11 +586,135 @@ class Control extends Control_Core {
         }
     }
 
-	// fp removal candidate
+    'remove_dom_event_listener'(event_name, fn_handler) {
+        var listener = this._bound_events[event_name];
+        var that = this;
+
+        var el = this.dom.el;
+
+
+
+        //console.log('el', el);
+        //console.trace();
+
+        if (el) {
+            //console.log('listener', listener);
+
+            // The listener has been set up already.
+            //  It looks like its an array.
+            //  Event has been added twice for some reason.
+
+
+
+
+
+            /*
+            if (!listener) {
+                // a single listener called when a bound dom event fires.
+                //  this will then split up the event calls to everything that is listening to this.
+                // for the DOM event on the object, we raise the event on the control.
+
+                listener = this.mapListeners[event_name] = function (e) {
+                    //console.log('event_name heard ' + event_name);
+
+                    // Raising an event, there could be multiple listeners.
+                    //  would be good to get an array of what the listeners returned.
+                    //  Return false here if any of them return false?
+
+
+                    var res_raise = that.raise(event_name, e);
+                    //console.log('res_raise', res_raise);
+
+                    // then if any results are false, we return false.
+
+                    var any_are_false = false;
+                    var c = 0, l = res_raise.length;
+
+                    while (!any_are_false && c < l) {
+                        if (res_raise[c] === false) {
+                            any_are_false = true;
+                        }
+
+                        c++;
+                    }
+
+                    //console.log('any_are_false', any_are_false);
+
+                    if (any_are_false) {
+                        e.preventDefault();
+                        return false;
+                    }
+                    // Would like to respond to the event.
+                    //  Eg if the dom event handler returns false, it would be good to return false in the listener.
+
+
+
+                };
+            }
+
+                */
+            var t_listener = tof(listener);
+            //console.log('t_listener', t_listener);
+            //console.log('pre el addEventListener');
+
+            if (t_listener === 'array') {
+                //console.log('listener.length', listener.length);
+                each(listener, (listener) => {
+                    el.removeEventListener(event_name, listener, false);
+                });
+            } else {
+                el.removeEventListener(event_name, listener, false);
+            }
+
+        }
+    }
+
+    // Need to remove event listener from the DOM as well.
+
+    'remove_event_listener'() {
+        var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1), that = this;
+
+        if (sig === '[s,f]') {
+            var event_name = a[0];
+            
+            var fn_handler = a[1];
+
+            // change is also a DOM event
+            //  that's a tricky one.
+            //  should make it easy to listen out for DOM changes.
+            // let's include it for the moment.
+            //console.log('a[0]', a[0]);
+
+            //console.log('mapDomEventNames[a[0]]', mapDomEventNames[a[0]]);
+
+
+            if (mapDomEventNames[a[0]]) {
+                //console.log('we have a DOM event: ' + event_name);
+                //console.log('pre call add_dom_event_listener from add_event_listener');
+                //console.log('this.dom.el', !!this.dom.el);
+
+                // Want a way of recording that the event has been added to the DOM?
+
+
+
+                this.remove_dom_event_listener(event_name, fn_handler);
+                //super.add_event_listener.apply(that, arguments);
+
+
+            }
+
+
+        }
+
+        //super.apply(this, arguments);
+        //super(...arguments);
+        Control_Core.prototype.remove_event_listener.apply(this, arguments);
+
+    }
 
 	'add_event_listener'() {
 
-		var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+		var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1), that = this;
         
 		console.log('control-enh add_event_listener sig', sig);
 
@@ -693,22 +811,49 @@ class Control extends Control_Core {
 
 			//console.log('mapDomEventNames[a[0]]', mapDomEventNames[a[0]]);
 
-
+			console.log('using_dom', using_dom);
 			if (mapDomEventNames[a[0]] && using_dom) {
 				//console.log('we have a DOM event: ' + event_name);
-                console.log('pre call add_dom_event_listener from add_event_listener');
-                console.log('this.dom.el', !!this.dom.el);
+                //console.log('pre call add_dom_event_listener from add_event_listener');
+                //console.log('this.dom.el', !!this.dom.el);
 
                 // Want a way of recording that the event has been added to the DOM?
 
 
 
                 this.add_dom_event_listener(event_name, fn_handler);
+                //super.add_event_listener.apply(that, arguments);
 
 				
-			}
+            }
+
+
 		}
-	}
+    }
+
+    'pop_into_body'() {
+
+        this.show();
+        var bcr = this.bcr();
+
+        // Maybe need to make it visible first.
+
+        var pos = bcr[0];
+        var left = pos[0];
+        var top = pos[1];
+
+        //console.log('bcr', JSON.stringify(bcr));
+
+        this.style({
+            'position': 'absolute',
+            'left': left + 'px',
+            'top': top + 'px',
+            'z-index': 10000
+        });
+
+        document.body.appendChild(this.dom.el);
+
+    }
 
 	// not recursive
 	//  maybe call activate_individual?
@@ -764,7 +909,11 @@ class Control extends Control_Core {
 		var el = this.dom.el;
 		//if (dv_el) el = dv_el.value();
 
+		//console.log('dom_attributes.style', dom_attributes.style);
+
+		//dom_attributes.style.on('change', function(e_change) {
 		dom_attributes.on('change', function(e_change) {
+			//console.log('dom_attributes e_change', e_change);
 			var property_name = e_change.name || e_change.key, dval = e_change.value || e_change.new;
 			var t_dval = tof(dval);
 
@@ -968,11 +1117,6 @@ class Control extends Control_Core {
 
 							// Could rebind the events here?
 						}
-
-						//console.log('map_els[id]', map_els[id]);
-						//ctrl.set('dom.el', map_els[id]);
-
-						//ctrl._.el = map_els[id];
 					}
 					//ctrl.activate();
 				}
@@ -1024,8 +1168,6 @@ class Control extends Control_Core {
 				//that.set(key, referred_to_control);
 
 				// The underscore thing may work better as it could be a proxy object.
-
-
 
 				that[key] = referred_to_control;
 
@@ -1087,12 +1229,17 @@ class Control extends Control_Core {
 		var that = this;
 		var dom_attributes = this.dom.attributes;
 
+		// 
+
+		var item, name, value;
+
 		if (el) {
+
+			// Activate from the element to JSGUI controls.
+
 			for (var i = 0, attrs = el.attributes, l = attrs.length; i < l; i++){
 				//arr.push(attrs.item(i).nodeName);
-				var item = attrs.item(i);
-				var name = item.name;
-				var value = item.value;
+				item = attrs.item(i); name = item.name; value = item.value;
 				//console.log('name', name);
 
 				if (name == 'data-jsgui-id') {
@@ -1100,11 +1247,17 @@ class Control extends Control_Core {
 				} else if (name == 'data-jsgui-type') {
 					// ^
 				} else if (name == 'style') {
+					
+					// Could have this in the style setter.
+
+					/*
+					
 					var map_inline_css = this._icss;
 					var arr_style_items = value.split(';');
 					//console.log('arr_style_items', arr_style_items);
 
 					//each(arr_style_items)
+
 					for (var c = 0, l2 = arr_style_items.length; c < l2; c++) {
 						//map_inline_css[]
 
@@ -1123,6 +1276,17 @@ class Control extends Control_Core {
 					//    if (str_properties) {
 
 					//    }
+					*/
+
+
+					dom_attributes[name] = value;
+
+				} else if (name == 'class') {
+					//console.log('need to DOM activate CSS class', value);
+
+
+
+					//    }
 				} else {
 					// set the dom attributes value... silent set?
 
@@ -1131,6 +1295,18 @@ class Control extends Control_Core {
                     dom_attributes[name] = value;
 				}
 			}
+
+			// Activate from jsgui to the DOM.
+			//  Some DOM properties may not have been set.
+
+			//console.log('that.dom.attrs', that.dom.attrs);
+
+			//each(that.dom.attrs, (attr, i) => {
+				//console.log('attr', attr);
+				//console.log('i', i);
+			//})
+
+
 		}
 	}
 
@@ -1138,12 +1314,12 @@ class Control extends Control_Core {
 		// Attaches the bound events to the DOM.
 		//  Called after the control has been assigned an element.
 
-		console.log('attach_dom_events');
+		//console.log('attach_dom_events');
 		var that = this;
 
 		each(this._bound_events, (handlers, name) => {
 			each(handlers, (handler) => {
-				console.log('event name', name);
+				//console.log('event name', name);
 				//console.log('handler', handler);
 				//console.trace();
 
@@ -1157,11 +1333,11 @@ class Control extends Control_Core {
 	}
 
 	'hide'() {
-		console.log('hide');
+		//console.log('hide');
 		this.add_class('hidden');
 	}
 	'show'() {
-		console.log('show');
+		//console.log('show');
 		this.remove_class('hidden');
 	}
 
@@ -1370,6 +1546,7 @@ class Control extends Control_Core {
 			}
 		})
 	}
+
 	*/
 	// make full height.
 	//  makes the control take the rest of the height of the window.
@@ -1378,285 +1555,17 @@ class Control extends Control_Core {
 	//   but this version will be more flexible with more modes.
 	// Drag and drop could also be set up with simpler parameters and acts in the default way that .drag would do.
 
-	'draggable'() {
-		var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
-		var that = this;
-		//console.log('draggable sig', sig);
-		//console.trace();
-		var options = {}, mode, drag_start_distance = 4;
-		// options could contain event handlers.
-		//  Not sure about the publish / subscribe model.
-		//   Maybe it would work well.
-		// But allowing event handlers as specified in the options would be good as well.
-		var fn_mousedown, fn_dragstart, fn_dragmove, fn_dragend;
-		var handle_mousedown, handle_dragstart, handle_dragmove , handle_dragend;
 
-		if (sig == '[o]') {
-			options = a[0];
-		}
+	// internal relative div?
+	//  could have different kinds of internal structures.
 
-		// fn_mousedown, fn_begin, fn_move, fn_end
-		if (sig == '[f,f,f,f]') {
-			handle_mousedown = a[0];
-			handle_dragstart = a[1];
-			handle_dragmove = a[2];
-			handle_dragend = a[3];
-		}
+	// could have an internal grid 9.
+
+	// Could even include internal relative within the core, so they get rendered without (ever) being a control.
+	//  Adding and removing it and the contents could be easier if it's a rendering feature rather than a control.
+	//   The internal relative div would be a special case.
 
 
-		if (options.mode) mode = options.mode;
-		//if (options.fn_dragmove) fn_dragmove = options.fn_dragmove;
-		if (options.move) handle_dragmove = options.move;
-		//if (options.fn_dragstart) fn_dragstart = options.fn_dragstart;
-		if (options.start) handle_dragstart = options.start;
-
-		// could have a 'none' mode that does not implement drag behaviour itself, but just shows the events?
-		//  or I think 'events' mode would be a better name because it's saying what it is.
-		//  would be useful for moving objects around according to more specific rules.
-
-		if (mode == 'ghost-copy') {
-			console.log('ghost-copy drag');
-		}
-
-		var body = that.context.body();
-		// raise the events externally.
-		var is_dragging;
-		var pos_mousedown;
-
-		var ghost_clone;
-		var fn_mousemove = function(e_mousemove) {
-			//console.log('e_mousemove', e_mousemove);
-			var pos = [e_mousemove.pageX, e_mousemove.pageY];
-			var pos_offset = [pos[0] - pos_mousedown[0], pos[1] - pos_mousedown[1]];
-
-			//console.log('dist', dist);
-			//console.log('is_dragging ' + is_dragging);
-
-			if (!is_dragging) {
-				var dist = Math.round(Math.sqrt(pos_offset[0] * pos_offset[0] + pos_offset[1] * pos_offset[1]));
-				if (dist >= drag_start_distance) {
-					//console.log('starting drag');
-					is_dragging = true;
-					// in ghost copy mode create the ghost copy
-					if (mode == 'ghost-copy') {
-						ghost_clone = that.absolute_ghost_clone();
-					}
-					if (handle_dragstart) {
-						e_mousemove.control = that;
-						// set the body's css cursor to 'default'
-						//body.style('cursor', 'default');
-						body.add_class('no-text-select')
-						body.add_class('default-cursor');
-						//body.add_class('dragging');
-						handle_dragstart(e_mousemove);
-					}
-				}
-			}
-			if (is_dragging) {
-				// raise the drag event.
-				// could do some of the drag-drop activity depending on the drag mode.
-				//  also want to provide other hooks for functionality.
-				// console.log('fn_dragmove', fn_dragmove);
-				if (handle_dragmove) {
-					e_mousemove.control = that;
-					//console.log('e_mousemove', e_mousemove);
-					handle_dragmove(e_mousemove);
-				}
-			}
-			// Want the offset from the mousedown position.
-		}
-		var fn_mouseup = function(e_mouseup) {
-			//console.log('e_mouseup', e_mouseup);
-			//console.log('pre switch off mousemove, mouseup');
-			// Seems the events are being added too many times.
-			body.off('mousemove', fn_mousemove);
-			body.off('mouseup', fn_mouseup);
-			body.remove_class('no-text-select');
-			body.remove_class('default-cursor');
-			//body.remove_class('dragging');
-		}
-		this.on('mousedown', function(e_mousedown) {
-			//console.log('e_mousedown', e_mousedown);
-			pos_mousedown = [e_mousedown.pageX, e_mousedown.pageY];
-			// position within Control
-			// position within window
-			body.on('mousemove', fn_mousemove);
-			body.on('mouseup', fn_mouseup);
-			body.add_class('no-text-select');
-			is_dragging = false;
-			if (handle_mousedown) {
-				handle_mousedown(e_mousedown);
-			}
-		})
-	}
-
-	'drag_handle_to'(ctrl) {
-		var mousedown_offset_from_ctrl_lt;
-		var ctrl_el = ctrl.dom.el;
-		// could go in enhanced....
-		//this.drag(function(e_mousedown) {
-		this.draggable(function(e_mousedown) {
-			//console.log('e_mousedown', e_mousedown);
-			// This will need to be revised - making adjustment for when dragging from an anchored position.
-			//  Should maintain some info about the drag so it knows if it starts/ends anchored anywhere.
-			var target = e_mousedown.target;
-			var targetPos = findPos(target);
-			//console.log('targetPos ' + stringify(targetPos));
-			var el_ctrl = ctrl.value('dom.el');
-			var ctrl_el_pos = findPos(el_ctrl);
-			var e_pos_on_page = [e_mousedown.pageX, e_mousedown.pageY];
-			mousedown_offset_from_ctrl_lt = jsgui.v_subtract(e_pos_on_page, ctrl_el_pos);
-
-		}, function(e_begin) {
-			var ctrlSize = ctrl.size();
-			//console.log('ctrlSize', ctrlSize);
-			var anchored_to = ctrl.anchored_to;
-			//console.log('anchored_to', anchored_to);
-			if (!anchored_to) {
-				//ctrl.set('unanchored_size', ctrlSize);
-			} else {
-				// need to unanchor it.
-				ctrl.unanchor();
-			}
-		}, function(e_move) {
-			var clientX = e_move.clientX;
-			var clientY = e_move.clientY;
-			var window_size = get_window_size();
-			//console.log('mousedown_offset_from_ctrl_lt', mousedown_offset_from_ctrl_lt);
-			var ctrl_pos = jsgui.v_subtract([clientX, clientY], mousedown_offset_from_ctrl_lt);
-
-			// But then act differently if we are dragging from an anchored position.
-			//  The mousedown offset within the control won't be so relevant -
-			//   or won't be the only factor.
-			// Take account of position_adjustment
-			//  or offset_adjustment
-
-			var offset_adjustment = ctrl.offset_adjustment;
-			if (offset_adjustment) {
-				// want to find out what zone it is anchored in.
-
-				ctrl_pos = jsgui.v_add(ctrl_pos, offset_adjustment);
-
-				//
-			}
-			if (ctrl_pos[0] < 0) ctrl_pos[0] = 0;
-			if (ctrl_pos[1] < 0) ctrl_pos[1] = 0;
-			var ow = ctrl_el.offsetWidth;
-			var oh = ctrl_el.offsetHeight;
-
-
-			if (ctrl_pos[0] > window_size[0] - ow) ctrl_pos[0] = window_size[0] - ow;
-			if (ctrl_pos[1] > window_size[1] - oh) ctrl_pos[1] = window_size[1] - oh;
-
-			var style_vals = {
-				'left': ctrl_pos[0] + 'px',
-				'top': ctrl_pos[1] + 'px'
-			};
-			//console.log('style_vals', style_vals);
-			ctrl.style(style_vals);
-			ctrl.context.move_drag_ctrl(e_move, ctrl);
-		}, function(e_end) {
-			// tell the context that the drag has ended.
-			var uo1 = ctrl.unanchored_offset;
-			//console.log('uo1', uo1);
-			ctrl.context.end_drag_ctrl(e_end, ctrl);
-			var uo2 = ctrl.unanchored_offset;
-			//console.log('uo2', uo2);
-			if (uo1 && uo2) {
-				ctrl.unanchored_offset = null;
-			}
-			ctrl.offset_adjustment = null;
-			// and if it already has an unanchored_offset
-		});
-	}
-	'resize_handle_to'(ctrl, handle_position) {
-		// The control needs to be draggable normally?
-		//  And then from the positions of where it is adjust the size of what it's a resize handle to?
-		//console.log('resize_handle_to');
-		if (handle_position == 'right-bottom') {
-			/*
-			var fn_move = function(e_move) {
-				console.log('e_move', e_move);
-			}
-			var fn_up = function(e_up) {
-				console.log(e_up);
-			}
-			*/
-			var doc = ctrl.context.ctrl_document;
-			//console.log('ctrl.context', ctrl.context);
-			var fn_move = function(e_move) {
-				//console.log('e_move', e_move);
-			}
-			var fn_up = function(e_up) {
-				//console.log('e_up', e_up);
-
-				doc.off('mousemove', fn_move);
-				doc.off('mouseup', fn_up);
-			}
-			ctrl.on('mousedown', function(e_mousedown) {
-				//console.log('e_mousedown', e_mousedown);
-				doc.on('mousemove', fn_move);
-				doc.on('mouseup', fn_up);
-			})
-		}
-	}
-
-	'selectable'(ctrl) {
-		var that = this;
-		ctrl = ctrl || this;
-
-		if (typeof document === 'undefined') {
-			//that._fields = that._fields || {};
-			//that._fields['is_selectable'] = true;
-			that.is_selectable = true;
-
-		} else {
-
-			that.click(function(e) {
-				var ctrl_key = e.ctrlKey;
-				var meta_key = e.metaKey;
-				if (ctrl_key || meta_key) {
-					ctrl.action_select_toggle();
-				} else {
-					ctrl.action_select_only();
-				}
-			});
-		}
-	}
-
-	'action_select_only'() {
-		var ss = this.find_selection_scope();
-		//console.log('ss', ss);
-		ss.select_only(this);
-		//this.find_selection_scope().select_only(this);
-	}
-
-	'action_select_toggle'() {
-		this.find_selection_scope().select_toggle(this);
-	}
-
-	// So I think the resource-pool will have a selection scope.
-	'find_selection_scope'() {
-		//console.log('find_selection_scope');
-		var res = this.selection_scope;
-		if (res) return res;
-		if (this.parent) return this.parent.find_selection_scope();
-	}
-
-	// Nice, this works. Not that efficiently yet.
-
-	'make_full_height'() {
-		var el = this.dom.el;
-		var viewportHeight = document.documentElement.clientHeight;
-		var rect = el.getBoundingClientRect();
-		console.log(rect.top, rect.right, rect.bottom, rect.left);
-		var h = viewportHeight - rect.top;
-		this.style('height', h + 'px', true);
-	}
-	'unanchor'() {
-		var anchored_to = this.get('anchored_to');
-		anchored_to[0].unanchor_ctrl(this);
-	}
 };
 
 module.exports = Control;

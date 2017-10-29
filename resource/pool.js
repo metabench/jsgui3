@@ -19,9 +19,6 @@ var Collection = jsgui.Collection;
 //  Could make use of collection indexing too.
 
 
-
-
-
 // Keeps track of resources available within JavaScript process (browser or node.js).
 class Resource_Pool extends Evented_Class {
 

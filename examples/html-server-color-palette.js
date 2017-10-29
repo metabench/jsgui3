@@ -13,6 +13,7 @@
 
 var jsgui = require('../server/server');
 var Start_Stop_Toggle_Button = require('../controls/start-stop-toggle-button');
+var Color_Palette = require('../controls/color-palette');
 
 var Server = jsgui.Server;
 var port = 8000;
@@ -49,13 +50,13 @@ var resource_pool = server.resource_pool;
 
 //console.log('\n\n');
 
-console.log('resource_names', resource_pool.get_resource_names());
+//console.log('resource_names', resource_pool.get_resource_names());
 //throw 'stop';
 var server_router = resource_pool.get_resource('Server Router');
 
 
 
-console.log('server_router', server_router);
+//console.log('server_router', server_router);
 
 if (!server_router) {
 	throw 'no server_router';
@@ -77,11 +78,15 @@ routing_tree.set('/', function(req, res) {
 	hd.include_client_css();
 	hd.include_js('/js/app-bundle-active.js');
 	var body = hd.body;
-	var ctrl = new Start_Stop_Toggle_Button({
-		'context': server_page_context
+	body.size = [800, 600];
+	var ctrl = new Color_Palette({
+		'context': server_page_context,
+		'size': [312, 312]
 	});
 	//var ctrl2 = new jsgui.Control({});
+	ctrl.resizable = true;
 	body.add(ctrl);
+	ctrl.active();
 	hd.all_html_render(function(err, deferred_html) {
 		if (err) {
 			throw err;
@@ -95,7 +100,7 @@ routing_tree.set('/', function(req, res) {
 	});
 });
 
-console.log('pre server start');
+//console.log('pre server start');
 server.start(port, function(err, cb_start) {
 	if (err) {
 		throw err;

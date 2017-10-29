@@ -38,19 +38,13 @@ var resource_pool = server.resource_pool;
 
 // Get the website resource
 
-
-
 // Caching items / resources by type?
-
 // Need to give the resources a name.
 
 
 //var website = resource_pool.get_resource('Server Router');
-
 //console.log('\n\n');
 var server_router = resource_pool.get_resource('Server Router');
-
-
 
 //console.log('server_router', server_router);
 

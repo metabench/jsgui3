@@ -56,7 +56,6 @@ routing_tree.set('/', function(req, res) {
 
 	// The list has got an items collection.
 
-
 	//ctrl.items.content([]);
 
 

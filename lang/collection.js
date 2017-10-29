@@ -75,7 +75,6 @@ var Constraint = Data_Object.Constraint;
 var j = jsgui;
 var Class = j.Class;
 var each = j.each;
-var eac = j.eac;
 var is_array = j.is_array;
 var is_dom_node = j.is_dom_node;
 var is_ctrl = j.is_ctrl;
@@ -1556,6 +1555,22 @@ class Collection extends Data_Object{
         //   There can't really be full automatic indexing here.
 
         if (tv == 'collection') {
+
+            pos = this._arr.length;
+
+            this._arr.push(value);
+            //console.log('pushing value', value);
+            //this.index_system.unsafe_add_object(value);
+            this._arr_idx++;
+
+            var e = {
+                'target': this,
+                'item': value,
+                'position': pos,
+                'type': 'insert'
+            }
+            this.raise('change', e);
+
             //console.log('1) pre test_object_against_constraints');
 
             /*
@@ -1625,7 +1640,7 @@ class Collection extends Data_Object{
             //return this.push(coll);
 
             var new_coll = new Collection(value);
-            console.log('new_coll', new_coll);
+            //console.log('new_coll', new_coll);
 
             pos = this._arr.length;
             // Should not need a context or ID just to be put in place.
@@ -1701,7 +1716,7 @@ class Collection extends Data_Object{
 
     'load_array'(arr) {
         var that = this;
-        console.log('load_array arr ', (arr));
+        //console.log('load_array arr ', (arr));
         // there could be a data type that this is expecting... a constraint?
         //  could have a data type constructor.
         // so, if the item given is not a Data_Object, we can try making the Data_Object, and putting it in place.

@@ -2,13 +2,14 @@
  * Created by James on 15/09/2016.
  */
 
+var are_equal = require('deep-equal');
+
 if (typeof window === 'undefined') {
 	//exports.foo = {};
 	var Stream = require('stream');
 } else {
 	//window.foo = {};
 }
-
 
 var each = (collection, fn, context) => {
 	// each that puts the results in an array or dict.
@@ -56,8 +57,6 @@ var each = (collection, fn, context) => {
 	}
 };
 
-
-
 var jq_class2type = {};
 var jq_type = (obj) => {
 	//return obj == null ? String(obj) : jq_class2type[toString.call(obj)] || "object";
@@ -66,19 +65,23 @@ var jq_type = (obj) => {
 	return jq_class2type[s] || "object";
 };
 
-
 var is_array = Array.isArray;
 
 var is_dom_node = function isDomNode(obj) {
 	return (!!obj && typeof obj.nodeType != 'undefined' && typeof obj.childNodes != 'undefined');
 };
 
-
-
 var get_truth_map_from_arr = function(arr) {
 	var res = {};
 	each(arr, function(v, i) {
 		res[v] = true;
+	});
+	return res;
+};
+var get_arr_from_truth_map = function(truth_map) {
+	var res = [];
+	each(truth_map, function(v, i) {
+		res.push(i);
 	});
 	return res;
 };
@@ -144,9 +147,11 @@ var tof = (obj, t1) => {
 			//console.log('typeof obj ' + typeof obj);
 			//console.log('obj === null ' + (obj === null));
 
-			if (obj.__type) {
-				return obj.__type;
-			} else {
+            if (obj.__type) {
+                return obj.__type;
+            } else if (obj.__type_name) {
+                return obj.__type_name;
+            } else {
 
 				if (is_ctrl(obj)) {
 					//return res;
@@ -429,8 +434,12 @@ var get_item_sig = (i, arr_depth) => {
 						}
 
 
-					} else {
-						throw 'Unexpected object type ' + t;
+                    } else {
+
+                        res = '?';
+
+
+						//throw 'Unexpected object type ' + t;
 					}
 
 					//if ()
@@ -580,7 +589,7 @@ var arrayify = fp(function(a, sig) {
 			var a = arr_like_to_arr(arguments), ts = atof(a), t = this;
 			//console.log('a ' + stringify(a));
 			var last_arg = a[a.length - 1];
-			console.log('last_arg ' + last_arg);
+			//console.log('last_arg ' + last_arg);
 			//console.log('a.length ' + a.length);
 			if (tof(last_arg) == 'function') {
 				// it seems like a callback function.
@@ -620,7 +629,8 @@ var arrayify = fp(function(a, sig) {
 					//throw 'stop';
 
 					call_multiple_callback_functions(fns, num_parallel, delay, function(err, res) {
-						if (err) {
+                        if (err) {
+                            console.trace();
 							throw err;
 						} else {
 							//
@@ -947,7 +957,7 @@ var are_equal = () => {
 
 */
 
-var are_equal = require('deep-equal');
+
 
 var set_vals = function(obj, map) {
 	each(map, function(v, i) {
@@ -1626,6 +1636,29 @@ var str_arr_mapify = function(fn) {
 	return res;
 };
 
+var to_arr_strip_keys = (obj) => {
+    var res = [];
+    each(obj, (v) => {
+        res.push(v);
+    });
+    return res;
+}
+
+// Array of objects to keys values table
+
+
+
+var arr_objs_to_arr_keys_values_table = (arr_objs) => {
+    var keys = Object.keys(arr_objs[0]);
+
+    var arr_items = [], arr_values;
+    each(arr_objs, (item) => {
+        arr_items.push(to_arr_strip_keys(item));
+    });
+
+    return [keys, arr_items];
+}
+
 // will put functions into the jsgui object.
 
 // with the functions listed like this it will be easier to document them.
@@ -1637,6 +1670,7 @@ var jsgui = {
 	'is_ctrl' : is_ctrl,
 	'clone' : clone,
 	'get_truth_map_from_arr' : get_truth_map_from_arr,
+	'get_arr_from_truth_map': get_arr_from_truth_map,
 	'arr_trim_undefined': arr_trim_undefined,
 	'get_map_from_arr' : get_map_from_arr,
 	'arr_like_to_arr' : arr_like_to_arr,
@@ -1669,7 +1703,9 @@ var jsgui = {
 	'native_constructor_tof': native_constructor_tof,
 	'Fns': Fns,
 	'sig_match': sig_match,
-	'remove_sig_from_arr_shell': remove_sig_from_arr_shell
+    'remove_sig_from_arr_shell': remove_sig_from_arr_shell,
+    'to_arr_strip_keys': to_arr_strip_keys,
+    'arr_objs_to_arr_keys_values_table': arr_objs_to_arr_keys_values_table
 };
 
 

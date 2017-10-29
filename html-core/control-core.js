@@ -26,14 +26,187 @@ var stringify = jsgui.stringify;
 // For the moment retiring the field constructors.
 //  Likely to make an improved factory at some point soon.
 
+// Have a specific style object...?
+
+// Could apply input and output transformations here.
+
+
+// Have a special class proxy.
+//  Will use input and output formatters.
+
+var px_handler = (target, property, value, receiver) => {
+	// just the number part, any units
+
+	//console.log('value', value);
+	//console.log('tof(value)', tof(value));
+
+	var t_val = tof(value);
+
+	if (t_val === 'number') {
+		target[property] = value + 'px';
+	} else if (t_val === 'string') {
+		var match = value.match(/(\d*\.?\d*)(.*)/);
+		//console.log('px_handler match', match);
+		if (match.length === 2) {
+			target[property] = value + 'px';
+		} else {
+			target[property] = value;
+		}
+	}
+	return true;
+}
+
+var style_input_handlers = {
+	'width': px_handler, 'height': px_handler
+}
+
+// A new CSS Style Class.
+//  Evented to allow for changes?
+
+// Could also use proxies to set the style object from a string.
+
+
+
+var new_obj_style = () => {
+	//var style = new Evented_Class({});
+	var style = {}
+	
+	style.__empty = true;
+
+	style.toString = () => {
+		var res = [];
+		var first = true;
+
+		each(style, (value, key) => {
+			//console.log('descriptor', Reflect.getOwnPropertyDescriptor(style, key));
+			//console.log('key', key);
+			if (key !== 'toString' && key !== '__empty' && key !== '_bound_events' && key !== 'raise' && key != {}) {
+				if (first) {
+					first = false;
+				} else {
+					res.push(' ');
+				}
+				//console.log('tof key ' + tof(key));
+				//console.log('key', key);
+				//console.log('tof value ' + tof(value));
+				res.push(key + ': ' + value + ';');
+				
+			}
+
+			
+		});
+
+		return res.join('');
+	}
+
+	var res = new Proxy(style, {
+		set: function(target, property, value, receiver) {
+			//console.log('set style trap');
+
+
+			target['__empty'] = false;
+			var old_value = target[property];
+			if(style_input_handlers[property]) {
+				return style_input_handlers[property](target, property, value, receiver);
+			} else {
+				target[property] = value;
+			}
+
+			// raise an event somehow?
+
+			/*
+			style.raise('change', {
+				'key': property,
+				'old': old_value,
+				'new': value,
+				'value': value
+			});
+			*/
+
+			
+			//style.__empty = false;
+			return true;
+		},
+		get: function( target, property, receiver ) {
+	
+			// I'd like to have access to any arguments when
+			// the property being accessed here is a function
+			// that is being called
+	
+			return target[property];
+		}
+	});
+	return res;
+}
+
+
+// Intercept the changing of the style attribute.
+
 class DOM_Attributes extends Evented_Class {
 	'constructor'(spec) {
 		super(spec);
 
 		//this._class = new Data_Value();
 
+		// Some kind of a CSS style class?
+
+		
+
+		//var style = new_obj_style;
+
+		// Could use proxy object for setting style
+
+
+
+		this.style = new_obj_style();
+		//console.log('this.style', this.style);
+
 
 	}
+
+	/*
+
+	get style() {
+		return this._style;
+	}
+	set style(value) {
+		var t_value = tof(value);
+		console.log('t_value', t_value);
+		var style = this._style = this._style || new_obj_style();
+		if (t_value === 'object') {
+			
+			each(value, (v, i) => {
+				style[i] = v;
+			})
+
+		} else if (t_value === 'string') {
+			//var style = this._style = new_obj_style();
+			//each(value, (v, i) => {
+			//	style[i] = v;
+			//})
+			console.log('value', value);
+			var s_values = value.trim().split(';');
+			var kv;
+			each(s_values, (s_value) => {
+				kv = s_value.split(':');
+				//console.log('kv', kv);
+				if (kv.length === 2) {
+					kv[0] = kv[0].trim();
+					kv[1] = kv[1].trim();
+					style[kv[0]] = kv[1];
+				}
+
+			})
+
+		} else {
+			console.log('value', value);
+			throw 'stop';
+		}
+	}
+	*/
+
+	/*
+
 	'set'(key, value) {
 		var old = this[key];
 		this[key] = value;
@@ -43,6 +216,8 @@ class DOM_Attributes extends Evented_Class {
 			'new': value
 		});
 	}
+	*/
+
 }
 
 /*
@@ -52,9 +227,95 @@ Object.defineProperty(DOM_Attributes.prototype, 'class', {
 });
 */
 
-class Control_DOM {
+// 
+
+class Control_DOM extends Evented_Class{
 	'constructor'() {
-		this.attrs = this.attributes = new DOM_Attributes();
+
+		// Proxy the attributes, so that it raises an event for changes.
+		super();
+		var dom_attributes = new DOM_Attributes();
+		var that = this;
+
+
+		var attrs = this.attrs = this.attributes = new Proxy(dom_attributes, {
+			'set': (target, property, value, receiver) => {
+
+				// proxy for setting the style with a string.
+
+				
+				//console.log('property', property)
+				
+				if (property === 'style') {
+					//console.log('');
+					//console.log('Control_DOM attrs set style')
+					//console.log('value', value);
+					//console.log('tof(value)', tof(value));
+
+					var t_value = tof(value);
+					if (t_value === 'string') {
+
+						var s_values = value.trim().split(';');
+						var kv;
+						each(s_values, (s_value) => {
+							kv = s_value.split(':');
+							//console.log('kv', kv);
+							if (kv.length === 2) {
+								kv[0] = kv[0].trim();
+								kv[1] = kv[1].trim();
+								target.style[kv[0]] = kv[1];
+							}
+						});
+
+						// raise style change event.
+						//  or dom attributes change
+
+						dom_attributes.raise('change', {
+							'property': property
+						});
+
+
+						
+
+						// need to set the style items individually.
+						//  or create new style object now.
+
+
+
+
+
+					}
+
+					// if we are setting it with a string, we need to break up these parts
+
+					//console.trace();
+				} else {
+					var old_value = target[property];
+					target[property] = value;
+					//console.log('pre raise change');
+					dom_attributes.raise('change', {
+						'key': property,
+						'old': old_value,
+						'new': value,
+						'value': value
+					});
+				}
+
+				
+				return true;
+			},
+			get: function(target, property, receiver) {
+		
+				// I'd like to have access to any arguments when
+				// the property being accessed here is a function
+				// that is being called
+		
+				return target[property];
+			}
+		});
+
+		// Then whenever the DOM attributes change...
+
 	}
 }
 
@@ -72,7 +333,6 @@ var fields = [
 
 
 class Control_Core extends Data_Object {
-
 
 	'constructor'(spec) {
 		// but process / normalize the spec here?
@@ -98,6 +358,8 @@ class Control_Core extends Data_Object {
 		var spec_content;
 
 		this.dom = new Control_DOM();
+
+		// Could have object for internal properties, such as 'resizable'
 
 
 		//this.size = {};
@@ -142,7 +404,7 @@ class Control_Core extends Data_Object {
 			}
 
 			var that = this;
-			var context = this.context;
+			var context = this.context || spec.context;
 			//console.log('context', context);
 			if (context) {
 
@@ -155,8 +417,9 @@ class Control_Core extends Data_Object {
 				//  a context at some stage.
 			}
 			if (spec['class']) {
-				//this.add_class(spec['class']);
-				this.dom.attrs.set('class', spec['class']);
+				this.add_class(spec['class']);
+				//this.dom.attrs.set('class', spec['class']);
+				this.dom.attrs['class'] = spec['class'];
 			}
 
 
@@ -177,6 +440,7 @@ class Control_Core extends Data_Object {
 			// Want a 'target' for the change event.
 
 			//var size = this.size;
+			/*
 			var set_dom_size = function(size) {
 				var width = size[0].join('');
 				var height = size[1].join('');
@@ -189,6 +453,11 @@ class Control_Core extends Data_Object {
 					'height': height
 				});
 			};
+			*/
+
+			if (spec.size) {
+				this.size = spec.size;
+			}
 
 			var set_dom_color = function(color) {
 				var color_css_property = 'background-color';
@@ -202,64 +471,100 @@ class Control_Core extends Data_Object {
 			//  Need the same for color.
 			//  Possibly need the same for a whole load of properties.
 
-			/*
-			if (size._) {
-				set_dom_size(size._);
-			}
-
-			size.on('change', function(e_size_change) {
-				//console.log('e_size_change', e_size_change);
-				var target = e_size_change.target, name = e_size_change.name, value = e_size_change.value;
-				set_dom_size(value);
-				//console.log('*** value', value);
-				//console.log('*** tof value', tof(value));
-				// Could use an html/css output processor.
-			});
-			*/
-
-			// Need to listen for changes in the color as well.
-
-			// Getters and setters will listen and enact changes
-
-			/*
-
-			var color = this.get('color');
-
-			if (color._) {
-				//console.log('color._', color._);
-				set_dom_color(color._);
-			}
-
-			color.on('change', function(e_color_change) {
-				//console.log('core ctrl e_color_change', e_color_change);
-				var value = e_color_change.value;
-				// Some controls will have color property apply to a different css property
-				var color_css_property = 'background-color';
-				// need to run output processor on the inernal color value
-				var out_color = output_processors['color'](value);
-				//console.log('out_color');
-				that.style(color_css_property, out_color);
-			});
-
-			*/
+			
 		}
 	}
 
 	get size() {
-
+		return this._size;
 	}
 	set size(value) {
 
+		// format the value...
+
+		/*
+
+		var width = value[0].join('');
+		var height = value[1].join('');
+		*/
+
+		// Maybe keep its own style object, not css rules?
+		// As well as CSS rule-based object.
+
+		// size fits into own rules and description. Could bypass css inefficiencies.
+
+		//console.log('set size');
+
+		this._size = value;
+
+		
+
+		var width = value[0];
+		var height = value[1];
+
+		//console.log('width', width);
+		//console.log('height', height);
+
+		this.style({
+			'width': width,
+			'height': height
+		});
+
+		//console.log('pre raise resize');
+		this.raise('resize', {
+			'value': value
+		});
 	}
 
-	get color() {
+	get internal_relative_div() {
+		return this._internal_relative_div || false;
+	}
+	set internal_relative_div(value) {
+		var old_value = this._internal_relative_div;
+		this._internal_relative_div = value;
 
+		if (value === true) {
+			// maybe re-render, raise event?
+		}
+	}
+
+	// resizable...
+	//  more of an enhanced property.
+
+
+	get color() {
+		// Could use some internal property system that's more developed. Can use proxied objects rather than fields.
+
+		return _color;
 	}
 	set color(value) {
 
+		// Don't really have input processors any longer.
+		// Could do with some internal style, such as iStyle object.
+		//  or a non-css style abstraction, through proxy possibly.
+
+		/*
+
+
+		var input_processor = jsgui.input_processors['color'];
+		var output_processor = jsgui.output_processors['color'];
+		var processed = input_processor(value);
+		//console.log('processed', processed);
+
+
+		this.set('color', processed, false); // false not to raise change event from it?
+
+
+		var html_color = output_processor(processed);
+		//console.log('html_color', html_color);
+		*/
+
+		this._color = value;
+
+
+		var color_property_name = this.color_property_name || 'background-color';
+		this.style(color_property_name, value);
 	}
-
-
 
 	'post_init'(spec) {
 		//throw 'stop';
@@ -365,6 +670,8 @@ class Control_Core extends Data_Object {
 				var obj_ctrl_fields = {};
 
 				var keys = Object.keys(this._ctrl_fields);
+
+
 				var key;
 				for (var c = 0, l = keys.length; c < l; c++) {
 					key = keys[c];
@@ -402,7 +709,7 @@ class Control_Core extends Data_Object {
 
 
 				//this.set('dom.attributes.data-jsgui-fields', stringify(this._fields).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]"));
-				dom_attrs.set('data-jsgui-fields', stringify(this._fields).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]"))
+				dom_attrs['data-jsgui-fields'] = stringify(this._fields).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]");
 
 			}
 			var arr = [];
@@ -413,17 +720,37 @@ class Control_Core extends Data_Object {
 			//}
 			//var _ = dom_attrs._;
 			var dom_attrs_keys = Object.keys(dom_attrs);
+			//var dom_attrs_keys = Reflect.ownKeys(dom_attrs);
+			
+
+
+			// but now have a raise event key....
+
 			//console.log('dom_attrs_keys', dom_attrs_keys);
 			//throw 'stop';
 
 			var key, item;
 			for (var c = 0, l = dom_attrs_keys.length; c < l; c++) {
 				key = dom_attrs_keys[c];
+				//console.log('key', key);
 
-                if (key !== '_bound_events') {
-                    item = dom_attrs[key];
+
+
+                if (key == '_bound_events') {
+					
+				} 
+				//else if (key === 'raise') {} 
+				else if (key === 'style') {
+					item = dom_attrs[key];
+					//console.log('item.__empty', item.__empty);
+					if (!item.__empty) {
+						arr.push(' ', key, '="', item, '"');
+					}
+				} else {
+					item = dom_attrs[key];
+					//console.log('item', item);
                     arr.push(' ', key, '="', item, '"');
-                }
+				}
 
 
 			}
@@ -670,8 +997,14 @@ class Control_Core extends Data_Object {
 			}
 		}
 
+		if (this._internal_relative_div === true) {
+			return '<div class="relative">' + res.join('') + '</div>';
+		} else {
+			return res.join('');
+		}
+
 		//console.log('res', res);
-		return res.join('');
+		
 	}
 
 	'all_html_render_internal_controls'() {
@@ -985,11 +1318,12 @@ class Control_Core extends Data_Object {
 		var content = target_parent.content;
 		content.insert(this, target_index);
 	}
-	'toJSON' () {
+	'toJSON'() {
 		var res = [];
 		res.push('Control(' + stringify(this._) + ')');
 		return res.join('');
 	}
+
 	'style'() {
 
 		var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
@@ -1041,7 +1375,48 @@ class Control_Core extends Data_Object {
 		};
 		if (sig == '[s,s]' || sig == '[s,n]') {
 			var styleName = a[0];
-			var styleValue = a[1];
+            var styleValue = a[1];
+
+			// Seems like we need to do style modifications on a string.
+			
+			// May have to do input transformations for some values.
+
+
+
+            // Needs a model of the styles that are currently active.
+
+
+
+            //console.log('styleName', styleName);
+            //console.log('styleValue', styleValue);
+
+			// better to have a style object and then construct that on render. change dom attributes object.
+
+
+            if (this.dom.el) this.dom.el.style[styleName] = styleValue;
+			// needs to deal with the dom attribute's style name(s).
+
+			// Should be there already.
+			//  Could just be an object.
+			//  An OO style class could be useful
+
+			if (this.dom.attrs.style) {
+				//console.log('styleName', styleName);
+				//console.log('styleValue', styleValue);
+
+				//console.log('this.dom.attrs.style', this.dom.attrs.style);
+				//console.log('tof(this.dom.attrs.style)', tof(this.dom.attrs.style));
+
+				this.dom.attrs.style[styleName] = styleValue;
+				this.dom.attrs.raise('change', {
+					'property': 'style',
+					'name': 'style',
+					'value': this.dom.attrs.style + ''
+				});
+			} else {
+				//this.dom.attrs.style = styleName + ':' + ''
+			}
+
 
 			// rebuild the css style???
 			//  May just be in the dom attributes as well.
@@ -1098,25 +1473,24 @@ class Control_Core extends Data_Object {
 		if (sig == '[o]') {
 			// could recompute the whole style string in a more optimized way.
 			//  there could also be a style map, that would help in storing and checking particular styles.
-
 			each(a[0], function(v, i) {
 				//console.log('v', v);
 				//console.log('i', i);
-				that.style(i, v, false);
-			});
+                //that.style(i, v, false);
+                that.style(i, v);
+            });
+
+            /*
 
 			var style = this.dom.attributes.style;
-
-			var el = this.value('dom.el');
+			//var el = this.value('dom.el');
+            var el = this.dom.el;
 
 			if (el) {
 				el.style.cssText = style;
 			}
-
-
+            */
 		}
-
-
 	}
 	'active'() {
 		var id = this._id();
@@ -1139,7 +1513,6 @@ class Control_Core extends Data_Object {
 		dom_attributes['data-jsgui-type'] = new Data_Value({'value': this.__type_name});
 		//var el = this._.el || dom._.el;
 		var el;
-
 		if (dom.el) {
 			el = dom.el;
 		}
@@ -1168,16 +1541,12 @@ class Control_Core extends Data_Object {
 	// So I think the resource-pool will have a selection scope.
 	'find_selection_scope'() {
 		//console.log('find_selection_scope');
-
 		var res = this.selection_scope;
 		if (res) return res;
-
 		// look at the ancestor...
 
 		//var parent = this.get('parent');
 		//console.log('parent ' + tof(parent));
-
-
 		if (this.parent) return this.parent.find_selection_scope();
 
 	}
@@ -1200,7 +1569,7 @@ class Control_Core extends Data_Object {
 	'add_class'(class_name) {
 		// Should have already set these up on activation.
 		//console.log('Control add_class ' + class_name);
-		var cls = this.dom.attrs.class;
+		var cls = this.dom.attrs['class'];
 		//console.log('cls ' + cls);
 		var el = this.dom.el;
 
@@ -1214,7 +1583,10 @@ class Control_Core extends Data_Object {
 			//   The class value changes, then it gets updated in the UI.
 
 			//this.dom.attributes.class = class_name;
-			this.dom.attrs.set('class', str_cls);
+			//this.dom.attrs.set('class', class_name);
+			//this.dom.attrs['class'] = class_name;
+			//this.dom.attrs.set('class', class_name);
+			this.dom.attrs['class'] = class_name;
 
 			// as well as that, need to have the class in the doc respond to this chaging.
 			//  event listener listening for dom changes will update this.
@@ -1233,7 +1605,8 @@ class Control_Core extends Data_Object {
 				})
 				var str_class = arr_class.join(' ');
 				//el.className = str_class;
-				this.dom.attrs.set('class', str_cls);
+				//this.dom.attrs.set('class', str_cls);
+				this.dom.attrs['class'] = str_cls;
 			} else if (tCls == 'data_value') {
 				var val = cls.value();
 
@@ -1251,7 +1624,8 @@ class Control_Core extends Data_Object {
 				var str_cls = arr_classes.join(' ');
 				//console.log('str_cls', str_cls);
 				//this.add_class(str_cls);
-				this.dom.attrs.set('class', str_cls);
+				//this.dom.attrs.set('class', str_cls);
+				this.dom.attrs['class'] = str_cls;
 
 				//this.add_class(val);
 				// And the DOM should update itself when one of these 'model' objects gets changed - depending on if its activated or not.
@@ -1271,11 +1645,10 @@ class Control_Core extends Data_Object {
 				}
 				var str_cls = arr_classes.join(' ');
 				//console.log('add_class str_cls', str_cls);
-
 				//this.add_class(str_cls);
-				this.dom.attrs.set('class', str_cls);
-
-
+				//this.dom.attrs.set('class', str_cls);
+				this.dom.attrs['class'] = str_cls;
+				//this.dom.attrs['class'] = class_name;
 
 
 				// And the DOM should update itself when one of these 'model' objects gets changed - depending on if its activated or not.
@@ -1322,7 +1695,7 @@ class Control_Core extends Data_Object {
 				var l = arr_classes.length, c = 0;
 				//console.log('arr_classes', arr_classes);
 				while (c < l) {
-					console.log('arr_classes[c]', arr_classes[c]);
+					//console.log('arr_classes[c]', arr_classes[c]);
 					if (arr_classes[c] != class_name) {
 						//already_has_class = true;
 						arr_res.push(arr_classes[c]);
@@ -1331,7 +1704,7 @@ class Control_Core extends Data_Object {
 				}
 				//console.log('arr_res', arr_res);
 				var str_cls = arr_res.join(' ');
-				console.log('str_cls', str_cls);
+				//console.log('str_cls', str_cls);
 				//this.add_class(str_cls);
 				this.dom.attrs.set('class', str_cls);
 
@@ -1458,7 +1831,7 @@ class Control_Core extends Data_Object {
 	}
 
 	'shallow_copy'() {
-		console.log('Control shallow_copy');
+		//console.log('Control shallow_copy');
 
 		var res = new Control({
 			'context': this.context
@@ -1512,70 +1885,6 @@ class Control_Core extends Data_Object {
 	//   Getters and setters would do the job better.
 
 
-	get color() {
-
-	}
-	set color(value) {
-		var input_processor = jsgui.input_processors['color'];
-		var output_processor = jsgui.output_processors['color'];
-		var processed = input_processor(value);
-		//console.log('processed', processed);
-		this.set('color', processed, false); // false not to raise change event from it?
-
-
-		var html_color = output_processor(processed);
-		//console.log('html_color', html_color);
-		var color_property_name = this.color_property_name || 'background-color';
-		this.style(color_property_name, html_color);
-	}
-
-
-	/*
-
-	'color'() {
-
-		var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
-
-		// It may be worth having a color field.
-		//  And that color field gets listened to, and DOM changes get made from that.
-
-
-
-		console.log('color sig ', sig);
-		// Should probably try to use color input and output processors.
-
-		var input_processor = jsgui.input_processors['color'];
-		//console.log('input_processor', input_processor);
-
-		var output_processor = jsgui.output_processors['color'];
-		//console.log('output_processor', output_processor);
-
-		if (sig == '[]') {
-			var el = this.dom.el;
-
-			//var w = parseInt(getStyle(el, 'width'), 10);
-			//var h = parseInt(getStyle(el, 'height'), 10);
-			//var res = [w, h];
-			//return res;
-		}
-		if (sig == '[a]') {
-			var processed = input_processor(a[0]);
-			//console.log('processed', processed);
-
-			this.set('color', processed, false); // false not to raise change event from it?
-
-			var html_color = output_processor(processed);
-
-			//console.log('html_color', html_color);
-
-			var color_property_name = this.__color_property_name || 'background-color';
-
-			this.style(color_property_name, html_color);
-
-	 	}
-	 }
-
-	 */
 
 	get offset() {
 		var el = this.dom.el;

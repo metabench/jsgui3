@@ -45,7 +45,7 @@ var vectorify = function(n_fn) {
 				if (ats[0] == 'array') {
 					if (ats[1] == 'number') {
 						var res = [], n = a[1];
-						each(a[0], function(i, v) {
+						each(a[0], function(v, i) {
 							res.push(fn_res(v, n));
 						});
 						return res;
@@ -55,7 +55,7 @@ var vectorify = function(n_fn) {
 							throw 'vector array lengths mismatch';
 						} else {
 							var res = [], arr2 = a[1];
-							each(a[0], function(i, v) {
+							each(a[0], function(v, i) {
 								res.push(fn_res(v, arr2[i]));
 							});
 							return res;

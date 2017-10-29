@@ -33,11 +33,14 @@ window.onload = function() {
 
     
     var early_load_and_activate = function () {
+        page_context.update_Controls('resize_handle', jsgui.Resize_Handle);
         page_context.update_Controls('toggle_button', jsgui.Toggle_Button);
         page_context.update_Controls('list', jsgui.List);
         page_context.update_Controls('item', jsgui.Item);
         page_context.update_Controls('combo_box', jsgui.Combo_Box);
         page_context.update_Controls('popup_menu_button', jsgui.Popup_Menu_Button);
+        page_context.update_Controls('color_palette', jsgui.Color_Palette);
+        page_context.update_Controls('grid', jsgui.Grid);
 
         jsgui.activate(page_context);
     }

@@ -75,7 +75,7 @@ routing_tree.set('/', function(req, res) {
 		'context': server_page_context
 	});
 	hd.include_client_css();
-	hd.include_js('/js/app-bundle.js');
+	hd.include_js('/js/app-bundle-active.js');
 	var body = hd.body;
 	var ctrl = new Popup_Menu_Button({
 		'context': server_page_context,

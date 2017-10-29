@@ -1403,6 +1403,34 @@ var fs2 = {
 		})
 	},
 
+	'exists': function(path, callback) {
+		fs.stat(path, (err, stat) => {
+			callback(null, !!stat);
+		});
+	},
+
+	//  does not try to delete it if its not there to start with
+
+	'ensure_deleted': function(path, callback) {
+		fs2.exists(path, (err, exists) => {
+			if (!exists) {
+				callback(null, true);
+			} else {
+				fs2.delete(path, callback);
+			}
+		});
+	},
+	// ensure_deleted
+
+	'move': function(source_path, dest_path, callback) {
+		var that = this;
+		this.copy(source_path, dest_path, (err, res_copy) => {
+			if (err) { callback(err); } else {
+				that.delete(source_path, callback);
+			}
+		})
+	},
+
 
 	// fs2-traverse?
 

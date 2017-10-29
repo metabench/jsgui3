@@ -9,6 +9,7 @@ ctrl.add(ctrl2);
 ctrl.add_class('example');
 
 ctrl2.add('Hello');
+//ctrl2.add('World');
 
 var html = ctrl.all_html_render();
 

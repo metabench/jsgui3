@@ -3,18 +3,19 @@
  */
 
 
-var jsgui = require('../html-core/html-core');
+var jsgui = require('../html-core/html-core-enh');
 
 // A general purpose grid...
 //  Have something with a similar API to Vectorious?
-
-
 //var Data_Grid = jsgui.Data_Grid;
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
 
 var group = jsgui.group;
+
+
+// Not as complex, or designed to be as responsive to data as the Data_Grid.
 
 // This will need to be versatile as well as operating simply with little configuration.
 
@@ -35,9 +36,8 @@ var group = jsgui.group;
 //  Listens to and queries the Data_Grid.
 //  Possibly will be showing just a view of particular cells on the grid.
 
-// If the gris is initialised with a Data_Grid, it uses that.
+// If the grid is initialised with a Data_Grid, it uses that.
 //  If it's not a Data_Grid, it attempts to load that data into a Data_Grid.
-
 
 // Also want to indicate row and column labels.
 
@@ -51,10 +51,19 @@ var group = jsgui.group;
 class Grid extends Control {
     // maybe add before make would be better. add will probably be used more.
     'constructor'(spec, add, make) {
+        spec = spec || {};
+        spec.__type_name = spec.__type_name || 'grid';
         super(spec);
-        this.__type_name = 'grid';
+        //this.__type_name = 'grid';
         this.add_class('grid');
         var spec_data = spec.data;
+
+        this._arr_rows = [];
+
+        var composition_mode = 'divs';
+
+
+        if (spec.grid_size) this.grid_size = spec.grid_size;
 
         if (!spec.abstract && !spec.el) {
             var data;
@@ -88,32 +97,109 @@ class Grid extends Control {
             //  Becomes more complicated when the heights/sizes of items vary.
 
             //console.log('pre full_compose_as_table');
-            this.full_compose_as_table();
 
+            // Table grid
 
+            //this.full_compose_as_table();
+            this.full_compose_as_divs();
 
-            // Needs to take the data from a grid-compatible source.
+            /*
+            this.dom.attributes['data-jsgui-fields'] = stringify({
+                'composition_mode': composition_mode
+            }).replace(/"/g, "'");
+            */
 
-            // Could use a GridData object.
-            //  Which would have an asyncronous interface (too?)
-
-            // Automatically wrapping an Array in a GridData object makes sense.
-            //  Could extend that GridData / use it for spreadsheets.
-
-
-            // Then the initial rendering of the data grid.
-
-            // We need to know its range.
-            //  In some cases it would be too big to fit on the screen, or too big to be worth rendering as HTML all at once.
-            //   In that case we need to decide on either fixed cell placement or cells that move with the scrollbars.
-            //    Would need to determine how many get shown, and which, based on scrollbar positions.
-            //     And would need to use a specific JSGUI scrollbar control.
-
-            //var obj = spec.value;
-
-
+            this._fields = {
+                'composition_mode': composition_mode,
+                'grid_size': this.grid_size
+            };
         }
 
+        // on resize, resize all of the cells.
+
+        // on activate, will need to reconnect all of the cells.
+
+        this.on('resize', (e_resize) => {
+            //console.log('resize Grid', e_resize);
+
+            // then need to recalculate the cell sizes.
+            //console.log('this.composition_mode', this.composition_mode);
+
+            if (this.composition_mode === 'divs') {
+                var num_columns = this.grid_size[0];
+                var num_rows = this.grid_size[1];
+                var cell_border_thickness = 1;
+                var _2_cell_border_thickness = cell_border_thickness * 2;
+                var cell_size = [Math.floor(this.size[0] / num_columns) - _2_cell_border_thickness, Math.floor(this.size[1] / num_rows) - _2_cell_border_thickness];
+                var that = this;
+                var cell_v_border_thickness = 2;
+
+                this.each_row((row) => {
+                    // not enough to trigger the event it seems.
+                    //  need to get changing a style property to raise the relevant event.
+                    //row.dom.attrs.style.height = cell_size[1];
+                    row.size = [that.size[0], cell_size[1] + cell_v_border_thickness];
+                });
+
+                this.each_cell((cell) => {
+                    cell.size = cell_size;
+                });
+            }
+        })
+
+    }
+
+    'each_row'(cb_row) {
+        each(this._arr_rows, cb_row);
+    }
+
+    'each_cell'(cb_cell) {
+        each(this._arr_rows, (row) => {
+            row.content.each(cb_cell);
+
+            //each(row, cb_cell);
+        });
+    }
+
+    'full_compose_as_divs'() {
+        var num_columns = this.grid_size[0];
+        var num_rows = this.grid_size[1];
+
+        //console.log('this.size', this.size);
+
+
+        //throw 'stop';
+
+        var cell_border_thickness = 1;
+        var _2_cell_border_thickness = cell_border_thickness * 2;
+
+        var cell_size = [Math.floor(this.size[0] / num_columns) - _2_cell_border_thickness, Math.floor(this.size[1] / num_rows) - _2_cell_border_thickness];
+        //console.log('cell_size', cell_size);
+
+        var x, y;
+
+        for (y = 0; y < num_rows; y++) {
+            var row_container = new Control({
+                context: this.context//,
+                //'class': 'row'
+            });
+            //row_container.style.height = cell_size[1];
+            row_container.style('height', Math.floor(this.size[1] / num_rows));
+            row_container.add_class('row');
+            this._arr_rows.push(row_container);
+            this.add(row_container);
+
+            for (x = 0; x < num_columns; x++) {
+                var cell = new Control({
+                    context: this.context//,
+                    //'class': 'cell'
+                });
+                cell.add_class('cell');
+                cell.size = cell_size;
+                row_container.add(cell);
+    
+            }
+        }
     }
 
     'full_compose_as_table'() {
@@ -216,6 +302,33 @@ class Grid extends Control {
 
         if (!this.__active) {
             super.activate();
+            //console.log('activate Grid');
+            var _arr_rows;
+
+            var load_rows = () => {
+                //console.log('load_rows');
+                //console.log('this.content.length()', this.content.length());
+                // the rows are the content?
+
+                var _arr_rows = this._arr_rows = [];
+                this.content.each((v) => {
+                    _arr_rows.push(v);
+                })
+
+            }
+            load_rows();
+
+
+            // load the cells
+            /*
+            var load_cells = () => {
+                each(_arr_rows, (row) => {
+                    each(row, (cell) => {
+
+                    })
+                })
+            }
+            */
 
 
         }

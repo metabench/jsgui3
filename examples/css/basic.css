@@ -16,7 +16,9 @@ body {
 	display: none;
 }
 
-
+.relative {
+	position: relative;
+}
 
 .field {
 	/* clear: both; */
@@ -502,9 +504,7 @@ div.single-line.selected {
 	padding-left: 18px;
 }
 
-.relative {
-	position: relative;
-}
+
 
 /* Custom CSS, just for the moment */
 
@@ -570,6 +570,27 @@ button {
 	width: 16px;
 	height: 16px;
 	background-color: #FF0000;
+	user-select: none;
+}
+
+.resize-handle.top-left {
+	left: 0px;
+	top: 0px;
+}
+
+.resize-handle.top-right {
+	right: 0px;
+	top: 0px;
+}
+
+.resize-handle.bottom-left {
+	left: 0px;
+	bottom: 0px;
+}
+
+.resize-handle.bottom-right {
+	right: 0px;
+	bottom: 0px;
 }
 
 /* Audio Player */
@@ -730,4 +751,15 @@ table.grid tbody {
 
 table.grid td {
 	padding: 1px;
+}
+
+div.grid {
+	border: 1px solid #BBBBBB;
+	padding: 6px;
+}
+
+div.grid .cell{
+	border: 1px solid #BBBBBB;
+	border-radius: 4px;
+	display: inline-block;
 }

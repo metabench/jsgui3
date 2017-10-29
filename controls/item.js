@@ -37,14 +37,11 @@ class Item extends Control {
 
 
 
-
-
-
-
-
     'constructor'(spec, add, make) {
+        spec['class'] = 'item';
         super(spec);
         this.__type_name = 'item';
+        
         //this.add_class('item');
 
         this.add_class('item');
@@ -172,7 +169,7 @@ class Item extends Control {
                         id = value.id;
                         key = value.key;
                         //console.log('id', id);
-                        //c/onsole.log('key', key);
+                        //console.log('key', key);
                         var ctrl_id = new Control({
                             'context': this.context
                         });

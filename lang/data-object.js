@@ -450,9 +450,7 @@ class Data_Object extends Evented_Class {
         if (this.__id) return this.__id;
 
         if (this.context) {
-
             this.__id = this.context.new_id(this.__type_name || this.__type);
-
         } else {
             if (this._abstract) {
                 return undefined;
@@ -464,7 +462,7 @@ class Data_Object extends Evented_Class {
                 //console.log(stack);
 
                 // no such function... but there should be something declared in many situations.
-
+                console.trace();
                 throw 'stop, currently unsupported.';
                 this.__id = new_data_object_id();
 

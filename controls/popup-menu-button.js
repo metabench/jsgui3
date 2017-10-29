@@ -26,11 +26,22 @@ class Popup_Menu_Button extends Button {
     // maybe add before make would be better. add will probably be used more.
     'constructor'(spec, add, make) {
         spec.no_compose = true;
+        spec['class'] = 'popup-menu-button';
         super(spec);
 
         this.__type_name = 'popup_menu_button';
         //this.add_class('panel');
-        this.add_class('popup-menu-button');
+        //console.log('pre add class');
+        //console.log('1) this.dom.attrs', this.dom.attrs);
+       
+
+        //this.add_class('popup-menu-button');
+        //console.log('2) this.dom.attrs', this.dom.attrs);
+
+        // Should set the class in the DOM if its not set already.
+
+
+
         var context = this.context;
         var that = this;
         // With name as a field, that field should get sent to the client...
@@ -76,8 +87,10 @@ class Popup_Menu_Button extends Button {
                 'context': context,
                 'item': this.text
             });
+            root_menu_item.add_class('popup-menu');
 
             that.add(root_menu_item);
+            root_menu_item.inner.add_class('popup-menu');
             that.root_menu_item = root_menu_item;
 
             // Then the inner part / the part that is hidden within the root node.
@@ -94,6 +107,7 @@ class Popup_Menu_Button extends Button {
                         'context': context,
                         'item': item
                     });
+                    menu_item.add_class('popup-menu');
 
                     root_menu_item.inner.add(menu_item);
 
@@ -113,19 +127,11 @@ class Popup_Menu_Button extends Button {
             this.dom.attrs['data-jsgui-ctrl-fields'] = stringify(ctrl_fields).replace(/"/g, "'");
         }
 
-
-
-
         if (!spec.abstract && !spec.el) {
             // Render the menu itself as a bunch of items / an item tree.
 
             // Create the top level menu item.
             compose();
-
-            
-
-            
-
         }
 
         if (spec.el) {
@@ -153,10 +159,17 @@ class Popup_Menu_Button extends Button {
         if (!this.__active) {
             super.activate();
 
+            // Activating should set the CSS class of the node if necessary.
+
+
+
 
 
             var root_menu_item = this.root_menu_item;
-            console.log('Popup_Menu_Button activate');
+
+            //console.log('root_menu_item.inner', root_menu_item.inner);
+
+            //console.log('Popup_Menu_Button activate');
             // Need references?
             var that = this;
 
@@ -172,7 +185,11 @@ class Popup_Menu_Button extends Button {
 
             //console.log('root_menu_item', root_menu_item);
 
-            this.state.on('change', function(e_change) {
+            // And pop out of body too?
+            //  Could leave a placeholder / comment in place of where the element used to be.
+            //  Then swap them to go back.
+
+            this.state.on('change', function (e_change) {
                 //console.log('Popup_Menu_Button state change', e_change);
 
                 // Change it in the UI at this point.
@@ -180,44 +197,113 @@ class Popup_Menu_Button extends Button {
                 //console.log('val', val);
 
                 //if (val == 'closed') {
-                    //ui_close();
+                //ui_close();
                 //    root_menu_item.close();
                 //}
 
                 //if (val == 'open') {
-                    //ui_open();
+                //ui_open();
                 //    root_menu_item.open();
                 //}
+
+                if (val == 'open') {
+                    //ui_open();
+                    //root_menu_item.open();
+                    root_menu_item.inner.pop_into_body();
+
+                    // Elsewhere could take account for menu being put into the body?
+
+                    that.one_mousedown_elsewhere((e_mousedown_elsewhere) => {
+                        console.log('e_mousedown_elsewhere', e_mousedown_elsewhere);
+                        /*
+                        window.requestAnimationFrame(function () {
+                            //resolve(func.apply(null, args));
+                            that.i_state = 0;
+                            that.state.set('closed'); // closed
+                        });
+                        */
+                        
+
+                        setTimeout(function () {
+                            //resolve(func.apply(null, args));
+                            that.i_state = 0;
+                            that.state.set('closed'); // closed
+                        }, 300);
+                        
+
+                        // close it.
+                        //console.log('pre close');
+
+
+
+                        
+
+
+                    })
+                };
+
+                // The root menu item needs to pup up into the DOM.
 
                 root_menu_item.state.set(val);
             });
 
 
-            root_menu_item.on('click', function(e_click) {
+            root_menu_item.on('click', function (e_click) {
                 //console.log('root_menu_item clicked e_click', e_click);
 
                 // have a control target?
                 // Find out if that control is part of this control directly, not part of any other control?
 
                 //if (e_click.target === root_menu_item.dom.el) {
+                //console.log('that.state', that.state);
+                //console.log('that.i_state', that.i_state);
+                //console.log('that.states', that.states);
+
+                //console.log('tof that.state', tof(that.state));
+
+                var new_i_state = that.i_state + 1;
+                if (new_i_state === that.states.length) {
+                    new_i_state = 0;
+                }
+
+                that.i_state = new_i_state;
+                that.state.set(that.states[new_i_state]);
+                //}
+
+            });
+
+
+            // When it's disconnected from the DOM, the events from inner controls don't reach above.
+
+            // Need to go through the internal menu items...
+
+
+
+            //console.log('root_menu_item.inner.content', root_menu_item.inner.content);
+            root_menu_item.inner.content.each((inner_menu_item) => {
+                //console.log('inner_menu_item', inner_menu_item);
+
+                inner_menu_item.on('click', function (e_click) {
+                    //console.log('root_menu_item clicked e_click', e_click);
+
+                    // have a control target?
+                    // Find out if that control is part of this control directly, not part of any other control?
+
+                    //if (e_click.target === root_menu_item.dom.el) {
                     //console.log('that.state', that.state);
                     //console.log('that.i_state', that.i_state);
                     //console.log('that.states', that.states);
 
                     //console.log('tof that.state', tof(that.state));
 
-                    var new_i_state = that.i_state + 1;
-                    if (new_i_state === that.states.length) {
-                        new_i_state = 0;
-                    }
+                    root_menu_item.state.set('closed');
+                    that.i_state = 0;
+                    //}
 
-                    that.i_state = new_i_state;
-                    that.state.set(that.states[new_i_state]);
-                //}
+                });
 
-                
+            })
 
-            });
 
             // Listen for the various changes on inner buttons.
             //  Want an easy way to iterate them.

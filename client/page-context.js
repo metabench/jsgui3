@@ -52,15 +52,81 @@ class Client_Page_Context extends jsgui.Page_Context {
     'body'() {
         var doc = this.document;
         //console.log('doc', doc);
-        var bod = doc.childNodes[0].childNodes[1];
-        //var bod = doc.body;
-        //console.log('bod', bod);
 
-        var bod_id = bod.getAttribute('data-jsgui-id');
+        //var bod = doc.childNodes[0].childNodes[1];
+
+        // Gets the body control.
+
+        var bod = doc.body;
+        //var bod = doc.body;
+        console.log('bod', bod);
+
+        // Then need to see if a control exists.
+
+        if (!this._body) {
+
+            // Can we connect it through jsgui ids.
+
+            var existing_jsgui_id = bod.getAttribute('jsgui-id');
+
+            if (!existing_jsgui_id) {
+                // Those don't use the enhancements...
+
+                
+
+                var ctrl_body = new jsgui.body({
+                    'el': document.body,
+                    'context': this
+                });
+                //ctrl_body.dom.el = bod;
+                ctrl_body.dom.el.setAttribute('jsgui-id', ctrl_body._id());
+
+                //var id = ctrl_body._id();
+
+                //this.map_controls[id] = ctrl_body;
+
+                this.register_control(ctrl_body);
+                this._body = ctrl_body;
+            }
+
+
+            
+            //console.log('ctrl_body._id()', ctrl_body._id());
+            
+
+        } else {
+
+        }
+
+        return this._body;
+
+
+
+        // and if we don't have a body control, we need to make one.
+
+        
+        /*
+        if (!bod) {
+            // Need to create a new body control.
+
+            // Possibly body control should have been made upon jsgui activation.
+
+            
+
+
+            // May need to activate it?
+
+
+        } else {
+            var bod_id = bod.getAttribute('data-jsgui-id');
+            var res = this.map_controls[bod_id];
+            //console.log('res', res);
+            return res;
+        }
+        */
+
         //console.log('bod_id', bod_id);
-        var res = this.map_controls[bod_id];
-        //console.log('res', res);
-        return res;
+        
     }
 }
 // Also want a File_Server.

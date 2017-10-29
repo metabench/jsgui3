@@ -2,7 +2,7 @@
  * Created by James on 16/09/2016.
  */
 //"use strict";
-var jsgui = require('../html-core/html-core');
+var jsgui = require('../html-core/html-core-enh');
 var str_arr_mapify = jsgui.str_arr_mapify;
 var get_a_sig = jsgui.get_a_sig;
 var each = jsgui.each;
@@ -15,7 +15,6 @@ var map_Controls = jsgui.map_Controls = {};
 // Can we require all of the controls at once, and then merge them?
 
 var Controls = require('../controls/controls');
-
 Object.assign(jsgui, Controls);
 
 
