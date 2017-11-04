@@ -142,8 +142,6 @@ var tof = (obj, t1) => {
 				return 'null';
 			}
 
-
-
 			//console.log('typeof obj ' + typeof obj);
 			//console.log('obj === null ' + (obj === null));
 
@@ -1162,9 +1160,18 @@ var call_multiple_callback_functions = fp(function(a, sig) {
 	var arr_functions_params_pairs, callback, return_params = false;
 	var delay;
 
+	console.log('sig', sig);
 
 	var num_parallel = 1;
-	//console.log('a.l', a.l);
+	console.log('a.l', a.l);
+
+	if (a.l == 1) {
+		console.log('a', a);
+		console.log('a[0].length', a[0].length);
+
+
+	}
+
 	if (a.l == 2) {
 		arr_functions_params_pairs = a[0];
 		//console.log('arr_functions_params_pairs', arr_functions_params_pairs);
@@ -1488,8 +1495,8 @@ var call_multiple_callback_functions = fp(function(a, sig) {
 var multi = call_multiple_callback_functions;
 var call_multi = call_multiple_callback_functions;
 
-var Fns = function() {
-	var fns = [];
+var Fns = function(arr) {
+	var fns = arr || [];
 	fns.go = function(parallel, delay, callback) {
 		// Should have better param checking here.
 
@@ -1504,13 +1511,17 @@ var Fns = function() {
 
 		// No, we may give the number in parallel, alongside a callback.
 
+		//console.log('al', al);
+		//console.log('a[0]', a[0]);
+		//throw 'stop';
+
 		// call cases:
 		// (callback)
 		// (parallel, callback)
 		// (parallel, delay, callback)
 
 		if (al == 1) {
-			call_multi(fns, parallel); // meaning call_multi(fns, callback);
+			call_multi(fns, a[0]); // meaning call_multi(fns, callback);
 		}
 		if (al == 2) {
 			call_multi(parallel, fns, delay); // meaning call_multi(parallel, fns, callback);
@@ -1663,6 +1674,77 @@ var arr_objs_to_arr_keys_values_table = (arr_objs) => {
 
 // with the functions listed like this it will be easier to document them.
 
+var set_arr_tree_value = (arr_tree, arr_path, value) => {
+	// navingate to the path, need to change the last one by reference.
+	// move through the tree, using parts of the path
+	var item_current = arr_tree;
+	var last_item_current, last_path_item;
+	each(arr_path, (path_item) => {
+		last_item_current = item_current;
+		//console.log('path_item', path_item);
+		//console.log('1) item_current', item_current);
+		item_current = item_current[path_item];
+		//console.log('2) item_current', item_current);
+		last_path_item = path_item;
+	});
+	last_item_current[last_path_item] = value;
+	//throw 'stop';
+}
+
+var get_arr_tree_value = (arr_tree, arr_path) => {
+	// navingate to the path, need to change the last one by reference.
+
+	// move through the tree, using parts of the path
+	var item_current = arr_tree;
+	//var last_item_current, last_path_item;
+	each(arr_path, (path_item) => {
+		//last_item_current = item_current;
+		//console.log('path_item', path_item);
+		//console.log('1) item_current', item_current);
+		item_current = item_current[path_item];
+		//console.log('2) item_current', item_current);
+		//last_path_item = path_item;
+	});
+	//last_item_current[last_path_item] = value;
+
+	//throw 'stop';
+	return item_current;
+}
+
+// Think we should clone the paths and pass them forward.
+
+var deep_arr_iterate = (arr, path = [], callback) => {
+	if (arguments.length === 2) {
+		callback = path;
+		path = [];
+	}
+
+	each(arr, (item, i) => {
+		
+		//path = clone(path);
+		//path.push(i);
+		//console.log('path', path);
+		//path.push(i);
+
+		var c_path = clone(path);
+		c_path.push(i);
+		//console.log('c_path', c_path);
+
+		var t = tof(item);
+		//console.log('t', t);
+		
+		if (t === 'array') {
+			deep_arr_iterate(item, c_path, callback);
+		} //else if (t === 'number') {
+
+		//} 
+		else {
+			callback(c_path, item);
+		}
+	})
+}
+
+
 var jsgui = {
 	'each' : each,
 	'is_array' : is_array,
@@ -1705,7 +1787,10 @@ var jsgui = {
 	'sig_match': sig_match,
     'remove_sig_from_arr_shell': remove_sig_from_arr_shell,
     'to_arr_strip_keys': to_arr_strip_keys,
-    'arr_objs_to_arr_keys_values_table': arr_objs_to_arr_keys_values_table
+	'arr_objs_to_arr_keys_values_table': arr_objs_to_arr_keys_values_table,
+	'set_arr_tree_value': set_arr_tree_value,
+	'get_arr_tree_value': get_arr_tree_value,
+	'deep_arr_iterate': deep_arr_iterate
 };
 
 
