@@ -1160,10 +1160,10 @@ var call_multiple_callback_functions = fp(function(a, sig) {
 	var arr_functions_params_pairs, callback, return_params = false;
 	var delay;
 
-	console.log('sig', sig);
+	//console.log('sig', sig);
 
 	var num_parallel = 1;
-	console.log('a.l', a.l);
+	//console.log('a.l', a.l);
 
 	if (a.l == 1) {
 		console.log('a', a);

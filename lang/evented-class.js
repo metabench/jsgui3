@@ -47,15 +47,9 @@ class Evented_Class {
         //  treat array-like arguments as if they are an array.
         //  get_arr_sig?
 
-
-
-
-
         //console.log('arguments', arguments);
 
         var a = Array.prototype.slice.call(arguments), sig = get_item_sig(a, 1); a.l = a.length;
-
-
 
         // fp(function(a, sig)
         var that = this;
@@ -111,9 +105,6 @@ class Evented_Class {
 
         // Seems to call more functions.
         //  Not allowing an array to be the event object.
-
-
-
 
         if (sig == '[s,a]') {
             var be = this._bound_events;
