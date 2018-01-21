@@ -1,13 +1,21 @@
 var jsgui = require('../html-core/html-core');
 var Text_Input = require('./text-input');
+var Text_Item = require('./text-item');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 var Control = jsgui.Control;
+
+console.log('jsgui.Control', jsgui.Control);
+//throw 'stop';
+
+// fields could have default values too.
 
 var fields = [
 	['text', String],
 	['name', String],
 	['value', String],
-	['type', String]
+	['type', String],
+	['editable', Boolean, true],
+	['show_text', Boolean, true]
 ];
 
 class Text_Field extends Control {
@@ -16,7 +24,8 @@ class Text_Field extends Control {
 
 	//  and can have other fields possibly.
 	'constructor'(spec) {
-		super(spec);
+		super(spec, fields);
+		this.__type_name = 'text_field';
 		this.add_class('field');
 
 		var left = new jsgui.div({
@@ -39,29 +48,51 @@ class Text_Field extends Control {
 		clearall.add_class('clearall');
 		this.add(clearall);
 
-		var label = new jsgui.label({
-			'context': this.context
+		if (this.show_text) {
+			var label = new jsgui.label({
+				'context': this.context
+	
+			});
+			//var text = this.get('text');
+			//console.log('this.text ' + this.text);
+			//console.log('tof text ' + tof(text));
+			label.add(this.text);
+			left.add(label);
 
-		});
-		var text = this.get('text');
-		//console.log('text ' + text);
-		//console.log('tof text ' + tof(text));
-		label.add(text.value());
+		}
 
-		var textInput = new Text_Input({
-			'context': this.context
-		});
-		var tiid = textInput._id();
-		textInput.dom.attributes.id = tiid;
-		textInput.dom.attributes.name = this.name;
+		
 
-		label.dom.attributes.for = tiid;
+		if (this.editable) {
+			var textInput = new Text_Input({
+				'context': this.context,
+				'value': this.value
+			});
+			var tiid = textInput._id();
+			textInput.dom.attributes.id = tiid;
+			textInput.dom.attributes.name = this.name;
+	
+			label.dom.attributes.for = tiid;
+	
+			// and the type... it could be a password.
+			//  that's a DOM attribute.
+			textInput.dom.attributes.type = spec.type;
+			right.add(textInput);
+		} else {
+			// Text_Item.
+			var text_item = new Text_Item({
+				'context': this.context,
+				'value': this.value
+			});
+			right.add(text_item);
 
-		// and the type... it could be a password.
-		//  that's a DOM attribute.
-		textInput.dom.attributes.type = spec.type;
-		left.add(label);
-		right.add(textInput);
+
+
+		}
+
+		
+		
+		
 		//this.add_event_listener('change', function(e) {
 			//console.log('Text_Field change event e ' + stringify(e));
 		//});

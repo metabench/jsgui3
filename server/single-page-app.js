@@ -3,7 +3,7 @@
  */
 
 
-var jsgui = require('jsgui2-html');
+var jsgui = require('../html-core/html-core');
 //var Window = require('../../../../js/web/controls/advanced/window');
 //var Start_Stop_Toggle_Button = require('../../../../js/web/controls/advanced/start-stop-toggle-button');
 var Server_Page_Context = require("./page-context");

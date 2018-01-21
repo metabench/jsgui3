@@ -110,10 +110,13 @@ class Control extends Control_Core {
 	//	'scrollbars': String
 	//},
 
-	'constructor'(spec) {
+	'constructor'(spec, fields) {
 		// The enhanced control can look at the element for data-jsgui-fields
 		//  Those fields will be fed back into the initialization.
-		super(spec);
+
+		//console.log('* fields', fields);
+		//throw 'stop';
+		super(spec, fields);
 		if (spec.el) {
 			var jgf = spec.el.getAttribute('data-jsgui-fields');
 

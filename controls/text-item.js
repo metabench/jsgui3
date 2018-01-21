@@ -1,9 +1,3 @@
-/*
- if (typeof define !== 'function') { var define = require('amdefine')(module) }
-
- define(["../../jsgui-html"],
- function(jsgui) {
- */
 
 var jsgui = require('../html-core/html-core');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
@@ -13,12 +7,11 @@ var Control = jsgui.Control;
 //  there.
 
 var fields = [
-    ['value', String],
-    ['type', String]
+    ['value', String, '']
 
 ];
 
-class Text_Input extends Control {
+class Text_Item extends Control {
     // is an Input element.
     //  type of either text or password.
     // could possibly specify some of the starting field values in this part.
@@ -26,12 +19,19 @@ class Text_Input extends Control {
     'constructor'(spec) {
         //this._super(spec, fields);
         super(spec, fields);
+        this.__type_name = 'text_item';
+        this.add_class('item');
+
+        this.add(new jsgui.textNode({
+            text: this.value,
+            context: this.context
+        }))
 
         // listen for a change in the value of the text field, in the DOM.
         //  and when that changes, the value changes.
 
         //this.set('dom.tagName', 'input');
-        this.dom.tagName = 'input';
+        //this.dom.tagName = 'div';
 
         //console.log('dom.tagName ' + this.get('dom.tagName'));
 
@@ -41,14 +41,13 @@ class Text_Input extends Control {
         //   input type from a drop-down menu. Smaller builds may not have these.
 
         //this.set('dom.attributes.type', 'input');
-        this.dom.attributes.type = 'input';
-        this.dom.attributes.value = this.value;
+        //this.dom.attributes.type = 'input';
+        //this.dom.attributes.value = this.value;
+
+
 
         // This should render as an input field.
 
     }
 }
-module.exports = Text_Input;
-
-//return Text_Input;
-//});
+module.exports = Text_Item;

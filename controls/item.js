@@ -5,6 +5,9 @@ var Data_Value = jsgui.Data_Value;
 
 //var Data_Object = jsgui.Data_Object;
 
+
+// Could make this into an open-close mixin.
+
 class Item extends Control {
 
     // Items collection as a field?

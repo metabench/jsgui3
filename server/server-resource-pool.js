@@ -51,6 +51,8 @@ class Server_Resource_Pool extends Resource_Pool {
 
 		this.add(lsi);
 
+		//this.js = new 
+
 		// And a resource publisher resource.
 		//  It goes in the pool, and it publishes other resources (over HTTP)
 		//   The resource pool contains its own publisher.

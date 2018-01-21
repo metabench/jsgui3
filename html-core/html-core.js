@@ -665,7 +665,6 @@ class Client_HTML_Document extends Blank_HTML_Document {
         domAttributes.href = '/css/basic.css';
 
 
-
         head.content.add(link);
         // <link rel="stylesheet" type="text/css" href="theme.css">
     }

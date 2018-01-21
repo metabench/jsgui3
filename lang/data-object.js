@@ -117,8 +117,12 @@ var is_js_native = function(obj) {
 };
 
 class Data_Object extends Evented_Class {
-    'constructor'(spec) {
+    'constructor'(spec, fields) {
         super(spec);
+
+
+        this.set_fields_from_spec(fields, spec);
+
         this.__data_object = true;
         if (!spec) spec = {};
         // if it's abstract call the abstract_init.
@@ -271,6 +275,19 @@ class Data_Object extends Evented_Class {
             this._initializing = false;
         }
         //console.log('end Data_Object init');
+    }
+
+    'set_fields_from_spec'(fields, spec) {
+        let that = this;
+        each(fields, field => {
+            if (typeof spec[field[0]] !== 'undefined') {
+                that[field[0]] = spec[field[0]];
+            } else {
+                that[field[0]] = field[2];
+            }
+
+            
+        })
     }
 
     'init_default_events'() {
@@ -1347,7 +1364,10 @@ class Data_Object extends Evented_Class {
 
 
                 //}
-                var res = ll_get(this._, a[0]);
+                //var res = ll_get(this._, a[0]);
+                var res = ll_get(this, a[0]);
+
+                /*
                 if (!res) {
                     //if (field_name.indexOf('.') > -1) {
                     //    throw 'not yet handled';
@@ -1356,6 +1376,7 @@ class Data_Object extends Evented_Class {
                     //}
                     res = this[a[0]];
                 }
+                */
                 return res;
             } else if (a.l === 0) {
                 // need to get the values of all fields.
@@ -1510,7 +1531,9 @@ class Data_Object extends Evented_Class {
                                 //dv = value;
                             }
                         }
-                        this._[property_name] = dv;
+
+                        //this._[property_name] = dv;
+                        this[property_name] = dv;
 
                         if (!silent) {
                             e_change = {
@@ -1532,7 +1555,10 @@ class Data_Object extends Evented_Class {
                             //console.log('is_js_native');
                             //this.set
                             // but maybe that object should be wrapped in Data_Object?
-                            this._[property_name] = value;
+                            //this._[property_name] = value;
+
+                            this[property_name] = value;
+
                             res = value;
 
 
@@ -1541,7 +1567,9 @@ class Data_Object extends Evented_Class {
 
                             //var res = data_object_next.set(value);
                             res = data_object_next;
-                            this._[property_name] = data_object_next;
+                            //this._[property_name] = data_object_next;
+
+                            this[property_name] = data_object_next;
                         }
 
 

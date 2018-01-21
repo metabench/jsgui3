@@ -323,7 +323,11 @@ class Control_DOM extends Evented_Class{
 //	'constructr'
 //}
 
-var fields = [
+// May take these fields out of use for the moment.
+
+/*
+
+var my_fields = [
 	['content', 'collection'],
 	['dom', 'control_dom'],
 	['size', 'size'],
@@ -331,17 +335,22 @@ var fields = [
 ]
 
 
+*/
+
+
 
 class Control_Core extends Data_Object {
 
-	'constructor'(spec) {
+	'constructor'(spec, fields) {
 		// but process / normalize the spec here?
 		spec = spec || {};
 		spec.__type_name = spec.__type_name || 'control';
-		super(spec);
+		//super(spec, fields.concat(my_fields));
 		//spec.nodeType = spec.nodeType || 1;
 		//console.log('pre super init');
-		//super(spec);
+		//console.log('fields', fields);
+		//throw 'stop';
+		super(spec, fields);
 
 		//do_init_call(this, spec);
 		this.mapListeners = {};
@@ -847,6 +856,18 @@ class Control_Core extends Data_Object {
 			}
 		});
 	}
+
+	/*
+	'deferred'(cbfn) {
+		this.__status = 'waiting';
+
+
+		// The callback function will have a callback itself. ???
+		//  
+		//cbfn((err, ))
+	}
+	*/
+
 	// Should now include deferred rendering.
 	'all_html_render'(callback) {
 

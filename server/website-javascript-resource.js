@@ -65,6 +65,10 @@ var zlib = require('zlib');
 //  Better to try serving the files in their paths without modification.
 
 
+
+// 21/02/2018 - Need site JavaScript to be able to send a specified Buffer for a specified JS path.
+
+
 var serve_js_file_from_disk_updated_refs = function(filePath, response, callback) {
 	fs2.load_file_as_string(filePath, function (err, data) {
 		if (err) {
@@ -253,6 +257,10 @@ class Site_JavaScript extends Resource {
 	// .set_custom_path(url, fileName)
 	//  would need to appear in the main routing tree perhaps?
 
+	// However, may set it using a buffer, not a file path.
+	// The app-bundle may be created on application start.
+
+
 	'set_custom_path'(url, file_path) {
 		// But change the URL to have a smiley face instead of fullstops
 		//console.log('url', url);
@@ -260,11 +268,13 @@ class Site_JavaScript extends Resource {
 		//console.log('escaped_url', escaped_url);
 
 		//this.meta.set('custom_paths.' + escaped_url, file_path);
-		var custom_paths = this.meta.get('custom_paths');
+		//var custom_paths = this.meta.get('custom_paths');
 		//console.log('custom_paths', custom_paths);
-		custom_paths.set(escaped_url, file_path);
+		this.custom_paths.set(escaped_url, file_path);
 
 	}
+
+	// 
 
 	'process'(req, res) {
 		console.log('Site_JavaScript processing req.url', req.url);
@@ -317,17 +327,18 @@ class Site_JavaScript extends Resource {
 
 		var custom_paths = this.custom_paths;
 
-		//console.log('custom_paths', custom_paths);
+		console.log('custom_paths', custom_paths);
+		//throw 'stop'
 		//console.log('tof custom_paths', tof(custom_paths));
 
 		var rurl = req.url.replace(/\./g, '☺');
 
-		if (rurl.substr(0, 1) == '/') rurl = rurl.substr(1);
+		//if (rurl.substr(0, 1) == '/') rurl = rurl.substr(1);
 
 
-		//console.log('rurl', rurl);
+		console.log('rurl', rurl);
 
-		var custom_response_entry = custom_paths.get(rurl);
+		var custom_response_entry = custom_paths[rurl];
 
 		// hmmmm get not working right?
 
@@ -336,25 +347,46 @@ class Site_JavaScript extends Resource {
 
 		var pool = this.pool;
 		if (custom_response_entry) {
-			// we serve the file pointed to.
-			var file_path = custom_response_entry.value();
-			console.log('file_path', file_path);
+
+			let t = tof(custom_response_entry._);
+			console.log('t', t);
+			if (t === 'buffer') {
+				res.writeHead(200, {'Content-Type': 'text/javascript'});
+				//response.end(servableJs);
+				res.end(custom_response_entry._);
+			} else {
+				var file_path = custom_response_entry.value();
+				console.log('file_path', file_path);
+
+
+
+				//throw 'stop';
+				//var disk_path = '../../ws/js/' + wildcard_value;
+				fs2.load_file_as_string(file_path, function (err, data) {
+					if (err) {
+						throw err;
+					} else {
+						res.writeHead(200, {'Content-Type': 'text/javascript'});
+						//response.end(servableJs);
+						res.end(data);
+					}
+				});
+			}
+
+			// 
+			//console.trace();
 			//throw 'stop';
-			//var disk_path = '../../ws/js/' + wildcard_value;
-			fs2.load_file_as_string(file_path, function (err, data) {
-				if (err) {
-					throw err;
-				} else {
-					res.writeHead(200, {'Content-Type': 'text/javascript'});
-					//response.end(servableJs);
-					res.end(data);
-				}
-			});
+
+			// we serve the file pointed to.
+			
 		} else {
 
 			var served_directories = this.served_directories;
 
-			//console.log('served_directories', served_directories);
+			console.log('served_directories', served_directories);
+
+			console.trace();
+			throw 'stop';
 
 
 			var url_parts = url.parse(req.url, true);
