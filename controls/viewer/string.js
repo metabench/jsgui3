@@ -29,9 +29,10 @@ class String_Viewer extends Control {
 
 
     'constructor'(spec) {
+        super(spec);
         var make = this.make;
 
-        this._super(spec);
+        //this._super(spec);
 
         this.add_class('string-viewer');
         this.__type_name = 'string_viewer';

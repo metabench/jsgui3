@@ -37,10 +37,11 @@ var Control = jsgui.Control;
 
 class Object_KVP_Editor extends Object_KVP_Viewer {
     'constructor'(spec) {
+        super(spec);
         this.factory = factory;
         this.String = String_Editor;
         this.Number = Number_Editor;
-        this._super(spec);
+        //this._super(spec);
 
         this.add_class('object-kvp-editor');
         // but keep the mode class somehow?

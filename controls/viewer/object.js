@@ -23,8 +23,9 @@ class Object_Viewer extends Control {
 	//  That could possibly be disabled.
 
 	'constructor'(spec) {
-		var make = this.make;
+		
 		super(spec);
+		var make = this.make;
 		if (!this.factory) this.factory = factory;
 		this.add_class('object-viewer');
 		this.__type_name = 'object_viewer';

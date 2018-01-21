@@ -393,7 +393,8 @@ var path = require('path'), fs = require('fs'), url = require('url'), jsgui = re
 
 
 		'init': function(spec) {
-			this._super(spec);
+			super(spec);
+			//this._super(spec);
 
 			this.meta.set('custom_paths', new Data_Object({}));
 			// Those are custom file paths.

@@ -13,6 +13,7 @@ var tof = jsgui.tof;
 class Selection_Scope extends jsgui.Data_Object {
 //var Selection_Scope = jsgui.Class.extend({
 	'constructor'(spec) {
+		super(spec);
 		// A selection scope belongs to a context
 		//  should do
 		// has its control.

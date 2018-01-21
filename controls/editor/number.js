@@ -29,8 +29,9 @@ class Number_Editor extends Number_Viewer {
     //  That could possibly be disabled.
 
     'constructor'(spec) {
+        super(spec);
         var make = this.make;
-        this._super(spec);
+        //this._super(spec);
 
         //this.add_class('number-editor');
         this.add_class('number-editor');

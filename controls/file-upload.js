@@ -32,6 +32,7 @@ class File_Upload extends Control {
     //  That could possibly be disabled.
 
     'constructor'(spec) {
+        super(spec);
         var make = this.make;
 
         // 0 icon / mini mode
@@ -40,7 +41,7 @@ class File_Upload extends Control {
         // 3 large mode
 
         var autosubmit = spec.autosubmit || false;
-        super(spec);
+        
         var mode = 'medium';
         if (spec.mode) mode = spec.mode;
         if (mode == 'icon' || mode == 'mini' || mode == 'compact') autosubmit = true;

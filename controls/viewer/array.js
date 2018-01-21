@@ -30,9 +30,10 @@ class Array_Viewer extends Control {
     //  That could possibly be disabled.
 
     'constructor'(spec) {
+        super(spec);
         var make = this.make;
 
-        this._super(spec);
+        //this._super(spec);
 
         this.add_class('array-viewer');
         this.__type_name = 'array_viewer';

@@ -21,8 +21,9 @@ class Up_Down_Arrow_Buttons extends Control {
     // Maybe should put this into a form, so that it does a form post.
     //  That could possibly be disabled.
     'constructor'(spec) {
+        super(spec);
         var make = this.make;
-        this._super(spec);
+        //this._super(spec);
         this.add_class('up-down arrow buttons');
         this.__type_name = 'up_down_arrow_buttons';
         // Render up button and down button.

@@ -23,10 +23,11 @@ class Login extends Control {
 
 
 	'constructor'(spec) {
+		super(spec);
 		var make = this.make;
 
 
-		super(spec);
+		
 
 		//this.add_class('login-control');
 		this.add_class('login-control');

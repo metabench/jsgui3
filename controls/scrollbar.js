@@ -70,15 +70,17 @@ class Scrollbar extends Control {
 
 class Horizontal_Scrollbar extends Scrollbar {
     'constructor'(spec) {
-        this.__direction = 'horizontal';
         super(spec);
+        this.__direction = 'horizontal';
+        
     }
 }
 
 class Vertical_Scrollbar extends Scrollbar {
     'constructor'(spec) {
-        this.__direction = 'vertical';
         super(spec);
+        this.__direction = 'vertical';
+        
     }
 }
 

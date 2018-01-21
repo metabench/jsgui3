@@ -4,8 +4,6 @@ var Text_Item = require('./text-item');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 var Control = jsgui.Control;
 
-console.log('jsgui.Control', jsgui.Control);
-//throw 'stop';
 
 // fields could have default values too.
 
