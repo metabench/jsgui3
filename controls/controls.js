@@ -55,6 +55,8 @@ var controls = {
 	Start_Stop_Toggle_Button: require('./start-stop-toggle-button'),
 	Tabs: require('./tabs'),
 	Text_Field: require('./text-field'),
+	Text_Item: require('./text-item'),
+	Text_Input: require('./text-input'),
 	Title_Bar: require('./title-bar'),
 	Titled_Panel: require('./titled-panel'),
 	Toggle_Button: require('./toggle-button'),

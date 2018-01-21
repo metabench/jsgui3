@@ -14,32 +14,34 @@ var desc = function(ctrl, callback) {
 
 
 		var content = ctrl.get('content');
-		//console.log('content', content);
-		var t_content = typeof content;
-		//console.log('t_content', t_content);
+		if (content) {
+			var t_content = typeof content;
+			//console.log('t_content', t_content);
 
-		if (t_content === 'string' || t_content === 'number') {
+			if (t_content === 'string' || t_content === 'number') {
 
-		} else {
-			// it's a Collection
+			} else {
+				// it's a Collection
 
-			var arr = content._arr;
-			var c, l = arr.length;
+				var arr = content._arr;
+				var c, l = arr.length;
 
-			//console.log('l', l);
-			var item, t_item;
+				//console.log('l', l);
+				var item, t_item;
 
-			for (c = 0; c < l; c++) {
-				item = arr[c];
-				t_item = typeof item;
-				if (t_item === 'string' || t_item === 'numbers') {
+				for (c = 0; c < l; c++) {
+					item = arr[c];
+					t_item = typeof item;
+					if (t_item === 'string' || t_item === 'numbers') {
 
-				} else {
-					callback(arr[c]);
-					desc(arr[c], callback);
+					} else {
+						callback(arr[c]);
+						desc(arr[c], callback);
+					}
 				}
 			}
 		}
+		//console.log('content', content);
 	}
 }
 
@@ -1196,6 +1198,8 @@ class Control extends Control_Core {
 							var ctrl_id = cctrl.__id;
 							//console.log('* ctrl_id', ctrl_id);
 							if (ctrl_id) {
+
+
 								content.each(function(v, i) {
 									if (v.__id) {
 										if (v.__id == ctrl_id) found = true;

@@ -277,9 +277,9 @@ class Site_JavaScript extends Resource {
 	// 
 
 	'process'(req, res) {
-		console.log('Site_JavaScript processing req.url', req.url);
+		//console.log('Site_JavaScript processing req.url', req.url);
 		var remoteAddress = req.connection.remoteAddress;
-		console.log('remoteAddress ' + remoteAddress);
+		//console.log('remoteAddress ' + remoteAddress);
 
 		// Need to be able to get the resource pool from this resource.
 		//  It routes http calls to particular resources, and resources in the same pool make use of each
@@ -327,7 +327,7 @@ class Site_JavaScript extends Resource {
 
 		var custom_paths = this.custom_paths;
 
-		console.log('custom_paths', custom_paths);
+		//console.log('custom_paths', custom_paths);
 		//throw 'stop'
 		//console.log('tof custom_paths', tof(custom_paths));
 
@@ -336,14 +336,14 @@ class Site_JavaScript extends Resource {
 		//if (rurl.substr(0, 1) == '/') rurl = rurl.substr(1);
 
 
-		console.log('rurl', rurl);
+		//console.log('rurl', rurl);
 
 		var custom_response_entry = custom_paths[rurl];
 
 		// hmmmm get not working right?
 
 
-		console.log('custom_response_entry', custom_response_entry);
+		//console.log('custom_response_entry', custom_response_entry);
 
 		var pool = this.pool;
 		if (custom_response_entry) {
