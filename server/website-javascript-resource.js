@@ -18,6 +18,12 @@ var zlib = require('zlib');
 // Extends AutoStart_Resource?
 
 
+// This could do with some overhauling.
+//  Only need to have it do what the applications need from it.
+//  Building the app may take place automatically elsewhere.
+
+
+
 // May need to change around a fair few references to make it workable.
 // May need some more complicated logic to change it to the path for service.
 
@@ -349,14 +355,14 @@ class Site_JavaScript extends Resource {
 		if (custom_response_entry) {
 
 			let t = tof(custom_response_entry._);
-			console.log('t', t);
+			//console.log('t', t);
 			if (t === 'buffer') {
 				res.writeHead(200, {'Content-Type': 'text/javascript'});
 				//response.end(servableJs);
 				res.end(custom_response_entry._);
 			} else {
 				var file_path = custom_response_entry.value();
-				console.log('file_path', file_path);
+				//console.log('file_path', file_path);
 
 
 
@@ -407,8 +413,8 @@ class Site_JavaScript extends Resource {
 				//  Could also make it buildable on the server?
 				//var disk_path = './js/' + wildcard_value;
 
-				console.log('__dirname', __dirname);
-				console.log('require.main.filename', require.main.filename);
+				//console.log('__dirname', __dirname);
+				//console.log('require.main.filename', require.main.filename);
 				// Would be good to uglify and gzip what gets served.
 
                 var disk_path = path.dirname(require.main.filename) + '/' + 'js/' + wildcard_value;
@@ -418,7 +424,7 @@ class Site_JavaScript extends Resource {
 				var compress = false;
 
 
-				console.log('disk_path', disk_path);
+				//console.log('disk_path', disk_path);
 
 				if (compress) {
 					fs2.load_file_as_string(disk_path, function (err, data) {

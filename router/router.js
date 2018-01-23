@@ -153,13 +153,13 @@ class Routing_Tree {
                 if (currentNode) {
                     var next_level_node = currentNode.mapNormalPathChildren[strLevel];
                     if (next_level_node) {
-                        console.log('no next level node'); //???
+                        //console.log('no next level node'); //???
                     } else {
                         if (currentNode.variableChild) {
                             next_level_node = currentNode.variableChild;
-                            console.log('next_level_node', next_level_node);
+                            //console.log('next_level_node', next_level_node);
                             params = params || {};
-                            params[currentNode.variableChild.name] = strLevel;
+                            params[currentNode.variableChild.name] = decodeURI(strLevel);
                         } else {
                             if (currentNode.wildcardChild) {
                                 var arr_the_rest = splitUrl.slice(c);
@@ -201,7 +201,7 @@ class Routing_Tree {
                                 var str_wildcard_value = arr_the_rest.join('/');
                                 //console.log('str_wildcard_value', str_wildcard_value);
                                 if (params) {
-                                    params.wildcard_value = str_wildcard_value;
+                                    params.wildcard_value = decodeURI(str_wildcard_value);
 
                                     if (next_level_node.wildcardChild.context) {
                                         return [next_level_node.wildcardChild.context, next_level_node.wildcardChild.handler, params];
@@ -275,7 +275,7 @@ class Router {
         var url_parts = url.parse(req.url, true);
         var splitPath = url_parts.path.substr(1).split('/');
 
-        console.log('req.url', req.url);
+        //console.log('req.url', req.url);
 
         var route_res = rt.get(req.url);
         var processor_values_pair;
