@@ -1,5 +1,7 @@
 var jsgui = require('../html-core/html-core');
-var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
+var stringify = jsgui.stringify,
+    each = jsgui.each,
+    tof = jsgui.tof;
 var Control = jsgui.Control;
 
 // Extending, with field values being set?
@@ -7,13 +9,16 @@ var Control = jsgui.Control;
 var fields = [
     ['text', String]
 ];
+
+// text alias being title?
 class Title_Bar extends Control {
     // fields... text, value, type?
     //  type could specify some kind of validation, or also 'password'.
     // single field?
     //  and can have other fields possibly.
-    'constructor'(spec) {
-        super(spec);
+    'constructor' (spec) {
+
+        super(spec, fields);
         this.add_class('title bar');
         var span = new jsgui.span({
             'context': this.context
