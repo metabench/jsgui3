@@ -35,11 +35,11 @@ class Evented_Class {
 
     // Needs to initialize the bound events to start with.
 
-    'constructor'() {
+    'constructor' () {
         this._bound_events = {};
     }
 
-    'raise_event'() {
+    'raise_event' () {
 
         //
 
@@ -49,7 +49,9 @@ class Evented_Class {
 
         //console.log('arguments', arguments);
 
-        var a = Array.prototype.slice.call(arguments), sig = get_item_sig(a, 1); a.l = a.length;
+        var a = Array.prototype.slice.call(arguments),
+            sig = get_item_sig(a, 1);
+        a.l = a.length;
 
         // fp(function(a, sig)
         var that = this;
@@ -256,8 +258,10 @@ class Evented_Class {
         return res;
     }
 
-    'add_event_listener'() {
-        var a = Array.prototype.slice.call(arguments), sig = get_item_sig(a, 1); a.l = a.length;
+    'add_event_listener' () {
+        var a = Array.prototype.slice.call(arguments),
+            sig = get_item_sig(a, 1);
+        a.l = a.length;
         // event listener for all events...
         //  that could work with delegation, and then when the code finds the event it interprets it.
         //console.log('');
@@ -292,7 +296,8 @@ class Evented_Class {
 
             // want the general triggering functions to be done too.
             //  with a different function
-            var event_name = a[0], fn_listener = a[1];
+            var event_name = a[0],
+                fn_listener = a[1];
             //console.log('event_name ' + event_name);
             this._bound_events = this._bound_events || {};
 
@@ -319,7 +324,9 @@ class Evented_Class {
 
     // A way of proxying functions below?
     //  Or simply use function alias?
-    'on'() {
+
+    /*
+    'on' () {
         // However, need to make use of some document events.
         //  With some controls, we need to pass through
 
@@ -327,8 +334,9 @@ class Evented_Class {
 
 
     }
+    */
 
-    'remove_event_listener'(event_name, fn_listener) {
+    'remove_event_listener' (event_name, fn_listener) {
 
 
         // TODO
@@ -351,7 +359,9 @@ class Evented_Class {
             if (Array.isArray(bei)) {
                 // bei.push(fn_listener);
 
-                var c = 0, l = bei.length, found = false;
+                var c = 0,
+                    l = bei.length,
+                    found = false;
 
                 //console.log('l', l);
 
@@ -373,16 +383,16 @@ class Evented_Class {
 
     }
 
-    'off'() {
+    'off' () {
         // However, need to make use of some document events.
         //  With some controls, we need to pass through
 
         return this.remove_event_listener.apply(this, arguments);
 
     }
-    'one'(event_name, fn_handler) {
+    'one' (event_name, fn_handler) {
 
-        var inner_handler = function(e) {
+        var inner_handler = function (e) {
 
             //var result = fn_handler.call(this, e);
             fn_handler.call(this, e);
@@ -397,5 +407,8 @@ class Evented_Class {
 var p = Evented_Class.prototype;
 p.raise = p.raise_event;
 p.trigger = p.raise_event;
+p.subscribe = p.add_event_listener;
+p.on = p.add_event_listener;
+
 
 module.exports = Evented_Class;
