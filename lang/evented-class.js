@@ -41,38 +41,20 @@ class Evented_Class {
 
     'raise_event' () {
 
-        //
-
-        // need to change the way it gets the signature of the arguments.
-        //  treat array-like arguments as if they are an array.
-        //  get_arr_sig?
-
-        //console.log('arguments', arguments);
-
-        var a = Array.prototype.slice.call(arguments),
+        let a = Array.prototype.slice.call(arguments),
             sig = get_item_sig(a, 1);
         a.l = a.length;
 
-        // fp(function(a, sig)
-        var that = this;
-        var target = this;
-        var c, l;
-
-        //console.log('raise_event sig', sig);
+        let that = this;
+        let target = this;
+        let c, l, res;
 
         if (sig == '[s]') {
-            // just raise an event, given with no parameters,
-            //  maybe like 'started'.
-
-            var target = this;
-            var event_name = a[0];
-
-            //console.log('Data_Object raise_event ' + event_name);
-
-            var bgh = this._bound_general_handler;
-
-            var be = this._bound_events;
-            var res = [];
+            let target = this;
+            let event_name = a[0];
+            let bgh = this._bound_general_handler;
+            let be = this._bound_events;
+            res = [];
             if (bgh) {
                 for (c = 0, l = bgh.length; c < l; c++) {
                     res.push(bgh[c].call(target, event_name));
@@ -80,23 +62,11 @@ class Evented_Class {
             }
 
             if (be) {
-                // This is attaching events to the same object.
-                //  Not sure why, but this needs to be fixed.
-
-
-                var bei = be[event_name];
-
-                //console.log('bei', bei);
-                //console.log('tof bei', tof(bei));
+                let bei = be[event_name];
                 if (tof(bei) == 'array') {
-                    //console.log('1) raise_event bei.length ' + bei.length);
-                    //var res = [];
-
                     for (c = 0, l = bei.length; c < l; c++) {
                         res.push(bei[c].call(target));
                     }
-
-                    //console.log('Evented_Class raise_event [s] res', res);
                     return res;
                 }
             }
@@ -109,82 +79,120 @@ class Evented_Class {
         //  Not allowing an array to be the event object.
 
         if (sig == '[s,a]') {
-            var be = this._bound_events;
+            let be = this._bound_events;
 
             // And its general bound events as well.
-            var bgh = this._bound_general_handler;
-            var event_name = a[0];
-
-            // Hard to include an event target in this situation.
-            //a[1].target = target;
-
-            var res = [];
+            let bgh = this._bound_general_handler;
+            let event_name = a[0];
+            res = [];
             if (bgh) {
+                for (c = 0, l = bgh.length; c < l; c++) {
+                    res.push(bgh[c].call(target, event_name, a[1]));
+                }
+            }
+            if (be) {
+                let bei = be[event_name];
+                if (tof(bei) === 'array') {
+                    for (c = 0, l = bei.length; c < l; c++) {
+                        res.push(bei[c].call(target, a[1]));
+                    }
+                }
+            }
+        }
 
-                //console.log('bgh.length', bgh.length);
 
+
+
+        if (sig == '[s,B]') {
+            let be = this._bound_events;
+            let bgh = this._bound_general_handler;
+            let event_name = a[0];
+
+            if (!a[1].target) a[1].target = target;
+
+            res = [];
+            if (bgh) {
                 for (c = 0, l = bgh.length; c < l; c++) {
                     res.push(bgh[c].call(target, event_name, a[1]));
                 }
             }
 
-            //console.log('this._bound_events', this._bound_events);
             if (be) {
-                var bei = be[event_name];
-
-                //console.log('bei.length', bei.length);
-                //console.log('tof bei', tof(bei));
+                let bei = be[event_name];
                 if (tof(bei) === 'array') {
-                    //console.log('1) raise_event bei.length ' + bei.length);
-
-
                     for (c = 0, l = bei.length; c < l; c++) {
                         res.push(bei[c].call(target, a[1]));
                     }
+                }
+            }
+        }
 
-                    //each(bei, function(i, v) {
-                    //    res.push(v.call(target, a[1]));
-                    //});
+        if (sig == '[s,b]') {
+            let be = this._bound_events;
+            let bgh = this._bound_general_handler;
+            let event_name = a[0];
 
-                    //console.log('Evented_Class raise_event [s] res', res);
-                    //return res;
+            //if (!a[1].target) a[1].target = target;
+
+            res = [];
+            if (bgh) {
+                for (c = 0, l = bgh.length; c < l; c++) {
+                    res.push(bgh[c].call(target, event_name, a[1]));
+                }
+            }
+
+            if (be) {
+                let bei = be[event_name];
+                if (tof(bei) === 'array') {
+                    for (c = 0, l = bei.length; c < l; c++) {
+                        res.push(bei[c].call(target, a[1]));
+                    }
+                }
+            }
+        }
+
+        if (sig == '[s,n]') {
+            let be = this._bound_events;
+            let bgh = this._bound_general_handler;
+            let event_name = a[0];
+
+            //if (!a[1].target) a[1].target = target;
+
+            res = [];
+            if (bgh) {
+                for (c = 0, l = bgh.length; c < l; c++) {
+                    res.push(bgh[c].call(target, event_name, a[1]));
+                }
+            }
+
+            if (be) {
+                let bei = be[event_name];
+                if (tof(bei) === 'array') {
+                    for (c = 0, l = bei.length; c < l; c++) {
+                        res.push(bei[c].call(target, a[1]));
+                    }
                 }
             }
         }
 
 
         if (sig == '[s,o]') {
-            var be = this._bound_events;
-
-            //console.log('be', be);
-
-            // And its general bound events as well.
-            var bgh = this._bound_general_handler;
-            var event_name = a[0];
+            let be = this._bound_events;
+            let bgh = this._bound_general_handler;
+            let event_name = a[0];
 
             if (!a[1].target) a[1].target = target;
 
-            var res = [];
+            res = [];
             if (bgh) {
-
-                //console.log('bgh.length', bgh.length);
-
                 for (c = 0, l = bgh.length; c < l; c++) {
                     res.push(bgh[c].call(target, event_name, a[1]));
                 }
             }
 
-
-            //console.log('this._bound_events', this._bound_events);
             if (be) {
-                var bei = be[event_name];
-
-                //console.log('bei.length', bei.length);
-                //console.log('tof bei', tof(bei));
+                let bei = be[event_name];
                 if (tof(bei) === 'array') {
-                    //console.log('1) raise_event bei.length ' + bei.length);
-
-
                     for (c = 0, l = bei.length; c < l; c++) {
                         res.push(bei[c].call(target, a[1]));
                     }
@@ -192,65 +200,43 @@ class Evented_Class {
             }
         } else {
             if (a.l > 2) {
-
-
-                // Want to pass the target value onwards so that the event handlers can read it.
-
-                var event_name = a[0];
-
-                //console.log('event_name ' + event_name);
-
-                var additional_args = [];
-                var bgh_args = [event_name];
-
+                let event_name = a[0];
+                let additional_args = [];
+                let bgh_args = [event_name];
                 for (c = 1, l = a.l; c < l; c++) {
                     additional_args.push(a[c]);
                     bgh_args.push(a[c]);
                 }
-
-                var be = this._bound_events;
-                var bgh = this._bound_general_handler;
-
-                var res = [];
+                let be = this._bound_events;
+                let bgh = this._bound_general_handler;
+                res = [];
 
                 if (bgh) {
                     for (c = 0, l = bgh.length; c < l; c++) {
                         res.push(bgh[c].apply(target, bgh_args));
                     }
                 }
-
-
-                //console.log('be ' + tof(be));
                 if (be) {
-                    // The controls that are activated on the clients need to have bound events.
-
-                    //console.log('event_name', event_name);
-                    var bei = be[event_name];
-                    //console.log('bei ', bei);
+                    let bei = be[event_name];
                     if (tof(bei) == 'array') {
-                        //console.log('1) raise_event bei.length ' + bei.length);
-
                         if (bei.length > 0) {
-
-
                             // They are handlers that get called.
 
                             for (c = 0, l = bei.length; c < l; c++) {
                                 if (bei[c]) res.push(bei[c].apply(target, additional_args));
 
                             }
-
                             return res;
                         } else {
                             return res;
                         }
-
-
-                        //console.log('2) raised the bound events');
                     }
                     // Or if it's just a function?
-
                 }
+            } else {
+                // s,?
+
+
 
             }
         }
