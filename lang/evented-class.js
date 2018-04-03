@@ -72,37 +72,6 @@ class Evented_Class {
             }
         }
 
-        // And s,a would be a value given as an array
-        //  We don't have more properties, just a value.
-
-        // Seems to call more functions.
-        //  Not allowing an array to be the event object.
-
-        if (sig == '[s,a]') {
-            let be = this._bound_events;
-
-            // And its general bound events as well.
-            let bgh = this._bound_general_handler;
-            let event_name = a[0];
-            res = [];
-            if (bgh) {
-                for (c = 0, l = bgh.length; c < l; c++) {
-                    res.push(bgh[c].call(target, event_name, a[1]));
-                }
-            }
-            if (be) {
-                let bei = be[event_name];
-                if (tof(bei) === 'array') {
-                    for (c = 0, l = bei.length; c < l; c++) {
-                        res.push(bei[c].call(target, a[1]));
-                    }
-                }
-            }
-        }
-
-
-
-
         if (sig == '[s,B]') {
             let be = this._bound_events;
             let bgh = this._bound_general_handler;
@@ -127,7 +96,7 @@ class Evented_Class {
             }
         }
 
-        if (sig == '[s,b]') {
+        if (sig === '[s,b]' || sig === '[s,s]' || sig === '[s,n]' || sig === '[s,a]') {
             let be = this._bound_events;
             let bgh = this._bound_general_handler;
             let event_name = a[0];
@@ -151,29 +120,7 @@ class Evented_Class {
             }
         }
 
-        if (sig == '[s,n]') {
-            let be = this._bound_events;
-            let bgh = this._bound_general_handler;
-            let event_name = a[0];
 
-            //if (!a[1].target) a[1].target = target;
-
-            res = [];
-            if (bgh) {
-                for (c = 0, l = bgh.length; c < l; c++) {
-                    res.push(bgh[c].call(target, event_name, a[1]));
-                }
-            }
-
-            if (be) {
-                let bei = be[event_name];
-                if (tof(bei) === 'array') {
-                    for (c = 0, l = bei.length; c < l; c++) {
-                        res.push(bei[c].call(target, a[1]));
-                    }
-                }
-            }
-        }
 
 
         if (sig == '[s,o]') {
