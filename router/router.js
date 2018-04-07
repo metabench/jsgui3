@@ -1,31 +1,37 @@
+var url = require('url'),
+    jsgui = require('../lang/lang'),
+    os = require('os'),
+    http = require('http');
 
-var url = require('url'), jsgui = require('../lang/lang'), os = require('os'),
-http = require('http');
-
-var stringify = jsgui.stringify, each = jsgui.each, arrayify = jsgui.arrayify, tof = jsgui.tof;
+var stringify = jsgui.stringify,
+    each = jsgui.each,
+    arrayify = jsgui.arrayify,
+    tof = jsgui.tof;
 var filter_map_by_regex = jsgui.filter_map_by_regex;
-var Class = jsgui.Class, Data_Object = jsgui.Data_Object;
-var fp = jsgui.fp, is_defined = jsgui.is_defined;
+var Class = jsgui.Class,
+    Data_Object = jsgui.Data_Object;
+var fp = jsgui.fp,
+    is_defined = jsgui.is_defined;
 var Collection = jsgui.Collection;
 var get_item_sig = jsgui.get_item_sig;
 
 // May need some general purpose traversal functions?
 class Routing_Tree_Node {
-    'constructor'(spec) {
+    'constructor' (spec) {
         spec = spec || {};
         if (spec.handler) this.handler = spec.handler;
         this.mapNormalPathChildren = {};
     }
 }
 class Variable_Routing_Tree_Node {
-    'constructor'(spec) {
+    'constructor' (spec) {
         this.name = spec.name;
         if (spec.handler) this.handler = spec.handler;
         this.mapNormalPathChildren = {};
     }
 }
 class Wildcard_Routing_Tree_Node {
-    'constructor'(spec) {
+    'constructor' (spec) {
 
     }
 }
@@ -36,13 +42,13 @@ class Wildcard_Routing_Tree_Node {
 // Want to be able to get the Routing_Tree_Node corresponding with a path
 
 class Routing_Tree {
-    'constructor'(spec) {
+    'constructor' (spec) {
         this.root = new Routing_Tree_Node();
     }
-    'setRoot404'(handler) {
+    'setRoot404' (handler) {
         this.root404Handler = handler;
     }
-    'set'(strRoute, context, handler) {
+    'set' (strRoute, context, handler) {
 
         if (!handler) {
             handler = context;
@@ -74,7 +80,9 @@ class Routing_Tree {
                     var variableName = strLevel.substr(1);
                     //console.log('variableName', variableName);
                     if (!currentNode.variableChild) {
-                        currentNode.variableChild = new Variable_Routing_Tree_Node({'name': variableName});
+                        currentNode.variableChild = new Variable_Routing_Tree_Node({
+                            'name': variableName
+                        });
                         if (c == splitRoute.length - 1) {
                             currentNode.variableChild.handler = handler;
                             if (context) currentNode.variableChild.context = context;
@@ -108,7 +116,7 @@ class Routing_Tree {
             }
         }
     }
-    'get'(url) {
+    'get' (url) {
         // routes the URL through the tree
         var params;
         if (url == '/') {
@@ -166,9 +174,13 @@ class Routing_Tree {
                                 //console.log('arr_the_rest', arr_the_rest);
                                 var str_wildcard_value = arr_the_rest.join('/');
                                 if (currentNode.wildcardChild.context) {
-                                    return [currentNode.wildcardChild.context, currentNode.wildcardChild.handler, {'wildcard_value': str_wildcard_value}];
+                                    return [currentNode.wildcardChild.context, currentNode.wildcardChild.handler, {
+                                        'wildcard_value': str_wildcard_value
+                                    }];
                                 } else {
-                                    return [currentNode.wildcardChild.handler, {'wildcard_value': str_wildcard_value}];
+                                    return [currentNode.wildcardChild.handler, {
+                                        'wildcard_value': str_wildcard_value
+                                    }];
                                 }
                             }
                         }
@@ -213,7 +225,9 @@ class Routing_Tree {
 
                                         return [next_level_node.wildcardChild.context, next_level_node.wildcardChild.handler, params];
                                     } else {
-                                        return [next_level_node.wildcardChild.handler, {'wildcard_value': str_wildcard_value}];
+                                        return [next_level_node.wildcardChild.handler, {
+                                            'wildcard_value': str_wildcard_value
+                                        }];
                                     }
                                 }
                             }
@@ -243,7 +257,7 @@ class Router {
     //    'routing_tree': Routing_Tree
     //}
 
-    'constructor'(spec) {
+    'constructor' (spec) {
 
         spec = spec || {};
         //super(spec);
@@ -255,17 +269,17 @@ class Router {
 
         this.routing_tree = new Routing_Tree();
     }
-    'start'(callback) {
+    'start' (callback) {
         callback(null, true);
     }
-    'set_route'(str_route, context, fn_handler) {
+    'set_route' (str_route, context, fn_handler) {
         //var rt = this.get('routing_tree');
         return this.routing_tree.set(str_route, context, fn_handler);
     }
-    'meets_requirements'() {
+    'meets_requirements' () {
         return true;
     }
-    'process'(req, res) {
+    'process' (req, res) {
         var remoteAddress = req.connection.remoteAddress;
         //var rt = this.get('routing_tree');
         var rt = this.routing_tree;
@@ -316,7 +330,7 @@ class Router {
                     handler(req, res);
                 } else {
                     if (t_handler === 'undefined') {
-                        console.log('no defined route result');
+                        console.log('1) no defined route result', splitPath);
 
                         // Some kind of 404 handler makes sense.
 
@@ -338,7 +352,7 @@ class Router {
                 route_res(req, res);
             }
         } else if (tof(route_res) === 'undefined') {
-            console.log('no defined route result');
+            console.log('2) no defined route result', splitPath);
             return false;
         }
         if (processor_values_pair) {

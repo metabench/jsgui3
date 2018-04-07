@@ -61,7 +61,10 @@ var Site_Static_HTML = require('./website-static-html-resource');
 //var database_resource_factory = require('../../db/resource/factory');
 
 
-var is_defined = jsgui.is_defined, fp = jsgui.fp, stringify = jsgui.stringify, tof = jsgui.tof;
+var is_defined = jsgui.is_defined,
+    fp = jsgui.fp,
+    stringify = jsgui.stringify,
+    tof = jsgui.tof;
 /*
 var fs2 = require('../../fs/jsgui-node-fs2-core');
 var jsgui_jpeg = require('../../image/node/jsgui-node-jpeg');
@@ -69,25 +72,25 @@ var jsgui_png = require('../../image/node/jsgui-node-png');
 var Worker = require('webworker-threads');
 */
 
-    // Could maybe make a website resource as well?
+// Could maybe make a website resource as well?
 
 //console.log('2) Site_Images', Site_Images);
 
-    // It would publish a web db, I think.
-    //  A website resource would contain a variety of requests.
+// It would publish a web db, I think.
+//  A website resource would contain a variety of requests.
 
 
 
 
 
 
-    // Want to be able to run a website resource serving static files.
-    //  Don't want too complicated configuration here.
+// Want to be able to run a website resource serving static files.
+//  Don't want too complicated configuration here.
 
 
 class Website_Resource extends Resource {
 
-    'constructor'(spec) {
+    'constructor' (spec) {
 
         super(spec);
 
@@ -232,16 +235,16 @@ class Website_Resource extends Resource {
         //console.log('Site_Images', Site_Images);
 
         var img_resource = new Site_Images({
-            'meta': {
-                'name': 'Site Images'
-            }
+            //'meta': {
+            'name': 'Site Images'
+            // }
         });
 
 
         var js_resource = new Site_JavaScript({
-            'meta': {
-                'name': 'Site JavaScript'
-            }
+            //'meta': {
+            'name': 'Site JavaScript'
+            //}
         });
 
         // Also want a static HTML server.
@@ -267,9 +270,9 @@ class Website_Resource extends Resource {
             //  Not always needed!
 
             static_html_resource = new Site_Static_HTML({
-                'meta': {
-                    'name': 'Static HTML'
-                }
+                //'meta': {
+                'name': 'Static HTML'
+                //}
             });
 
             resource_pool.push(static_html_resource);
@@ -289,7 +292,7 @@ class Website_Resource extends Resource {
 
         var css_resource = new Site_CSS({
             //'meta': {
-                'name': 'Site CSS'
+            'name': 'Site CSS'
             //}
         })
 
@@ -301,6 +304,13 @@ class Website_Resource extends Resource {
         resource_pool.push(js_resource);
 
         resource_pool.push(css_resource);
+
+
+        // anything ending in .css as well.
+
+        //  Routing maybe wouldn't work like that.
+        //router.set_route('*.css', css_resource, css_resource.process);
+
 
         router.set_route('css/*', css_resource, css_resource.process);
 
@@ -356,7 +366,7 @@ class Website_Resource extends Resource {
 
     }
 
-    'get_resource'(resource_name) {
+    'get_resource' (resource_name) {
         var resource_pool = this.resource_pool;
         //console.log('resource_pool', resource_pool);
 
@@ -366,7 +376,7 @@ class Website_Resource extends Resource {
         return resource_pool.get_resource(resource_name);
     }
 
-    'start'(callback) {
+    'start' (callback) {
 
         // Need to wait until the database has started.
 
@@ -401,7 +411,7 @@ class Website_Resource extends Resource {
 
     }
 
-    'meets_requirements'() {
+    'meets_requirements' () {
         // Likely will be part of Status
 
         //return false;
@@ -410,7 +420,7 @@ class Website_Resource extends Resource {
     }
 
     // Needs to be able to process HTTP requests. A bit like the Router in that way.
-    'process'(req, res) {
+    'process' (req, res) {
         //console.log('website process request req.url', req.url);
         //throw 'stop';
 
@@ -431,6 +441,11 @@ class Website_Resource extends Resource {
         var router = this.router;
 
         var res_process = router.process(req, res);
+
+        // Then look at the last part of the filename.
+        //  
+
+
 
         // But then does anythin get returned?
 
@@ -465,7 +480,9 @@ class Website_Resource extends Resource {
             } else {
                 // show a 404
 
-                res.writeHead(404, {"Content-Type": "text/plain"});
+                res.writeHead(404, {
+                    "Content-Type": "text/plain"
+                });
                 res.write("404 Not Found\n");
                 res.end();
 

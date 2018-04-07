@@ -12,7 +12,7 @@ var map_Controls = jsgui.map_Controls = {};
 
 var core_extension = str_arr_mapify(function (tagName) {
     jsgui[tagName] = class extends Control {
-        'constructor'(spec) {
+        'constructor' (spec) {
             //spec.tagName = tagName;
             //console.log('core extension tagName ' + tagName);
             super(spec);
@@ -31,7 +31,7 @@ var core_extension = str_arr_mapify(function (tagName) {
 
 var core_extension_no_closing_tag = str_arr_mapify(function (tagName) {
     jsgui[tagName] = class extends Control {
-        'constructor'(spec) {
+        'constructor' (spec) {
             //spec.tagName = tagName;
 
             //console.log('core extension tagName ' + tagName);
@@ -96,7 +96,7 @@ var recursive_dom_iterate_depth = function (el, callback) {
 
 
 
-var activate = function(context) {
+var activate = function (context) {
     // The context should already have the map of controls.
 
     // Not so sure we can have the client page context here - does it use resources?
@@ -122,20 +122,20 @@ var activate = function(context) {
 
     var max_typed_ids = {};
 
-    var id_before__ = function(id) {
+    var id_before__ = function (id) {
         var pos1 = id.lastIndexOf('_');
         var res = id.substr(0, pos1);
         return res;
     }
 
-    var num_after = function(id) {
+    var num_after = function (id) {
         //var pos1 = id.lastIndexOf('_');
         //var res = parseInt(id.substr(pos1 + 1), 10);
         //return res;
         return parseInt(id.substr(id.lastIndexOf('_') + 1), 10);
     }
 
-    recursive_dom_iterate(document, function(el) {
+    recursive_dom_iterate(document, function (el) {
 
         //console.log('recursive_dom_iterate el', el);
         //console.log('tof el', tof(el));
@@ -174,7 +174,7 @@ var activate = function(context) {
     context.set_max_ids(max_typed_ids);
     var map_controls = context.map_controls;
     // Control construction and registration
-    each(map_jsgui_els, function(el, jsgui_id) {
+    each(map_jsgui_els, function (el, jsgui_id) {
         //console.log('jsgui_id ' + jsgui_id);
         //console.log('3) el.tagName ' + el.tagName);
         var l_tag_name = el.tagName.toLowerCase();
@@ -268,7 +268,7 @@ var activate = function(context) {
 
 
 
-            
+
 
 
             //console.log('jsgui_id ' + jsgui_id);
@@ -278,7 +278,7 @@ var activate = function(context) {
         // get the constructor from the id?
     });
 
-    recursive_dom_iterate_depth(document, function(el) {
+    recursive_dom_iterate_depth(document, function (el) {
         //console.log('el ' + el);
         var nt = el.nodeType;
         //console.log('nt ' + nt);
@@ -352,7 +352,7 @@ core_extension_no_closing_tag('link input');
 
 // Activated so it can listen for a change in the text?
 class textNode extends Control {
-    'constructor'(spec) {
+    'constructor' (spec) {
         super(spec);
         spec = spec || {};
         if (typeof spec == 'string') {
@@ -402,7 +402,7 @@ class textNode extends Control {
             'value': value
         });
     }
-    'all_html_render'() {
+    'all_html_render' () {
         // need to escape the HTML it outputs.
         var res;
 
@@ -437,11 +437,11 @@ class textNode extends Control {
 class HTML_Document extends jsgui.Control {
     // no tag to render...
     //  but has dtd.
-    'constructor'(spec) {
+    'constructor' (spec) {
         super(spec);
     }
 
-    'render_dtd'() {
+    'render_dtd' () {
         return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">\n';
     }
 
@@ -451,9 +451,9 @@ class HTML_Document extends jsgui.Control {
 
 
 class Blank_HTML_Document extends HTML_Document {
-    'constructor'(spec) {
+    'constructor' (spec) {
         //console.log('super', typeof super);
-        console.log('Blank_HTML_Document');
+        //console.log('Blank_HTML_Document');
 
         //HTML_Document.prototype.constructor.call(this, spec);
         super(spec);
@@ -502,10 +502,12 @@ class Blank_HTML_Document extends HTML_Document {
         //console.log('');
         //console.log('end init Blank_HTML_Document this._ ' + stringify(this._));
     }
-    'body'() {
+    'body' () {
         //console.log('body sig', sig);
-        var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
-        if (sig =='[]') {
+        var a = arguments;
+        a.l = arguments.length;
+        var sig = get_a_sig(a, 1);
+        if (sig == '[]') {
             // find the body control.
 
             var content = this.content;
@@ -524,15 +526,15 @@ class Blank_HTML_Document extends HTML_Document {
 
 
 class Client_HTML_Document extends Blank_HTML_Document {
-    'constructor'(spec) {
-        console.log('Client_HTML_Document');
+    'constructor' (spec) {
+        //console.log('Client_HTML_Document');
         super(spec);
         //spec.context.ctrl_document = this;
         this.active();
 
     }
 
-    'include_js'(url) {
+    'include_js' (url) {
         var head = this.get('head');
         // create jsgui.script
         var script = new jsgui.script({
@@ -558,7 +560,7 @@ class Client_HTML_Document extends Blank_HTML_Document {
         head.content.add(script);
     }
 
-    'include_css'(url) {
+    'include_css' (url) {
         var head = this.get('head');
         // create jsgui.script
         // <link rel="stylesheet" type="text/css" href="theme.css">
@@ -568,21 +570,21 @@ class Client_HTML_Document extends Blank_HTML_Document {
             'context': this.context
         })
         // <script data-main="scripts/main" src="scripts/require.js"></script>
-        var dom = link.get('dom');
+        var dom = link.dom;
         //console.log('* dom ' + stringify(dom));
         //var domAttributes = script.get('dom.attributes');
-        var domAttributes = dom.get('attributes');
+        var domAttributes = dom.attributes;
         //console.log('domAttributes ' + domAttributes);
 
-        domAttributes.set('rel', 'stylesheet');
-        domAttributes.set('type', 'text/css');
+        domAttributes['rel'] = 'stylesheet';
+        domAttributes['type'] = 'text/css';
         //domAttributes.set('src', '/js/require.js');
-        domAttributes.set('href', url);
-        head.content().add(link);
+        domAttributes['href'] = url;
+        head.content.add(link);
     }
 
 
-    'include_jsgui_client'(js_file_require_data_main) {
+    'include_jsgui_client' (js_file_require_data_main) {
         // Could add the default client file.
         // Or a specific client file with a control that also has client-side code.
         //  The client-side code won't get processed on the server.
@@ -627,7 +629,7 @@ class Client_HTML_Document extends Blank_HTML_Document {
 
     }
 
-    'include_jsgui_resource_client'(path) {
+    'include_jsgui_resource_client' (path) {
 
         // Could add the default client file.
 
@@ -641,7 +643,7 @@ class Client_HTML_Document extends Blank_HTML_Document {
         this.include_jsgui_client(js_file_require_data_main);
 
     }
-    'include_client_css'() {
+    'include_client_css' () {
         var head = this.get('head');
         var link = new jsgui.link({
             //<script type="text/JavaScript" src="abc.js"></script>

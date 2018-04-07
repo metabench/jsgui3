@@ -19,7 +19,7 @@ class Title_Bar extends Control {
     'constructor' (spec) {
 
         super(spec, fields);
-        this.add_class('title bar');
+        this.add_class('title-bar title bar');
         var span = new jsgui.span({
             'context': this.context
         })

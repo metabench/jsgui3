@@ -3,7 +3,9 @@
  */
 var jsgui = require('../lang/lang');
 var is_ctrl = jsgui.is_ctrl;
-var get_a_sig = jsgui.get_a_sig, fp = jsgui.fp, each = jsgui.each;
+var get_a_sig = jsgui.get_a_sig,
+	fp = jsgui.fp,
+	each = jsgui.each;
 var Control_Enh = require('./control-enh');
 var Resize_Handle = require('../controls/resize-handle')
 var tof = jsgui.tof;
@@ -18,7 +20,7 @@ class Control_Enh_2 extends Control_Enh {
 	//	'scrollbars': String
 	//},
 
-	'constructor'(spec, fields) {
+	'constructor' (spec, fields) {
 		// The enhanced control can look at the element for data-jsgui-fields
 		//  Those fields will be fed back into the initialization.
 		//console.log('e2 fields', fields);
@@ -27,10 +29,10 @@ class Control_Enh_2 extends Control_Enh {
 
 	}
 
-	
+
 
 	// absolute_ghost_clone
-	'absolute_ghost_clone'() {
+	'absolute_ghost_clone' () {
 
 		var type_name = this.__type_name;
 		var id = this._id();
@@ -81,7 +83,7 @@ class Control_Enh_2 extends Control_Enh {
 
 
 
-			each(my_contents, function(v, i) {
+			each(my_contents, function (v, i) {
 				//console.log('i', i);
 				//console.log('v', v);
 
@@ -143,38 +145,38 @@ class Control_Enh_2 extends Control_Enh {
 
 	}
 
-    
 
-    'pop_into_body'() {
 
-        this.show();
-        var bcr = this.bcr();
+	'pop_into_body' () {
 
-        // Maybe need to make it visible first.
+		this.show();
+		var bcr = this.bcr();
 
-        var pos = bcr[0];
-        var left = pos[0];
-        var top = pos[1];
+		// Maybe need to make it visible first.
 
-        //console.log('bcr', JSON.stringify(bcr));
+		var pos = bcr[0];
+		var left = pos[0];
+		var top = pos[1];
 
-        this.style({
-            'position': 'absolute',
-            'left': left + 'px',
-            'top': top + 'px',
-            'z-index': 10000
-        });
+		//console.log('bcr', JSON.stringify(bcr));
 
-        document.body.appendChild(this.dom.el);
+		this.style({
+			'position': 'absolute',
+			'left': left + 'px',
+			'top': top + 'px',
+			'z-index': 10000
+		});
 
-    }
+		document.body.appendChild(this.dom.el);
+
+	}
 
 	// not recursive
 	//  maybe call activate_individual?
 
 	//
 
-    /*
+	/*
 	'activate'(el) {
 		if (!this.__active) {
             this._super(el);
@@ -237,11 +239,11 @@ class Control_Enh_2 extends Control_Enh {
 	*/
 
 
-	'hide'() {
+	'hide' () {
 		//console.log('hide');
 		this.add_class('hidden');
 	}
-	'show'() {
+	'show' () {
 		//console.log('show');
 		this.remove_class('hidden');
 	}
@@ -401,7 +403,7 @@ class Control_Enh_2 extends Control_Enh {
 
 
 
-	
+
 	get resizable() {
 		return this._resizable || false;
 	}
@@ -428,11 +430,11 @@ class Control_Enh_2 extends Control_Enh {
 						target: this,
 						position: 'tl'
 					});
-					this.resize_tl.add_class('top-left');	
+					this.resize_tl.add_class('top-left');
 					this.add(this.resize_tl);
 					//throw 'stop';
 				}
-	
+
 				if (!this.resize_tr) {
 					this.resize_tr = new Resize_Handle({
 						context: this.context,
@@ -442,7 +444,7 @@ class Control_Enh_2 extends Control_Enh {
 					this.resize_tr.add_class('top-right');
 					this.add(this.resize_tr);
 				}
-				
+
 				if (!this.resize_bl) {
 					this.resize_bl = new Resize_Handle({
 						context: this.context,
@@ -465,7 +467,7 @@ class Control_Enh_2 extends Control_Enh {
 				this.resize_br.add_class('bottom-right');
 				this.add(this.resize_br);
 			}
-			
+
 
 
 
@@ -476,46 +478,49 @@ class Control_Enh_2 extends Control_Enh {
 			});
 			*/
 
-			
-			
-			
+
+
+
 
 
 
 
 		}
-    }
-    
-    'begin_resize'() {
-        this._resizing = {
-            'orig_size': this.size
-        }
-    }
-    'mid_resize'(offset) {
-        if (this._resizing) {
-            //console.log('this._resizing.orig_size', this._resizing.orig_size);
-            //console.log('offset', offset);
-            var new_size = v_add(this._resizing.orig_size, offset);
-            //console.log('new_size', new_size);
-            this.size = (new_size);
-        }
-    }
-    'end_resize'(offset) {
-        
-    }
+	}
 
-	'draggable'() {
-		var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+	'begin_resize' () {
+		this._resizing = {
+			'orig_size': this.size
+		}
+	}
+	'mid_resize' (offset) {
+		if (this._resizing) {
+			//console.log('this._resizing.orig_size', this._resizing.orig_size);
+			//console.log('offset', offset);
+			var new_size = v_add(this._resizing.orig_size, offset);
+			//console.log('new_size', new_size);
+			this.size = (new_size);
+		}
+	}
+	'end_resize' (offset) {
+
+	}
+
+	'draggable' () {
+		var a = arguments;
+		a.l = arguments.length;
+		var sig = get_a_sig(a, 1);
 		var that = this;
 		//console.log('draggable sig', sig);
 		//console.trace();
-		var options = {}, mode, drag_start_distance = 4;
+		var options = {},
+			mode, drag_start_distance = 4;
 		// options could contain event handlers.
 		//  Not sure about the publish / subscribe model.
 		//   Maybe it would work well.
 		// But allowing event handlers as specified in the options would be good as well.
 		var fn_mousedown, fn_dragstart, fn_dragmove, fn_dragend;
-		var handle_mousedown, handle_dragstart, handle_dragmove , handle_dragend;
+		var handle_mousedown, handle_dragstart, handle_dragmove, handle_dragend;
 
 		if (sig == '[o]') {
 			options = a[0];
@@ -550,7 +555,7 @@ class Control_Enh_2 extends Control_Enh {
 		var pos_mousedown;
 
 		var ghost_clone;
-		var fn_mousemove = function(e_mousemove) {
+		var fn_mousemove = function (e_mousemove) {
 			//console.log('e_mousemove', e_mousemove);
 			var pos = [e_mousemove.pageX, e_mousemove.pageY];
 			var pos_offset = [pos[0] - pos_mousedown[0], pos[1] - pos_mousedown[1]];
@@ -591,7 +596,7 @@ class Control_Enh_2 extends Control_Enh {
 			}
 			// Want the offset from the mousedown position.
 		}
-		var fn_mouseup = function(e_mouseup) {
+		var fn_mouseup = function (e_mouseup) {
 			//console.log('e_mouseup', e_mouseup);
 			//console.log('pre switch off mousemove, mouseup');
 			// Seems the events are being added too many times.
@@ -601,7 +606,7 @@ class Control_Enh_2 extends Control_Enh {
 			body.remove_class('default-cursor');
 			//body.remove_class('dragging');
 		}
-		this.on('mousedown', function(e_mousedown) {
+		this.on('mousedown', function (e_mousedown) {
 			//console.log('e_mousedown', e_mousedown);
 			pos_mousedown = [e_mousedown.pageX, e_mousedown.pageY];
 			// position within Control
@@ -616,12 +621,12 @@ class Control_Enh_2 extends Control_Enh {
 		})
 	}
 
-	'drag_handle_to'(ctrl) {
+	'drag_handle_to' (ctrl) {
 		var mousedown_offset_from_ctrl_lt;
 		var ctrl_el = ctrl.dom.el;
 		// could go in enhanced....
 		//this.drag(function(e_mousedown) {
-		this.draggable(function(e_mousedown) {
+		this.draggable(function (e_mousedown) {
 			//console.log('e_mousedown', e_mousedown);
 			// This will need to be revised - making adjustment for when dragging from an anchored position.
 			//  Should maintain some info about the drag so it knows if it starts/ends anchored anywhere.
@@ -633,7 +638,7 @@ class Control_Enh_2 extends Control_Enh {
 			var e_pos_on_page = [e_mousedown.pageX, e_mousedown.pageY];
 			mousedown_offset_from_ctrl_lt = jsgui.v_subtract(e_pos_on_page, ctrl_el_pos);
 
-		}, function(e_begin) {
+		}, function (e_begin) {
 			var ctrlSize = ctrl.size();
 			//console.log('ctrlSize', ctrlSize);
 			var anchored_to = ctrl.anchored_to;
@@ -644,7 +649,7 @@ class Control_Enh_2 extends Control_Enh {
 				// need to unanchor it.
 				ctrl.unanchor();
 			}
-		}, function(e_move) {
+		}, function (e_move) {
 			var clientX = e_move.clientX;
 			var clientY = e_move.clientY;
 			var window_size = get_window_size();
@@ -681,7 +686,7 @@ class Control_Enh_2 extends Control_Enh {
 			//console.log('style_vals', style_vals);
 			ctrl.style(style_vals);
 			ctrl.context.move_drag_ctrl(e_move, ctrl);
-		}, function(e_end) {
+		}, function (e_end) {
 			// tell the context that the drag has ended.
 			var uo1 = ctrl.unanchored_offset;
 			//console.log('uo1', uo1);
@@ -698,7 +703,7 @@ class Control_Enh_2 extends Control_Enh {
 
 	// maybe remove this.
 	//  
-	'resize_handle_to'(ctrl, handle_position) {
+	'resize_handle_to' (ctrl, handle_position) {
 		// The control needs to be draggable normally?
 		//  And then from the positions of where it is adjust the size of what it's a resize handle to?
 		//console.log('resize_handle_to');
@@ -713,16 +718,16 @@ class Control_Enh_2 extends Control_Enh {
 			*/
 			var doc = ctrl.context.ctrl_document;
 			//console.log('ctrl.context', ctrl.context);
-			var fn_move = function(e_move) {
+			var fn_move = function (e_move) {
 				//console.log('e_move', e_move);
 			}
-			var fn_up = function(e_up) {
+			var fn_up = function (e_up) {
 				//console.log('e_up', e_up);
 
 				doc.off('mousemove', fn_move);
 				doc.off('mouseup', fn_up);
 			}
-			ctrl.on('mousedown', function(e_mousedown) {
+			ctrl.on('mousedown', function (e_mousedown) {
 				//console.log('e_mousedown', e_mousedown);
 				doc.on('mousemove', fn_move);
 				doc.on('mouseup', fn_up);
@@ -730,7 +735,11 @@ class Control_Enh_2 extends Control_Enh {
 		}
 	}
 
-	'selectable'(ctrl) {
+	'selectable' (ctrl) {
+
+		// Do this before activation?
+
+
 		var that = this;
 		ctrl = ctrl || this;
 
@@ -741,7 +750,10 @@ class Control_Enh_2 extends Control_Enh {
 
 		} else {
 
-			that.click(function(e) {
+			that.click(function (e) {
+
+				console.log('e', e);
+
 				var ctrl_key = e.ctrlKey;
 				var meta_key = e.metaKey;
 				if (ctrl_key || meta_key) {
@@ -753,19 +765,19 @@ class Control_Enh_2 extends Control_Enh {
 		}
 	}
 
-	'action_select_only'() {
+	'action_select_only' () {
 		var ss = this.find_selection_scope();
 		//console.log('ss', ss);
 		ss.select_only(this);
 		//this.find_selection_scope().select_only(this);
 	}
 
-	'action_select_toggle'() {
+	'action_select_toggle' () {
 		this.find_selection_scope().select_toggle(this);
 	}
 
 	// So I think the resource-pool will have a selection scope.
-	'find_selection_scope'() {
+	'find_selection_scope' () {
 		//console.log('find_selection_scope');
 		var res = this.selection_scope;
 		if (res) return res;
@@ -774,7 +786,7 @@ class Control_Enh_2 extends Control_Enh {
 
 	// Nice, this works. Not that efficiently yet.
 
-	'make_full_height'() {
+	'make_full_height' () {
 		var el = this.dom.el;
 		var viewportHeight = document.documentElement.clientHeight;
 		var rect = el.getBoundingClientRect();
@@ -782,7 +794,7 @@ class Control_Enh_2 extends Control_Enh {
 		var h = viewportHeight - rect.top;
 		this.style('height', h + 'px', true);
 	}
-	'unanchor'() {
+	'unanchor' () {
 		var anchored_to = this.get('anchored_to');
 		anchored_to[0].unanchor_ctrl(this);
 	}

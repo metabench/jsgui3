@@ -1,11 +1,16 @@
-
 var jsgui = require('../lang/lang');
 //var Resource = require('./resource');
 
-var stringify = jsgui.stringify, each = jsgui.each, arrayify = jsgui.arrayify, tof = jsgui.tof, get_a_sig = jsgui.get_a_sig;
+var stringify = jsgui.stringify,
+	each = jsgui.each,
+	arrayify = jsgui.arrayify,
+	tof = jsgui.tof,
+	get_a_sig = jsgui.get_a_sig;
 var filter_map_by_regex = jsgui.filter_map_by_regex;
-var Evented_Class = jsgui.Evented_Class, Data_Object = jsgui.Data_Object;
-var fp = jsgui.fp, is_defined = jsgui.is_defined;
+var Evented_Class = jsgui.Evented_Class,
+	Data_Object = jsgui.Data_Object;
+var fp = jsgui.fp,
+	is_defined = jsgui.is_defined;
 var Collection = jsgui.Collection;
 
 // Should work to get this closer to the desired get/set resource interface.
@@ -22,7 +27,7 @@ var Collection = jsgui.Collection;
 // Keeps track of resources available within JavaScript process (browser or node.js).
 class Resource_Pool extends Evented_Class {
 
-	'constructor'(spec) {
+	'constructor' (spec) {
 		super(spec);
 
 		// Sorting them by a Data_Object's.meta name?
@@ -89,7 +94,7 @@ class Resource_Pool extends Evented_Class {
 
 
 		//this.resources.index_by('name');
-		
+
 		//console.log('this.resources.index_system.index_map ', JSON.stringify(this.resources.index_system.index_map));
 		//console.log('this.resources._arr ', this.resources._arr);
 		//throw 'stop';
@@ -105,10 +110,10 @@ class Resource_Pool extends Evented_Class {
 	}
 	*/
 
-	'_get_resources_by_interface'(i_name) {
+	'_get_resources_by_interface' (i_name) {
 		var res = [];
 
-		this.resources.each(function(i, resource) {
+		this.resources.each(function (i, resource) {
 			console.log('resource ' + resource);
 
 			// Not so sure we should treat 'get' like that for the resource.
@@ -124,7 +129,7 @@ class Resource_Pool extends Evented_Class {
 				if (i == i_name) res.push(resource);
 			} else if (tof(i) == 'array') {
 				var done = true;
-				each(i, function(i2, v) {
+				each(i, function (i2, v) {
 					if (!done) {
 						if (i == i_name) res.push(resource);
 						done = true;
@@ -139,7 +144,7 @@ class Resource_Pool extends Evented_Class {
 
 	}
 
-	'index_resource'(obj) {
+	'index_resource' (obj) {
 		// will get some metadata from the resource.
 
 		// resource will be indexed by its location and its type.
@@ -161,9 +166,11 @@ class Resource_Pool extends Evented_Class {
 
 	}
 
-	'receive_resource_event'() {
+	'receive_resource_event' () {
 		//console.log('receive_resource_event sig ' + sig);
-		var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+		var a = arguments;
+		a.l = arguments.length;
+		var sig = get_a_sig(a, 1);
 
 		if (sig == '[D,s,[s,s]]') {
 			var data_object = a[0];
@@ -194,7 +201,7 @@ class Resource_Pool extends Evented_Class {
 
 	}
 
-	'add'(obj) {
+	'add' (obj) {
 		// adds the resource obj to the pool.
 
 		// Each resource will have its own individual name within the pool.
@@ -245,11 +252,13 @@ class Resource_Pool extends Evented_Class {
 
 
 	}
-	'push'(obj) {
+	'push' (obj) {
 		return this.add(obj);
 	}
-	'has_resource'() {
-		var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+	'has_resource' () {
+		var a = arguments;
+		a.l = arguments.length;
+		var sig = get_a_sig(a, 1);
 
 		//return is_defined(this._dict_resources[resource_name]);
 
@@ -276,7 +285,17 @@ class Resource_Pool extends Evented_Class {
 
 	// Need to be able to access the resources' data with a convenient interface, not having to write repeated HTTP plumbing.
 
-	'get_resource_names'() {
+
+
+	get resource_names() {
+		var res = [];
+		each(this.resources, (resource) => {
+			res.push(resource.name);
+		})
+		return res;
+	}
+
+	'get_resource_names' () {
 		var res = [];
 		each(this.resources, (resource) => {
 			res.push(resource.name);
@@ -285,8 +304,10 @@ class Resource_Pool extends Evented_Class {
 	}
 
 
-	'get_resource'() {
-		var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+	'get_resource' () {
+		var a = arguments;
+		a.l = arguments.length;
+		var sig = get_a_sig(a, 1);
 		//console.log('get_resource sig ' + sig);
 
 		//return is_defined(this._dict_resources[resource_name]);
@@ -302,12 +323,15 @@ class Resource_Pool extends Evented_Class {
 
 			var obj_lookup_val = a[0];
 
-            //console.log('this.resources.index_system.index_map ', JSON.stringify(this.resources.index_system.index_map));
-            //console.log('this.resources._arr ', this.resources._arr);
+			//console.log('this.resources.index_system.index_map ', JSON.stringify(this.resources.index_system.index_map));
+			//console.log('this.resources._arr ', this.resources._arr);
 
 
 
 			//var find_result = this.resources.find('name', obj_lookup_val);
+
+			// May need to do more work on the index finding.
+
 			var find_result = this.resources.find(obj_lookup_val);
 
 
@@ -339,14 +363,14 @@ class Resource_Pool extends Evented_Class {
 	//  Means no need for the boilerplate code when it is linked.
 	//'resources'
 
-	'count'() {
+	'count' () {
 		return this.resources.length;
 	}
 
 
 	// May be useful to have a callback parameter here rather than just publish / subscribe.
 
-	'start'(callback) {
+	'start' (callback) {
 
 		//console.log('resource pool start');
 
@@ -359,8 +383,8 @@ class Resource_Pool extends Evented_Class {
 		//console.log('this.resources.length() ' + this.resources.length());
 		//console.log('this.resources', this.resources);
 
-		this.resources.each(function(v, i) {
-			
+		this.resources.each(function (v, i) {
+
 
 			//console.log('i ' + i);
 			//console.log('v ' + stringify(v));
@@ -406,8 +430,9 @@ class Resource_Pool extends Evented_Class {
 			//console.log('num_to_start ' + num_to_start);
 			//throw 'stop';
 
-			var num_starting = 0, num_started = 0;
-			var cb = function(err, start_res) {
+			var num_starting = 0,
+				num_started = 0;
+			var cb = function (err, start_res) {
 				num_starting--;
 				num_started++;
 				//console.log('cb');
@@ -418,7 +443,7 @@ class Resource_Pool extends Evented_Class {
 				}
 			}
 
-			each(arr_resources_meeting_requirements, function(resource_ready_to_start) {
+			each(arr_resources_meeting_requirements, function (resource_ready_to_start) {
 				//console.log('');
 				//console.log('');
 				//console.log('resource_ready_to_start ', resource_ready_to_start);
