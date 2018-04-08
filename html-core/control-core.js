@@ -375,6 +375,8 @@ class Control_Core extends Data_Object {
 
 		this.dom = new Control_DOM();
 
+		var cf = this._ctrl_fields = this._ctrl_fields || {};
+
 		// Could have object for internal properties, such as 'resizable'
 
 
@@ -695,8 +697,6 @@ class Control_Core extends Data_Object {
 						obj_ctrl_fields[key] = this._ctrl_fields[key]._id();
 					}
 
-
-
 				}
 
 				//each(this._ctrl_fields, function(ctrl_field, name) {
@@ -705,7 +705,14 @@ class Control_Core extends Data_Object {
 
 				//this.set('dom.attributes.data-jsgui-ctrl-fields', stringify(obj_ctrl_fields).replace(/"/g, "'"));
 				// lower level set here?
-				dom_attrs.set('data-jsgui-ctrl-fields', stringify(obj_ctrl_fields).replace(/"/g, "'"))
+				//dom_attrs['data-jsgui-ctrl-fields'] = stringify(obj_ctrl_fields).replace(/"/g, "'");
+
+				let scf = stringify(obj_ctrl_fields).replace(/"/g, "'");
+				//console.log('scf', scf);
+
+				if (scf.length > 2) {
+					dom_attrs['data-jsgui-ctrl-fields'] = scf;
+				}
 
 
 			}
