@@ -12,12 +12,37 @@ jsgui.Selection_Scope = require('./selection-scope');
 
 if (typeof window !== 'undefined') {
 
+    const textToArrayBuffer = (textBuffer, startOffset = 0) => {
+        var len = textBuffer.length - startOffset;
+        var arrayBuffer = new ArrayBuffer(len);
+        var ui8a = new Uint8Array(arrayBuffer, 0);
+        for (var i = 0, j = startOffset; i < len; i++, j++)
+            ui8a[i] = (textBuffer.charCodeAt(j) & 0xff);
+
+        let buf = new Buffer(arrayBuffer);
+        return buf;
+    }
+
     // make some client-side jsgui functionality.
     jsgui.http = (url, callback) => {
         var oReq = new XMLHttpRequest();
         //console.log('jsgui.http url', url);
         oReq.onload = function (res) {
-            console.log('oReq.responseText ' + oReq.responseText);
+            //console.log('oReq.responseText ' + oReq.responseText);
+
+            // But is it text?
+
+            let buf = textToArrayBuffer(oReq.responseText);
+
+            // Will need to work on client-side buffer processing.
+            //  Will need to turn this buffer / ArrayBuffer into a Model.
+            //  But not here.
+
+            //console.log('buf', buf);
+
+            console.log('pre cb client http');
+            callback(null, buf);
+
 
             //var objResponse = JSON.parse(oReq.responseText);
 

@@ -29,8 +29,10 @@ class Data_Resource extends Client_Resource {
             if (err) {
                 callback(err);
             } else {
+                callback(null, res_http);
 
-                console.log('res_http', res_http);
+
+                //console.log('res_http', res_http);
             }
         })
 

@@ -78,21 +78,21 @@ class Data_Resource extends Resource {
         var url_parts = url.parse(req.url, true);
         //console.log('url_parts ' + stringify(url_parts));
         var splitPath = url_parts.path.substr(1).split('/');
-        console.log('resource site css splitPath ' + stringify(splitPath));
+        //console.log('resource site data splitPath ' + stringify(splitPath));
 
 
         if (rurl.substr(0, 1) == '/') rurl = rurl.substr(1);
         rurl = rurl.replace(/\./g, '☺');
-        console.log('rurl ' + rurl);
+        //console.log('rurl ' + rurl);
 
         if (splitPath.length === 2) {
             if (splitPath[0] === 'data') {
                 let key = splitPath[1];
                 let value = this.data[key];
-                console.log('value', value);
+                //console.log('value', value);
 
                 let t_val = tof(value);
-                console.log('t_val', t_val);
+                //console.log('t_val', t_val);
 
                 if (t_val === 'buffer') {
                     // Encode it as hex / baase64?
