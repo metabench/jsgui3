@@ -1,10 +1,15 @@
-
 var jsgui = require('../html/html');
 
-var stringify = jsgui.stringify, each = jsgui.each, arrayify = jsgui.arrayify, tof = jsgui.tof;
+var stringify = jsgui.stringify,
+    each = jsgui.each,
+    arrayify = jsgui.arrayify,
+    tof = jsgui.tof;
 var filter_map_by_regex = jsgui.filter_map_by_regex;
-var Class = jsgui.Class, Data_Object = jsgui.Data_Object, Enhanced_Data_Object = jsgui.Enhanced_Data_Object;
-var fp = jsgui.fp, is_defined = jsgui.is_defined;
+var Class = jsgui.Class,
+    Data_Object = jsgui.Data_Object,
+    Enhanced_Data_Object = jsgui.Enhanced_Data_Object;
+var fp = jsgui.fp,
+    is_defined = jsgui.is_defined;
 var Collection = jsgui.Collection;
 
 var Client_Resource_Pool = require('./client-resource-pool');
@@ -13,12 +18,21 @@ var Selection_Scope = require('./selection-scope');
 
 
 class Client_Page_Context extends jsgui.Page_Context {
-    'constructor'(spec) {
+    'constructor' (spec) {
         spec = spec || {};
         super(spec);
         //this.set('document', spec.document);
         this.document = spec.document || document;
         this.resource_pool = new Client_Resource_Pool({});
+
+        // get the data_resource out of the resource_pool
+
+        // Looks like I need to fix Collection, its indexing, and use within Resource.
+        //console.log('this.resource_pool.resource_names', this.resource_pool.resource_names);
+        //console.log('this.resource_pool', this.resource_pool);
+
+        // Should be fixed alongside resource_pool collection indexing.
+        this.data_resource = this.resource_pool.resources._arr[0];
 
         this.map_els = {};
 
@@ -29,7 +43,7 @@ class Client_Page_Context extends jsgui.Page_Context {
         this.selection_scope_id_counter = 0;
 
     }
-    'new_selection_scope'() {
+    'new_selection_scope' () {
         // create the selection scope, with an assigned id
 
         var res = new Selection_Scope({
@@ -40,7 +54,7 @@ class Client_Page_Context extends jsgui.Page_Context {
         return res;
 
     }
-    'get_selection_scope_by_id'(id) {
+    'get_selection_scope_by_id' (id) {
         if (!this.selection_scopes[id]) {
             this.selection_scopes[id] = new Selection_Scope({
                 'context': this,
@@ -49,7 +63,7 @@ class Client_Page_Context extends jsgui.Page_Context {
         }
         return this.selection_scopes[id];
     }
-    'body'() {
+    'body' () {
         var doc = this.document;
         //console.log('doc', doc);
 
@@ -72,7 +86,7 @@ class Client_Page_Context extends jsgui.Page_Context {
             if (!existing_jsgui_id) {
                 // Those don't use the enhancements...
 
-                
+
 
                 var ctrl_body = new jsgui.body({
                     'el': document.body,
@@ -90,9 +104,9 @@ class Client_Page_Context extends jsgui.Page_Context {
             }
 
 
-            
+
             //console.log('ctrl_body._id()', ctrl_body._id());
-            
+
 
         } else {
 
@@ -104,7 +118,7 @@ class Client_Page_Context extends jsgui.Page_Context {
 
         // and if we don't have a body control, we need to make one.
 
-        
+
         /*
         if (!bod) {
             // Need to create a new body control.
@@ -126,7 +140,7 @@ class Client_Page_Context extends jsgui.Page_Context {
         */
 
         //console.log('bod_id', bod_id);
-        
+
     }
 }
 // Also want a File_Server.

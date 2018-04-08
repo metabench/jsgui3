@@ -1,4 +1,3 @@
-
 /*
  define(['../../web/jsgui-html', './client-resource', './pool'],
 
@@ -14,13 +13,18 @@ var Resource_Pool = require('../resource/pool');
 //  I think that makes sense, so that we have something specific which has the URL attached.
 //   It is able to make HTTP requests to the server resource.
 
+const Data_Resource = require('./data-resource');
 
 
-
-var stringify = jsgui.stringify, each = jsgui.each, arrayify = jsgui.arrayify, tof = jsgui.tof;
+var stringify = jsgui.stringify,
+	each = jsgui.each,
+	arrayify = jsgui.arrayify,
+	tof = jsgui.tof;
 var filter_map_by_regex = jsgui.filter_map_by_regex;
-var Class = jsgui.Class, Data_Object = jsgui.Data_Object;
-var fp = jsgui.fp, is_defined = jsgui.is_defined;
+var Class = jsgui.Class,
+	Data_Object = jsgui.Data_Object;
+var fp = jsgui.fp,
+	is_defined = jsgui.is_defined;
 var Collection = jsgui.Collection;
 
 //var exec = require('child_process').exec;
@@ -44,12 +48,35 @@ var fields = {
 };
 class Client_Resource_Pool extends Resource_Pool {
 	//'fields': ,
-	'constructor'(spec) {
+	'constructor' (spec) {
 		//this._super(spec);
 		super(spec);
 
+
+		// No need to start it in particular?
+		//  Sometimes the data resource will operate over websockets
+
+		//  Sometimes SSE would be better.
+
+		let data_resource = new Data_Resource();
+		console.log('pre add data_resource', data_resource);
+		this.add(data_resource);
+
+
 	}
-	'start'(callback) {
+	'start' (callback) {
+
+
+		// A simple and automatic data resource would be useful.
+		//  Hooks up with provision of server-side data.
+		//   Do more work on defining the server-side data provider.
+
+
+
+
+
+
+
 
 		// download the resource information from the server...
 		//  http request.

@@ -17,10 +17,16 @@
 var jsgui = require('../lang/lang');
 var Resource = require('../resource/resource');
 
-var stringify = jsgui.stringify, each = jsgui.each, arrayify = jsgui.arrayify, tof = jsgui.tof;
+var stringify = jsgui.stringify,
+	each = jsgui.each,
+	arrayify = jsgui.arrayify,
+	tof = jsgui.tof;
 var filter_map_by_regex = jsgui.filter_map_by_regex;
-var Class = jsgui.Class, Data_Object = jsgui.Data_Object, Enhanced_Data_Object = jsgui.Enhanced_Data_Object;
-var fp = jsgui.fp, is_defined = jsgui.is_defined;
+var Class = jsgui.Class,
+	Data_Object = jsgui.Data_Object,
+	Enhanced_Data_Object = jsgui.Enhanced_Data_Object;
+var fp = jsgui.fp,
+	is_defined = jsgui.is_defined;
 var Collection = jsgui.Collection;
 
 // Extends AutoStart_Resource?
@@ -72,7 +78,7 @@ var Collection = jsgui.Collection;
 //  however, it may be that the user control will just be making use of the client-side resources or client-side resource pool.
 
 
-var ends_with = function(str, suffix) {
+var ends_with = function (str, suffix) {
 	return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }
 
@@ -81,9 +87,12 @@ class Client_Resource extends Resource {
 	//	'url': String
 	//},
 
-	'constructor'(spec) {
+	'constructor' (spec) {
 		//this._super(spec);
+		spec = spec || {};
 		super(spec);
+
+
 
 
 		if (spec.meta) {
@@ -95,6 +104,17 @@ class Client_Resource extends Resource {
 
 			//console.log('meta.name ' + meta.name);
 		}
+
+
+		// The data resource won't hold the data itself.
+		//  (usually)
+		//  It will download the data unless it's cached.
+
+		// Will connect to the more customised server data resource.
+		//  This is the interface between the client's data and the server.
+
+
+
 
 		this.data = new Data_Object();
 
@@ -108,7 +128,7 @@ class Client_Resource extends Resource {
 		//  Should not be a problem when doing it on the client?
 
 
-		this.data.on('change', function(property_name, property_value) {
+		this.data.on('change', function (property_name, property_value) {
 			//console.log('');
 			//console.log('resource data change property_name', property_name);
 			//console.log('property_value', property_value);
@@ -131,15 +151,18 @@ class Client_Resource extends Resource {
 		//   Maybe default base URL, it's set up to communicate with the server that served the HTML document.
 
 		// could have a variety of server URLs, but let's deal with one for the moment.
+		//  Won't only get JSON data either.
 
 
 	}
-	'get'() {
-		var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+	'get' () {
+		var a = arguments;
+		a.l = arguments.length;
+		var sig = get_a_sig(a, 1);
 		var url, callback;
 		var url_path;
 		if (a.l === 1) {
-			url = this.meta.get('url').value();
+			url = this.url;
 			callback = a[0];
 		}
 		if (a.l === 2) {
@@ -148,7 +171,7 @@ class Client_Resource extends Resource {
 
 			//console.log('url_path', url_path);
 
-			url = this.meta.get('url').value() + url_path;
+			url = this.url + url_path;
 		}
 
 		// should be able to supply the url
@@ -170,7 +193,7 @@ class Client_Resource extends Resource {
 		}
 
 		//console.log('json_url', json_url);
-		jsgui.http(json_url, function(err, res) {
+		jsgui.http(json_url, function (err, res) {
 			if (err) {
 				callback(err);
 			} else {
@@ -188,7 +211,7 @@ class Client_Resource extends Resource {
 	//  Seems less likely that we will need this function here.
 	//  06/06/2015 - about to make the socks resource connection for the client, it's going to allow for real-time updates, while using generally RESTful addressing.
 
-	'notify_change_from_server'(property_name, property_value) {
+	'notify_change_from_server' (property_name, property_value) {
 		// needs to do some kind of silent set.
 		//console.log('client resource notify_change_from_server');
 		var data = this.data;

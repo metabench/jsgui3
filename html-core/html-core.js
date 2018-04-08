@@ -451,9 +451,6 @@ class textNode extends Control {
     //  A variety of properties will use getters and setters so that the updates get noted.
 
 
-
-
-
 };
 
 class HTML_Document extends jsgui.Control {

@@ -234,7 +234,10 @@ class Routing_Tree {
                             // Could handle a variable handler here?
                         }
                     } else {
-                        return [currentNode.handler, params];
+                        if (currentNode) {
+                            return [currentNode.handler, params];
+                        }
+
                     }
                 }
                 currentNode = next_level_node;

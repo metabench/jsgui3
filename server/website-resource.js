@@ -36,6 +36,25 @@
 // Do this not with AMD?
 
 
+
+// May need Website_Data_Resource
+//  Would be configured within the node app, client has maximum autoconfig from connecting to the server, and integration with client-side controls.
+//  With the DB admin, it's about returining queries (maybe from RAM) about table data.
+//  /data/then the api?
+
+// Respond to both data HTTP requests and websocket connections.
+
+
+
+// HTTP data request -> response seems like the most important step now.
+
+
+
+
+
+
+
+
 var Site_Images = require('./website-image-resource');
 
 
@@ -60,6 +79,8 @@ var Site_Static_HTML = require('./website-static-html-resource');
 //var DB_Web_Resource = require('../../web/db-resource-postgres');
 //var database_resource_factory = require('../../db/resource/factory');
 
+
+const Data_Resource = require('./data-resource');
 
 var is_defined = jsgui.is_defined,
     fp = jsgui.fp,
@@ -296,6 +317,11 @@ class Website_Resource extends Resource {
             //}
         })
 
+        var data_resource = new Data_Resource({
+            //'meta': {
+            'name': 'Site Data'
+            //}
+        })
         //resource_pool.push(admin_web_resource);
 
         // javascript and css resources.
@@ -304,6 +330,7 @@ class Website_Resource extends Resource {
         resource_pool.push(js_resource);
 
         resource_pool.push(css_resource);
+        resource_pool.push(data_resource);
 
 
         // anything ending in .css as well.
@@ -321,6 +348,7 @@ class Website_Resource extends Resource {
 
         router.set_route('img/*', img_resource, img_resource.process);
         router.set_route('images/*', img_resource, img_resource.process);
+        router.set_route('data/*', data_resource, data_resource.process);
 
 
         // The website (admin) resource will make use of the images resource where necessary.

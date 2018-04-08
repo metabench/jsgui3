@@ -25,6 +25,19 @@ var Collection = jsgui.Collection;
 
 
 // Keeps track of resources available within JavaScript process (browser or node.js).
+
+
+
+// Client-side resources may need to work differently.
+
+// Want a general purpose client-side data resource.
+// Makes a request to the server-side resource.
+//  Or just a client-side resource client (which itself is a resource)
+
+
+
+
+
 class Resource_Pool extends Evented_Class {
 
 	'constructor' (spec) {
