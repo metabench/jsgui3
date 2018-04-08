@@ -7,12 +7,12 @@
  */
 
 var jsgui = require('../html-core/html-core');
-var each = jsgui.eac;
+var each = jsgui.each;
 var tof = jsgui.tof;
 
 class Selection_Scope extends jsgui.Data_Object {
-//var Selection_Scope = jsgui.Class.extend({
-	'constructor'(spec) {
+	//var Selection_Scope = jsgui.Class.extend({
+	'constructor' (spec) {
 		super(spec);
 		// A selection scope belongs to a context
 		//  should do
@@ -35,7 +35,7 @@ class Selection_Scope extends jsgui.Data_Object {
 		// set the items by their id to point to the control.
 		//  the control will know its index within its parent, can look up more info there.
 	}
-	'select_only'(ctrl) {
+	'select_only' (ctrl) {
 		//console.log('Selection_Scope select_only ' + ctrl._id());
 
 		// remove the selected class from all that are currently selected (except the target ctrl).
@@ -49,15 +49,17 @@ class Selection_Scope extends jsgui.Data_Object {
 		var count_deselected = 0;
 
 		var selected;
-		each(this.map_selected_controls, function(v, i) {
+		each(this.map_selected_controls, function (v, i) {
 
 			if (v && v !== ctrl) {
-				selected = v.get('selected').value();
+				//selected = v.get('selected').value();
+				selected = v.selected;
 				//console.log('selected', selected);
 				//console.log('tof selected', tof(selected));
 
 				if (selected) {
-					v.set('selected', false);
+					//v.set('selected', false);
+					v.selected = false;
 					v.remove_class('selected');
 					v.trigger('deselect');
 					count_deselected++;
@@ -65,7 +67,7 @@ class Selection_Scope extends jsgui.Data_Object {
 				//console.log('should have deselcted ' + v._id())
 			}
 			if (v === ctrl) {
-				currently_selected = v.get('selected').value();
+				currently_selected = v.selected;
 			}
 		});
 
@@ -78,13 +80,13 @@ class Selection_Scope extends jsgui.Data_Object {
 		// could possibly set a CSS flag.
 
 		if (!currently_selected) {
-			ctrl.set('selected', true);
+			ctrl.selected = true;
 			ctrl.trigger('select');
 
 			ctrl.add_class('selected');
 		}
 
-		if (count_deselected > 0 &! currently_selected) {
+		if (count_deselected > 0 & !currently_selected) {
 			this.trigger('change');
 		}
 
@@ -95,11 +97,11 @@ class Selection_Scope extends jsgui.Data_Object {
 	// When selecting a control, we want to make it so that controls inside it, in the same selection context are not selected.
 	//  The Selection Scope does a fair bit of the management of the selections.
 
-	'deselect_ctrl_content'(ctrl) {
+	'deselect_ctrl_content' (ctrl) {
 		var cs = ctrl.get('selection_scope');
 		var msc = this.map_selected_controls;
 		var that = this;
-		ctrl.get('content').each(function(i, v) {
+		ctrl.get('content').each(function (i, v) {
 			var tv = tof(v);
 			//console.log('tv ' + tv);
 
@@ -121,7 +123,7 @@ class Selection_Scope extends jsgui.Data_Object {
 		//throw 'stop';
 	}
 
-	'select_toggle'(ctrl) {
+	'select_toggle' (ctrl) {
 		//console.log('');
 		//console.log('select_toggle');
 		var sel = ctrl.get('selected').value();

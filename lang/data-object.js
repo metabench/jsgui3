@@ -74,9 +74,9 @@ var Ordered_String_List = require('./ordered-string-list');
 class Mini_Context {
     // Need quite a simple mechanism to get IDs for objects.
     // They will be typed objects/
-    'constructor'(spec) {
+    'constructor' (spec) {
         var map_typed_counts = {};
-        var typed_id = function(str_type) {
+        var typed_id = function (str_type) {
             throw 'stop Mini_Context typed id';
             var res;
             if (!map_typed_counts[str_type]) {
@@ -91,7 +91,7 @@ class Mini_Context {
         this.new_id = typed_id;
         //new_id
     }
-    'make'(abstract_object) {
+    'make' (abstract_object) {
         if (abstract_object._abstract) {
             //var res = new
             // we need the constructor function.
@@ -111,13 +111,14 @@ class Mini_Context {
     }
 }
 
-var is_js_native = function(obj) {
+var is_js_native = function (obj) {
     var t = tof(obj);
     return t == 'number' || t == 'string' || t == 'boolean' || t == 'array';
 };
 
 class Data_Object extends Evented_Class {
-    'constructor'(spec, fields) {
+    'constructor' (spec, fields) {
+        //console.log('1* spec', spec);
         super(spec);
 
 
@@ -126,6 +127,8 @@ class Data_Object extends Evented_Class {
         this.__data_object = true;
         if (!spec) spec = {};
         // if it's abstract call the abstract_init.
+
+        //console.log('1** spec', spec);
 
         if (spec.abstract === true) {
             this._abstract = true;
@@ -168,16 +171,26 @@ class Data_Object extends Evented_Class {
             //    this._ = {};
             //}
 
-            if (t_spec == 'object') {
+            //console.log('t_spec', t_spec);
+
+            // Maybe could check for actual controls better.
+            if (t_spec === 'object' || t_spec === 'control') {
                 // Normal initialization
 
                 if (spec.context) {
                     //console.log('spec has context');
                     this.context = spec.context;
                 }
+                if (spec.id) {
+                    this.__id = spec.id;
+                }
                 if (spec._id) {
                     this.__id = spec._id;
                 }
+                if (spec.__id) {
+                    this.__id = spec.__id;
+                }
+                //console.log('this.__id', this.__id);
                 // want to see if we are using any of the spec items as fields.
             }
             if (t_spec == 'data_object') {
@@ -277,7 +290,7 @@ class Data_Object extends Evented_Class {
         //console.log('end Data_Object init');
     }
 
-    'set_fields_from_spec'(fields, spec) {
+    'set_fields_from_spec' (fields, spec) {
         let that = this;
         each(fields, field => {
             if (typeof spec[field[0]] !== 'undefined') {
@@ -286,11 +299,11 @@ class Data_Object extends Evented_Class {
                 that[field[0]] = field[2];
             }
 
-            
+
         })
     }
 
-    'init_default_events'() {
+    'init_default_events' () {
 
 
     }
@@ -305,17 +318,17 @@ class Data_Object extends Evented_Class {
      }),
      */
 
-    'keys'() {
+    'keys' () {
         return Object.keys(this._);
     }
 
-    'toJSON'() {
+    'toJSON' () {
         var res = [];
         res.push('Data_Object(' + JSON.stringify(this._) + ')');
         return res.join('');
     }
 
-    'toObject'() {
+    'toObject' () {
         // need to go through each of them...
         var res = {};
 
@@ -396,69 +409,84 @@ class Data_Object extends Evented_Class {
     }
     */
 
+
     //'parent': fp(function(a, sig) {
-    'parent'() {
-        var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
-        var obj, index;
-        //console.log('parent sig', sig);
-        // And _parent should be set automatically when the controls are put in place.
-
-        if (a.l === 0) {
-            //console.log('this._parent', this._parent);
-            return this._parent;
-        }
-        if (a.l == 1) {
-            obj = a[0];
-
-            if (!this.context && obj.context) {
-                this.context = obj.context;
-            }
-
-            var relate_by_id = function (that) {
-                var obj_id = obj._id();
-                that._relationships[obj_id] = true;
-            };
-
-            var relate_by_ref = function(that) {
-                that._parent = obj;
-            };
-            relate_by_ref(this);
-        }
-        if (a.l == 2) {
-            obj = a[0];
-            index = a[1];
-
-            if (!this.context && obj.context) {
-                this.context = obj.context;
-            }
-
-            this._parent = obj;
-            this._index = index;
-        }
-
-        if (is_defined(index)) {
-            // I think we just set the __index property.
-            //  I think a __parent property and a __index property would do the job here.
-            //  Suits DOM heirachy.
-            // A __relationships property could make sense for wider things, however, it would be easy (for the moment?)
-            // to just have .__parent and .__index
-            //
 
 
-            // Not sure all Data_Objects will need contexts.
-            //  It's mainly useful for Controls so far
-
-
-        } else {
-            // get the object's id...
-
-            // setting the parent... the parent may have a context.
-
-
-        }
+    get parent() {
+        return this._parent;
+    }
+    set parent(value) {
+        return this._parent = value;
     }
 
-    '_id'() {
+    /*
+        'parent' () {
+            var a = arguments;
+            a.l = arguments.length;
+            var sig = get_a_sig(a, 1);
+            var obj, index;
+            //console.log('parent sig', sig);
+    
+            // And _parent should be set automatically when the controls are put in place.
+    
+            if (a.l === 0) {
+                //console.log('this._parent', this._parent);
+                return this._parent;
+            }
+            if (a.l == 1) {
+                obj = a[0];
+    
+                if (!this.context && obj.context) {
+                    this.context = obj.context;
+                }
+    
+                var relate_by_id = function (that) {
+                    var obj_id = obj._id();
+                    that._relationships[obj_id] = true;
+                };
+    
+                var relate_by_ref = function (that) {
+                    that._parent = obj;
+                };
+                relate_by_ref(this);
+            }
+            if (a.l == 2) {
+                obj = a[0];
+                index = a[1];
+    
+                if (!this.context && obj.context) {
+                    this.context = obj.context;
+                }
+    
+                this._parent = obj;
+                this._index = index;
+            }
+    
+            if (is_defined(index)) {
+                // I think we just set the __index property.
+                //  I think a __parent property and a __index property would do the job here.
+                //  Suits DOM heirachy.
+                // A __relationships property could make sense for wider things, however, it would be easy (for the moment?)
+                // to just have .__parent and .__index
+                //
+    
+    
+                // Not sure all Data_Objects will need contexts.
+                //  It's mainly useful for Controls so far
+    
+    
+            } else {
+                // get the object's id...
+    
+                // setting the parent... the parent may have a context.
+    
+    
+            }
+        }
+        */
+
+    '_id' () {
         // gets the id.
         //console.log('Data_Object _id this.context ' + this.context);
 
@@ -835,7 +863,7 @@ class Data_Object extends Evented_Class {
     // The ._ object makes a lot of sense, for handling each.
 
 
-    'each'(callback) {
+    'each' (callback) {
         // could use for i in...
 
 
@@ -865,7 +893,7 @@ class Data_Object extends Evented_Class {
 
 
     // could make this polymorphic so that it
-    'position_within'(parent) {
+    'position_within' (parent) {
         var p_id = parent._id();
         //console.log('p_id ' + p_id);
         //console.log('this._parents ' + stringify(this._parents));
@@ -889,7 +917,7 @@ class Data_Object extends Evented_Class {
     // Maybe just 'remove' function.
     //  This may be needed with multiple parents, which are not being used at the moment.
 
-    'remove_from'(parent) {
+    'remove_from' (parent) {
         var p_id = parent._id();
 
         if (this._parents && is_defined(this._parents[p_id])) {
@@ -917,7 +945,7 @@ class Data_Object extends Evented_Class {
     //  
     // Maybe only do this with the fields anyway
 
-    'load_from_spec'(spec, arr_item_names) {
+    'load_from_spec' (spec, arr_item_names) {
         var that = this;
         each(arr_item_names, function (v, i) {
             var spec_item = spec[v];
@@ -958,8 +986,10 @@ class Data_Object extends Evented_Class {
     // 19/12/2016 - Not using get or set nearly as much anyway.
 
 
-    'get'() {
-        var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+    'get' () {
+        var a = arguments;
+        a.l = arguments.length;
+        var sig = get_a_sig(a, 1);
         var do_typed_processing = false;
 
         // Not sure about this 'typed processing'.
@@ -1360,7 +1390,7 @@ class Data_Object extends Evented_Class {
                 }
                 */
                 //else {
-                    // Without a field... t
+                // Without a field... t
 
 
                 //}
@@ -1387,7 +1417,7 @@ class Data_Object extends Evented_Class {
     }
 
     //'set': fp(function(a, sig) {
-    'set'() {
+    'set' () {
 
         // Using ll_set or something recursive would be good.
         //  Again, set function is much less important now that ES6 setters have arrived.
@@ -1398,11 +1428,14 @@ class Data_Object extends Evented_Class {
         // Make (more) monomorphic
         //  Can greatly simplify this too.
 
-        var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+        var a = arguments;
+        a.l = arguments.length;
+        var sig = get_a_sig(a, 1);
 
         if (this._abstract) return false;
 
-        var that = this, res;
+        var that = this,
+            res;
 
         var input_processors = jsgui.input_processors;
         //if (this._module_jsgui) {
@@ -1414,7 +1447,8 @@ class Data_Object extends Evented_Class {
         if (a.l == 2 || a.l == 3) {
 
 
-            var property_name = a[0], value = a[1];
+            var property_name = a[0],
+                value = a[1];
 
             var ta2 = tof(a[2]);
             //console.log('ta2', ta2);
@@ -1461,7 +1495,7 @@ class Data_Object extends Evented_Class {
                         }
                     } else {
 
-                        throw('No data object at this level.');
+                        throw ('No data object at this level.');
                     }
 
                 } else {
@@ -1500,7 +1534,9 @@ class Data_Object extends Evented_Class {
                         // And for an array?
 
                         if (tv === 'string' || tv === 'number' || tv === 'boolean' || tv === 'date') {
-                            dv = new Data_Value({'value': value});
+                            dv = new Data_Value({
+                                'value': value
+                            });
                         } else {
 
                             // And could make an array into a collection.
@@ -1509,7 +1545,9 @@ class Data_Object extends Evented_Class {
                             //   but a Collection makes the most sense logically.
 
                             if (tv === 'array') {
-                                dv = new Data_Value({'value': value});
+                                dv = new Data_Value({
+                                    'value': value
+                                });
                             } else {
 
                                 if (tv === 'object') {
@@ -1517,7 +1555,9 @@ class Data_Object extends Evented_Class {
                                     if (value.__data_object || value.__data_value || value.__data_grid) {
                                         dv = value;
                                     } else {
-                                        dv = new Data_Value({'value': value});
+                                        dv = new Data_Value({
+                                            'value': value
+                                        });
                                     }
 
 
@@ -1660,7 +1700,7 @@ class Data_Object extends Evented_Class {
         }
     }
 
-    'has'(property_name) {
+    'has' (property_name) {
         return is_defined(this.get(property_name));
     }
 }
@@ -1837,7 +1877,9 @@ var dobj = (obj, data_def) => {
 
     var res;
     if (data_def) {
-        res = new cstr({'data_def': data_def});
+        res = new cstr({
+            'data_def': data_def
+        });
     } else {
         res = new cstr({});
     }
@@ -1847,7 +1889,7 @@ var dobj = (obj, data_def) => {
     //console.log('obj ' + stringify(obj));
     if (tobj == 'object') {
         var res_set = res.set;
-        each(obj, function(v, i) {
+        each(obj, function (v, i) {
             //res.set(i, v);
             res_set.call(res, i, v);
         });

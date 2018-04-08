@@ -752,7 +752,7 @@ class Control_Enh_2 extends Control_Enh {
 
 			that.click(function (e) {
 
-				console.log('e', e);
+				//console.log('e', e);
 
 				var ctrl_key = e.ctrlKey;
 				var meta_key = e.metaKey;
@@ -781,7 +781,13 @@ class Control_Enh_2 extends Control_Enh {
 		//console.log('find_selection_scope');
 		var res = this.selection_scope;
 		if (res) return res;
-		if (this.parent) return this.parent.find_selection_scope();
+
+		//console.log('this.parent', this.parent);
+
+		//console.log('!!this.parent', !!this.parent);
+		//console.log('this.parent.find_selection_scope', this.parent.find_selection_scope);
+
+		if (this.parent && this.parent.find_selection_scope) return this.parent.find_selection_scope();
 	}
 
 	// Nice, this works. Not that efficiently yet.
@@ -790,7 +796,7 @@ class Control_Enh_2 extends Control_Enh {
 		var el = this.dom.el;
 		var viewportHeight = document.documentElement.clientHeight;
 		var rect = el.getBoundingClientRect();
-		console.log(rect.top, rect.right, rect.bottom, rect.left);
+		//console.log(rect.top, rect.right, rect.bottom, rect.left);
 		var h = viewportHeight - rect.top;
 		this.style('height', h + 'px', true);
 	}

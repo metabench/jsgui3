@@ -99,6 +99,7 @@ var recursive_dom_iterate_depth = function (el, callback) {
 var activate = function (context) {
     // The context should already have the map of controls.
 
+    console.log('jsgui activate');
     // Not so sure we can have the client page context here - does it use resources?
 
     //ensure_Context_Menu_loaded(function(_Context_Menu) {
@@ -108,6 +109,8 @@ var activate = function (context) {
     }
     //context = context || new Page_Context();
     //console.log('jsgui-html-enh activate context', context);
+
+    var map_controls = context.map_controls;
 
     var map_jsgui_els = {};
     var map_jsgui_types = {};
@@ -172,8 +175,16 @@ var activate = function (context) {
         }
     });
     context.set_max_ids(max_typed_ids);
-    var map_controls = context.map_controls;
+
+    //console.log('map_controls', map_controls);
+    //throw 'stop';
+
+    // Whenever they get added, they should be added to the context. This appears missing.
+
+
     // Control construction and registration
+
+    //console.log('map_jsgui_types', map_jsgui_types);
     each(map_jsgui_els, function (el, jsgui_id) {
         //console.log('jsgui_id ' + jsgui_id);
         //console.log('3) el.tagName ' + el.tagName);
@@ -213,10 +224,11 @@ var activate = function (context) {
                     //console.log('creating constructor of type', type, 'jsgui_id', jsgui_id);
 
                     // Would re-apply the constructors?
+                    //console.log('Cstr', Cstr);
 
                     var ctrl = new Cstr({
                         'context': context,
-                        '_id': jsgui_id,
+                        'id': jsgui_id,
                         'el': el
                     });
 
@@ -234,11 +246,15 @@ var activate = function (context) {
                     }
 
                     map_controls[jsgui_id] = ctrl;
+                    //console.log('\n');
+                    //console.log('ctrl._id()', ctrl._id());
+                    //console.log('jsgui_id', jsgui_id);
+                    //console.log('\n');
                 } else {
                     console.log('Missing context.map_Controls for type ' + type + ', using generic Control');
                     var ctrl = new Control({
                         'context': context,
-                        '_id': jsgui_id,
+                        'id': jsgui_id,
                         'el': el
                     })
                     //map_controls[jsgui_id] = ctrl;
@@ -279,10 +295,10 @@ var activate = function (context) {
     });
 
     recursive_dom_iterate_depth(document, function (el) {
-        //console.log('el ' + el);
+        //console.log('el ', el);
         var nt = el.nodeType;
         //console.log('nt ' + nt);
-        if (nt == 1) {
+        if (nt === 1) {
             var jsgui_id = el.getAttribute('data-jsgui-id');
             //console.log('* jsgui_id ' + jsgui_id);
             if (jsgui_id) {
@@ -297,6 +313,12 @@ var activate = function (context) {
                 //console.log('tof ctrl ' + tof(ctrl));
                 //console.log('ctrl.__type_name', ctrl.__type_name);
                 //console.log('ctrl', ctrl);
+                //console.log('pre ctrl activate', ctrl._id(), jsgui_id);
+                //console.log('ctrl.__type_name', ctrl.__type_name);
+
+
+                // Need to link the controls together in terms of parents (maybe contents?)
+
                 ctrl.activate();
 
                 // Type name being set in initialization?

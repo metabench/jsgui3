@@ -351,7 +351,13 @@ class Control_Core extends Data_Object {
 		//console.log('pre super init');
 		//console.log('fields', fields);
 		//throw 'stop';
+		//console.log('Control_Core spec', spec);
+		//console.log('Control_Core spec keys', Object.keys(spec));
+		//console.log('spec.id', spec.id);
+		//console.trace();
 		super(spec, fields);
+
+		//console.log('done Control_Core super');
 
 		//do_init_call(this, spec);
 		this.mapListeners = {};
@@ -439,7 +445,7 @@ class Control_Core extends Data_Object {
 
 			// Content collection.
 
-			var content = this.content = new Collection({});
+			var content = this.content = this.contents = new Collection({});
 
 
 			var that = this;
@@ -1573,14 +1579,14 @@ class Control_Core extends Data_Object {
 	}
 	// So I think the resource-pool will have a selection scope.
 	'find_selection_scope' () {
-		//console.log('find_selection_scope');
+		console.log('find_selection_scope');
 		var res = this.selection_scope;
 		if (res) return res;
 		// look at the ancestor...
 
 		//var parent = this.get('parent');
 		//console.log('parent ' + tof(parent));
-		if (this.parent) return this.parent.find_selection_scope();
+		if (this.parent && this.parent.find_selection_scope) return this.parent.find_selection_scope();
 
 	}
 	'click' (handler) {
@@ -1719,7 +1725,10 @@ class Control_Core extends Data_Object {
 				//this.add_class(str_cls);
 
 				//this.dom.attrs.set()
-				this.dom.attrs.set('class', str_cls);
+				//this.dom.attrs.set('class', str_cls);
+
+				this.dom.attrs['class'] = str_cls;
+
 
 				//el.className = str_class;
 
@@ -1744,7 +1753,9 @@ class Control_Core extends Data_Object {
 				var str_cls = arr_res.join(' ');
 				//console.log('str_cls', str_cls);
 				//this.add_class(str_cls);
-				this.dom.attrs.set('class', str_cls);
+				//this.dom.attrs.set('class', str_cls);
+
+				this.dom.attrs['class'] = str_cls;
 
 
 
@@ -1774,7 +1785,9 @@ class Control_Core extends Data_Object {
 				//console.log('str_cls ', str_cls);
 				//this.add_class(str_cls);
 
-				this.dom.attrs.set('class', str_cls);
+				//this.dom.attrs.set('class', str_cls);
+
+				this.dom.attrs['class'] = str_cls;
 
 				//console.log('str_cls ' + str_cls);
 			}
@@ -1908,6 +1921,35 @@ class Control_Core extends Data_Object {
 			}
 		})
 		return res;
+	}
+
+	'$match' (selector) {
+		// Does this match the selector?
+		let res = false;
+
+
+		let tn = this.__type_name;
+		if (tn) {
+			if (tn === selector) res = true;
+		}
+		return res;
+	}
+
+	'$' (selector, handler) {
+		let match = this.$match(selector);
+
+		if (match) {
+			handler(this);
+		}
+
+		this.content.each(item => {
+
+			if (item.$) {
+				item.$(selector, handler);
+			}
+
+		});
+
 	}
 
 	// 01/03/2016

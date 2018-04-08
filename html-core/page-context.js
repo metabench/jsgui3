@@ -1,6 +1,10 @@
 var jsgui = require('../lang/lang');
-var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
-var Control = jsgui.Control, Class = jsgui.Class;
+var stringify = jsgui.stringify,
+    each = jsgui.each,
+    tof = jsgui.tof,
+    is_defined = jsgui.is_defined;
+var Control = jsgui.Control,
+    Class = jsgui.Class;
 var fp = jsgui.fp;
 var group = jsgui.group;
 var get_a_sig = jsgui.get_a_sig;
@@ -9,8 +13,8 @@ var get_window_size = jsgui.get_window_size;
 
 // this is the enhanced HTML module.
 
-class Page_Context extends jsgui.Evented_Class{
-    'constructor'(spec) {
+class Page_Context extends jsgui.Evented_Class {
+    'constructor' (spec) {
         spec = spec || {};
         super(spec);
         if (spec.browser_info) {
@@ -31,7 +35,7 @@ class Page_Context extends jsgui.Evented_Class{
         var map_new_ids = {};
         // and have the objects registered within the context too.
         var map_objects = {};
-        var _get_new_typed_object_id = function(type_name) {
+        var _get_new_typed_object_id = function (type_name) {
             //console.log('map_new_ids', map_new_ids);
 
             if (!is_defined(map_new_ids[type_name])) {
@@ -46,9 +50,9 @@ class Page_Context extends jsgui.Evented_Class{
         }
 
         this.new_id = _get_new_typed_object_id;
-        this.set_max_ids = function(map_max_ids) {
+        this.set_max_ids = function (map_max_ids) {
 
-            each(map_max_ids, function(v, i) {
+            each(map_max_ids, function (v, i) {
                 map_new_ids[i] = v + 1;
             })
         }
@@ -58,7 +62,7 @@ class Page_Context extends jsgui.Evented_Class{
         var map_controls = this.map_controls = {};
         map_Controls['control'] = Control;
     }
-    'make'(abstract_object) {
+    'make' (abstract_object) {
         if (abstract_object._abstract) {
             //var res = new
             // we need the constructor function.
@@ -78,14 +82,16 @@ class Page_Context extends jsgui.Evented_Class{
             throw 'Object must be abstract, having ._abstract == true'
         }
     }
-    'update_Controls'() {
+    'update_Controls' () {
         //console.log('update_Controls sig ' + sig);
-        var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+        var a = arguments;
+        a.l = arguments.length;
+        var sig = get_a_sig(a, 1);
         if (sig == '[o]') {
             // a map of keys and constructors values.
             var o = a[0];
             var map_Controls = this.map_Controls;
-            each(o, function(name, Constructor) {
+            each(o, function (name, Constructor) {
                 name = name.toLowerCase();
                 //console.log('name ' + name);
                 map_Controls[name] = Constructor;
@@ -99,41 +105,47 @@ class Page_Context extends jsgui.Evented_Class{
             this.map_Controls[name] = Constructor;
         }
     }
-    'register_control'(control) {
+    'register_control' (control) {
         // Put it into the map of IDs
         //console.log('register_control');
         // Not sure how useful registration of all controls will be.
         //  Probably would not be a problem, just it will take memory and CPU cycles.
+
+
+
         control.context = this;
+
+        //console.log('control.__id', control.__id);
+
         var id = control._id();
-        
-        //console.log('id', id);
+
+        //console.log('registering control id', id);
         this.map_controls[id] = control;
     }
-    'first_ctrl_matching_type'(type_name) {
-      // Want to iterate through the controls.
-      var res;
-      each(this.map_controls, function(ctrl, ctrl_id, fn_stop) {
-        //console.log('fn_stop', fn_stop);
+    'first_ctrl_matching_type' (type_name) {
+        // Want to iterate through the controls.
+        var res;
+        each(this.map_controls, function (ctrl, ctrl_id, fn_stop) {
+            //console.log('fn_stop', fn_stop);
 
-        //console.log('ctrl', ctrl);
-        //console.log('ctrl.__type_name', ctrl.__type_name);
+            //console.log('ctrl', ctrl);
+            //console.log('ctrl.__type_name', ctrl.__type_name);
 
-        if (ctrl.__type_name === type_name) {
-          //console.log('have match');
-          fn_stop();
-          res = ctrl;
-        }
-      });
-      return res;
+            if (ctrl.__type_name === type_name) {
+                //console.log('have match');
+                fn_stop();
+                res = ctrl;
+            }
+        });
+        return res;
     }
-    'begin_drag_ctrl'(e_begin, ctrl) {
+    'begin_drag_ctrl' (e_begin, ctrl) {
         // Though the ctrl should probably go in the event object - maybe need to formalise an API.
         // Different types of drag could be made modular to make builds smaller.
         //  For the moment need to add functionality then work on build size later.
         this.raise('drag-ctrl-begin', e_end, ctrl);
     }
-    'move_drag_ctrl'(e_move, ctrl) {
+    'move_drag_ctrl' (e_move, ctrl) {
         var window_size = get_window_size();
         var from_left, from_top, from_right, from_bottom;
         var clientX = e_move.clientX;
@@ -172,11 +184,11 @@ class Page_Context extends jsgui.Evented_Class{
             this.raise('drag-ctrl-no-zone');
         }
     }
-    'end_drag_ctrl'(e_end, ctrl) {
+    'end_drag_ctrl' (e_end, ctrl) {
         // raise the event...
         this.raise('drag-ctrl-end', e_end, ctrl);
     }
-    'drop_ctrl'(ctrl, zone) {
+    'drop_ctrl' (ctrl, zone) {
         //console.log('page context drop control ctrl ' + ctrl);
         //console.log('zone ' + zone);
         if (this.full_window) {
@@ -186,7 +198,7 @@ class Page_Context extends jsgui.Evented_Class{
             //  The anchor zone will be a part of the grid_9 (or other mechanism)
         }
     }
-    'anchor'(ctrl, zone) {
+    'anchor' (ctrl, zone) {
         console.log('page context anchor ');
         if (this.full_window) {
             var fw = this.full_window;
@@ -204,7 +216,7 @@ class Page_Context extends jsgui.Evented_Class{
     //  If we are to dock the control somewhere, we have some docking code that does this that can be called separately from the
     //  event.
     // more than notify, this does some UI too.
-    'begin_drag_selection_scope'(e_begin, selection_scope) {
+    'begin_drag_selection_scope' (e_begin, selection_scope) {
         //console.log('page context drag selection_scope ' + selection_scope);
         var map_selected_controls = selection_scope.map_selected_controls;
         //console.log('map_selected_controls ' + stringify(map_selected_controls));
@@ -239,7 +251,7 @@ class Page_Context extends jsgui.Evented_Class{
         this.ctrl_abs = ctrl_abs;
         //throw 'stop';
     }
-    'move_drag_selection_scope'(e_move) {
+    'move_drag_selection_scope' (e_move) {
         console.log('page context move_drag_selection_scope');
         var clientX = e_move.clientX;
         var clientY = e_move.clientY;
@@ -251,7 +263,7 @@ class Page_Context extends jsgui.Evented_Class{
         //console.log('el ' + el);
         el.style.cssText = style;
     }
-    'end_drag_selection_scope'(e_end) {
+    'end_drag_selection_scope' (e_end) {
         if (this.ctrl_abs) {
             this.ctrl_abs.remove();
             this.ctrl_abs = null;

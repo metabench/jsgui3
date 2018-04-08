@@ -3,13 +3,15 @@
  */
 var jsgui = require('../lang/lang');
 var is_ctrl = jsgui.is_ctrl;
-var get_a_sig = jsgui.get_a_sig, fp = jsgui.fp, each = jsgui.each;
+var get_a_sig = jsgui.get_a_sig,
+	fp = jsgui.fp,
+	each = jsgui.each;
 var Control_Core = require('./control-core');
 //var Resize_Handle = require('../controls/resize-handle')
 var tof = jsgui.tof;
 // get_a_sig
 
-var desc = function(ctrl, callback) {
+var desc = function (ctrl, callback) {
 	if (ctrl.get) {
 
 
@@ -45,7 +47,7 @@ var desc = function(ctrl, callback) {
 	}
 }
 
-var dom_desc = function(el, callback) {
+var dom_desc = function (el, callback) {
 	// Possibly need to look at the element's node type.
 	//
 	callback(el);
@@ -61,47 +63,47 @@ var dom_desc = function(el, callback) {
 
 
 var mapDomEventNames = {
-    'change': true,
+	'change': true,
 
-    'click': true,
-    'mousedown': true,
-    'mouseup': true,
-    'mousemove': true,
-    'mouseover': true,
-    'mouseout': true,
-    'blur': true,
-    'focus': true,
-    'keydown': true,
-    'keyup': true,
-    'keypress': true,
-    'contextmenu': true,
+	'click': true,
+	'mousedown': true,
+	'mouseup': true,
+	'mousemove': true,
+	'mouseover': true,
+	'mouseout': true,
+	'blur': true,
+	'focus': true,
+	'keydown': true,
+	'keyup': true,
+	'keypress': true,
+	'contextmenu': true,
 
-    'touchstart': true,
-    'touchmove': true,
-    'touchend': true,
+	'touchstart': true,
+	'touchmove': true,
+	'touchend': true,
 
-    'abort': true,
-    'canplay': true,
-    'canplaythrough': true,
-    'durationchange': true,
-    'emptied': true,
-    'ended': true,
-    'error': true,
-    'loadeddata': true,
-    'loadedmetadata': true,
-    'loadstart': true,
-    'pause': true,
-    'play': true,
-    'playing': true,
-    'progress': true,
-    'ratechange': true,
-    'seeked': true,
-    'seeking': true,
-    'stalled': true,
-    'suspend': true,
-    'timeupdate': true,
-    'volumechange': true,
-    'waiting': true
+	'abort': true,
+	'canplay': true,
+	'canplaythrough': true,
+	'durationchange': true,
+	'emptied': true,
+	'ended': true,
+	'error': true,
+	'loadeddata': true,
+	'loadedmetadata': true,
+	'loadstart': true,
+	'pause': true,
+	'play': true,
+	'playing': true,
+	'progress': true,
+	'ratechange': true,
+	'seeked': true,
+	'seeking': true,
+	'stalled': true,
+	'suspend': true,
+	'timeupdate': true,
+	'volumechange': true,
+	'waiting': true
 
 };
 
@@ -112,7 +114,7 @@ class Control extends Control_Core {
 	//	'scrollbars': String
 	//},
 
-	'constructor'(spec, fields) {
+	'constructor' (spec, fields) {
 		// The enhanced control can look at the element for data-jsgui-fields
 		//  Those fields will be fed back into the initialization.
 
@@ -126,7 +128,7 @@ class Control extends Control_Core {
 				var s_pre_parse = jgf.replace(/\[DBL_QT\]/g, '"').replace(/\[SNG_QT\]/g, '\'');
 				s_pre_parse = s_pre_parse.replace(/\'/g, '"');
 				var props = JSON.parse(s_pre_parse);
-				
+
 				//extend(spec, props);
 				//Object.assign(spec, props);
 				Object.assign(this, props);
@@ -135,7 +137,7 @@ class Control extends Control_Core {
 
 		//super(spec);
 
-		
+
 
 		if (typeof spec.selection_scope !== 'undefined') {
 			//console.log('spec.selection_scope', spec.selection_scope);
@@ -173,13 +175,19 @@ class Control extends Control_Core {
 
 	}
 
-	'bcr'() {
+	'bcr' () {
 		//console.log('sig', sig);
-		var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+		var a = arguments;
+		a.l = arguments.length;
+		var sig = get_a_sig(a, 1);
 		if (sig == '[]') {
 			var el = this.dom.el;
 			var bcr = el.getBoundingClientRect();
-			var res = [[bcr.left, bcr.top], [bcr.right, bcr.bottom], [bcr.width, bcr.height]];
+			var res = [
+				[bcr.left, bcr.top],
+				[bcr.right, bcr.bottom],
+				[bcr.width, bcr.height]
+			];
 			return res;
 		}
 		if (sig == '[a]') {
@@ -199,7 +207,7 @@ class Control extends Control_Core {
 		}
 	}
 
-	
+
 	get size() {
 
 
@@ -237,7 +245,7 @@ class Control extends Control_Core {
 
 	}
 
-	'add_text'(value) {
+	'add_text' (value) {
 		var tn = new Text_Node({
 			'context': this.context,
 			'text': value + ''
@@ -245,8 +253,10 @@ class Control extends Control_Core {
 		this.add(tn);
 		return tn;
 	}
-	'computed_style'() {
-		var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+	'computed_style' () {
+		var a = arguments;
+		a.l = arguments.length;
+		var sig = get_a_sig(a, 1);
 		var y;
 		if (sig == '[s]') {
 			// Should only work on the client.
@@ -261,10 +271,12 @@ class Control extends Control_Core {
 	}
 	// Likely to be within the core.
 	//  Meaning it's not done with progressive enhancement.
-	'padding'() {
-		var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+	'padding' () {
+		var a = arguments;
+		a.l = arguments.length;
+		var sig = get_a_sig(a, 1);
 		if (sig == '[]') {
-			
+
 			var left, top, right, bottom;
 
 			var c_padding = this.computed_style('padding');
@@ -282,8 +294,10 @@ class Control extends Control_Core {
 			}
 		}
 	}
-	'border'() {
-		var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+	'border' () {
+		var a = arguments;
+		a.l = arguments.length;
+		var sig = get_a_sig(a, 1);
 		if (sig == '[]') {
 
 			var left, top, right, bottom;
@@ -294,8 +308,10 @@ class Control extends Control_Core {
 			throw 'stop';
 		}
 	}
-	'border_thickness'() {
-		var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+	'border_thickness' () {
+		var a = arguments;
+		a.l = arguments.length;
+		var sig = get_a_sig(a, 1);
 		if (sig == '[]') {
 			var left, top, right, bottom;
 
@@ -319,7 +335,7 @@ class Control extends Control_Core {
 		}
 	}
 
-	'cover'() {
+	'cover' () {
 		// Makes a cover to this control.
 		//  Relatively positioned div as first child (if it is not there already)
 		//  Absolutely positioned within that relative div.
@@ -329,15 +345,15 @@ class Control extends Control_Core {
 
 	}
 
-	'ghost'() {
+	'ghost' () {
 
 	}
 
-	
-	
+
+
 	// can have different monomorphic versions.
 
-	'set'(name, value) {
+	'set' (name, value) {
 		// Used for setting controls, on the server, that get persisted to the client.
 
 		// when the value is a control, we also want to set the ._jsgui_ctrl_fields
@@ -364,76 +380,76 @@ class Control extends Control_Core {
 			Control_Core.prototype.set.call(this, name);
 			//super(name);
 		}
-    }
+	}
 
-    // one mousedown elsewhere.
+	// one mousedown elsewhere.
 
-    // Special case for when part of a control has been made into a popup?
+	// Special case for when part of a control has been made into a popup?
 
-    // Need to trace back through the DOM and control heirachy to see if the click has occurred in a part that was moved to the document body.
-    //  Should be able to mark an inner control as belonging to a control. inner_to
+	// Need to trace back through the DOM and control heirachy to see if the click has occurred in a part that was moved to the document body.
+	//  Should be able to mark an inner control as belonging to a control. inner_to
 
-    // One mousedown elsewhere... needs to respond to all body events, while checking to see if the event originates from within this control.
-    //  Relies on tracing back through the DOM to see if a DOM node is connected to this control, or an inner part of it.
+	// One mousedown elsewhere... needs to respond to all body events, while checking to see if the event originates from within this control.
+	//  Relies on tracing back through the DOM to see if a DOM node is connected to this control, or an inner part of it.
 
-    'one_mousedown_elsewhere'(callback) {
-        var body = this.context.body();
+	'one_mousedown_elsewhere' (callback) {
+		var body = this.context.body();
 
-        var that = this;
+		var that = this;
 
-        var fn_mousedown = function(e_mousedown) {
-            // Maybe see if it's internal or external to the control
+		var fn_mousedown = function (e_mousedown) {
+			// Maybe see if it's internal or external to the control
 
-            // Would be good to have that in the event.
+			// Would be good to have that in the event.
 
-            var el = that.dom.el;
+			var el = that.dom.el;
 
-            var e_el = e_mousedown.srcElement || e_mousedown.target;
-
-
-
-
-
-            //console.log('one mousedown', e_mousedown);
-            //console.log('e_el', e_el);
-
-            // Want to see if the element clicked on is a descendant of this's el.
-
-            // is_contained_by
-
-
-            var iao = that.is_ancestor_of(e_el);
-
-            console.log('iao', iao);
-
-            e_mousedown.within_this = iao;
-
-            if (!iao) {
-                // raise the callback, disconnect the event.
-                console.log('pre body off');
-                body.off('mousedown', fn_mousedown);
-                callback(e_mousedown);
-            }
-        }
-        body.on('mousedown', fn_mousedown);
-    }
+			var e_el = e_mousedown.srcElement || e_mousedown.target;
 
 
 
 
 
+			//console.log('one mousedown', e_mousedown);
+			//console.log('e_el', e_el);
 
-    // one_click_anywhere
+			// Want to see if the element clicked on is a descendant of this's el.
+
+			// is_contained_by
 
 
-	'one_mousedown_anywhere'(callback) {
+			var iao = that.is_ancestor_of(e_el);
+
+			console.log('iao', iao);
+
+			e_mousedown.within_this = iao;
+
+			if (!iao) {
+				// raise the callback, disconnect the event.
+				console.log('pre body off');
+				body.off('mousedown', fn_mousedown);
+				callback(e_mousedown);
+			}
+		}
+		body.on('mousedown', fn_mousedown);
+	}
+
+
+
+
+
+
+	// one_click_anywhere
+
+
+	'one_mousedown_anywhere' (callback) {
 		//var ctrl_html_root = this.context.ctrl_document;
 		//console.log('this.context', this.context);
 		var body = this.context.body();
 
 		var that = this;
 
-		body.one('mousedown', function(e_mousedown) {
+		body.one('mousedown', function (e_mousedown) {
 			// Maybe see if it's internal or external to the control
 
 			// Would be good to have that in the event.
@@ -465,7 +481,7 @@ class Control extends Control_Core {
 	//  Need to get this to work with client-rendered content.
 
 
-	'activate_recursive'() {
+	'activate_recursive' () {
 		//console.log('activate_recursive');
 		var el = this.dom.el;
 
@@ -477,7 +493,7 @@ class Control extends Control_Core {
 		// does the control have a DOM node?
 
 
-		recursive_dom_iterate_depth(el, function(el2) {
+		recursive_dom_iterate_depth(el, function (el2) {
 			//console.log('el ' + el);
 			var nt = el2.nodeType;
 			//console.log('nt ' + nt);
@@ -506,221 +522,227 @@ class Control extends Control_Core {
 				}
 			}
 		})
-    }
+	}
 
-    'add_dom_event_listener'(event_name, fn_handler) {
-        //console.log('add_dom_event_listener', event_name, this.__id);
-        var listener = this._bound_events[event_name];
-        var that = this;
+	'add_dom_event_listener' (event_name, fn_handler) {
+		//console.log('add_dom_event_listener', event_name, this.__id);
+		var listener = this._bound_events[event_name];
+		var that = this;
 
-        var el = this.dom.el;
+		var el = this.dom.el;
 
-        //console.log('el', el);
-        //console.trace();
+		//console.log('el', el);
+		//console.trace();
 
-        if (el) {
-            //console.log('listener', listener);
+		if (el) {
+			//console.log('listener', listener);
 
-            // The listener has been set up already.
-            //  It looks like its an array.
-            //  Event has been added twice for some reason.
+			// The listener has been set up already.
+			//  It looks like its an array.
+			//  Event has been added twice for some reason.
 
 
 
-            
 
-            /*
-            if (!listener) {
-                // a single listener called when a bound dom event fires.
-                //  this will then split up the event calls to everything that is listening to this.
-                // for the DOM event on the object, we raise the event on the control.
 
-                listener = this.mapListeners[event_name] = function (e) {
-                    //console.log('event_name heard ' + event_name);
+			/*
+			if (!listener) {
+			    // a single listener called when a bound dom event fires.
+			    //  this will then split up the event calls to everything that is listening to this.
+			    // for the DOM event on the object, we raise the event on the control.
 
-                    // Raising an event, there could be multiple listeners.
-                    //  would be good to get an array of what the listeners returned.
-                    //  Return false here if any of them return false?
+			    listener = this.mapListeners[event_name] = function (e) {
+			        //console.log('event_name heard ' + event_name);
 
+			        // Raising an event, there could be multiple listeners.
+			        //  would be good to get an array of what the listeners returned.
+			        //  Return false here if any of them return false?
 
-                    var res_raise = that.raise(event_name, e);
-                    //console.log('res_raise', res_raise);
 
-                    // then if any results are false, we return false.
+			        var res_raise = that.raise(event_name, e);
+			        //console.log('res_raise', res_raise);
 
-                    var any_are_false = false;
-                    var c = 0, l = res_raise.length;
+			        // then if any results are false, we return false.
 
-                    while (!any_are_false && c < l) {
-                        if (res_raise[c] === false) {
-                            any_are_false = true;
-                        }
+			        var any_are_false = false;
+			        var c = 0, l = res_raise.length;
 
-                        c++;
-                    }
+			        while (!any_are_false && c < l) {
+			            if (res_raise[c] === false) {
+			                any_are_false = true;
+			            }
 
-                    //console.log('any_are_false', any_are_false);
+			            c++;
+			        }
 
-                    if (any_are_false) {
-                        e.preventDefault();
-                        return false;
-                    }
-                    // Would like to respond to the event.
-                    //  Eg if the dom event handler returns false, it would be good to return false in the listener.
+			        //console.log('any_are_false', any_are_false);
 
+			        if (any_are_false) {
+			            e.preventDefault();
+			            return false;
+			        }
+			        // Would like to respond to the event.
+			        //  Eg if the dom event handler returns false, it would be good to return false in the listener.
 
 
-                };
-            }
 
-                */
-            var t_listener = tof(listener);
-            //console.log('t_listener', t_listener);
-            //console.log('pre el addEventListener');
+			    };
+			}
 
-            // Can have an array of listeners for DOM events.
+			    */
+			var t_listener = tof(listener);
+			//console.log('t_listener', t_listener);
+			//console.log('pre el addEventListener');
 
-            if (t_listener === 'array') {
-                //console.log('listener.length', listener.length);
-                each(listener, (listener) => {
-                    el.addEventListener(event_name, listener, false);
-                });
-            } else {
-                el.addEventListener(event_name, listener, false);
-            }
-        }
-    }
+			// Can have an array of listeners for DOM events.
 
-    'remove_dom_event_listener'(event_name, fn_handler) {
-        var listener = this._bound_events[event_name];
-        var that = this;
+			if (t_listener === 'array') {
+				//console.log('listener.length', listener.length);
+				each(listener, (listener) => {
+					el.addEventListener(event_name, listener, false);
+				});
+			} else {
+				el.addEventListener(event_name, listener, false);
+			}
+		}
+	}
 
-        var el = this.dom.el;
+	'remove_dom_event_listener' (event_name, fn_handler) {
+		var listener = this._bound_events[event_name];
+		var that = this;
 
+		var el = this.dom.el;
 
 
-        //console.log('el', el);
-        //console.trace();
 
-        if (el) {
-            //console.log('listener', listener);
+		//console.log('el', el);
+		//console.trace();
 
-            // The listener has been set up already.
-            //  It looks like its an array.
-            //  Event has been added twice for some reason.
+		if (el) {
+			//console.log('listener', listener);
 
+			// The listener has been set up already.
+			//  It looks like its an array.
+			//  Event has been added twice for some reason.
 
 
 
 
-            /*
-            if (!listener) {
-                // a single listener called when a bound dom event fires.
-                //  this will then split up the event calls to everything that is listening to this.
-                // for the DOM event on the object, we raise the event on the control.
 
-                listener = this.mapListeners[event_name] = function (e) {
-                    //console.log('event_name heard ' + event_name);
+			/*
+			if (!listener) {
+			    // a single listener called when a bound dom event fires.
+			    //  this will then split up the event calls to everything that is listening to this.
+			    // for the DOM event on the object, we raise the event on the control.
 
-                    // Raising an event, there could be multiple listeners.
-                    //  would be good to get an array of what the listeners returned.
-                    //  Return false here if any of them return false?
+			    listener = this.mapListeners[event_name] = function (e) {
+			        //console.log('event_name heard ' + event_name);
 
+			        // Raising an event, there could be multiple listeners.
+			        //  would be good to get an array of what the listeners returned.
+			        //  Return false here if any of them return false?
 
-                    var res_raise = that.raise(event_name, e);
-                    //console.log('res_raise', res_raise);
 
-                    // then if any results are false, we return false.
+			        var res_raise = that.raise(event_name, e);
+			        //console.log('res_raise', res_raise);
 
-                    var any_are_false = false;
-                    var c = 0, l = res_raise.length;
+			        // then if any results are false, we return false.
 
-                    while (!any_are_false && c < l) {
-                        if (res_raise[c] === false) {
-                            any_are_false = true;
-                        }
+			        var any_are_false = false;
+			        var c = 0, l = res_raise.length;
 
-                        c++;
-                    }
+			        while (!any_are_false && c < l) {
+			            if (res_raise[c] === false) {
+			                any_are_false = true;
+			            }
 
-                    //console.log('any_are_false', any_are_false);
+			            c++;
+			        }
 
-                    if (any_are_false) {
-                        e.preventDefault();
-                        return false;
-                    }
-                    // Would like to respond to the event.
-                    //  Eg if the dom event handler returns false, it would be good to return false in the listener.
+			        //console.log('any_are_false', any_are_false);
 
+			        if (any_are_false) {
+			            e.preventDefault();
+			            return false;
+			        }
+			        // Would like to respond to the event.
+			        //  Eg if the dom event handler returns false, it would be good to return false in the listener.
 
 
-                };
-            }
 
-                */
-            var t_listener = tof(listener);
-            //console.log('t_listener', t_listener);
-            //console.log('pre el addEventListener');
+			    };
+			}
 
-            if (t_listener === 'array') {
-                //console.log('listener.length', listener.length);
-                each(listener, (listener) => {
-                    el.removeEventListener(event_name, listener, false);
-                });
-            } else {
-                el.removeEventListener(event_name, listener, false);
-            }
+			    */
+			var t_listener = tof(listener);
+			//console.log('t_listener', t_listener);
+			//console.log('pre el addEventListener');
 
-        }
-    }
+			if (t_listener === 'array') {
+				//console.log('listener.length', listener.length);
+				each(listener, (listener) => {
+					el.removeEventListener(event_name, listener, false);
+				});
+			} else {
+				el.removeEventListener(event_name, listener, false);
+			}
 
-    // Need to remove event listener from the DOM as well.
+		}
+	}
 
-    'remove_event_listener'() {
-        var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1), that = this;
+	// Need to remove event listener from the DOM as well.
 
-        if (sig === '[s,f]') {
-            var event_name = a[0];
-            
-            var fn_handler = a[1];
+	'remove_event_listener' () {
+		var a = arguments;
+		a.l = arguments.length;
+		var sig = get_a_sig(a, 1),
+			that = this;
 
-            // change is also a DOM event
-            //  that's a tricky one.
-            //  should make it easy to listen out for DOM changes.
-            // let's include it for the moment.
-            //console.log('a[0]', a[0]);
+		if (sig === '[s,f]') {
+			var event_name = a[0];
 
-            //console.log('mapDomEventNames[a[0]]', mapDomEventNames[a[0]]);
+			var fn_handler = a[1];
 
+			// change is also a DOM event
+			//  that's a tricky one.
+			//  should make it easy to listen out for DOM changes.
+			// let's include it for the moment.
+			//console.log('a[0]', a[0]);
 
-            if (mapDomEventNames[a[0]]) {
-                //console.log('we have a DOM event: ' + event_name);
-                //console.log('pre call add_dom_event_listener from add_event_listener');
-                //console.log('this.dom.el', !!this.dom.el);
+			//console.log('mapDomEventNames[a[0]]', mapDomEventNames[a[0]]);
 
-                // Want a way of recording that the event has been added to the DOM?
 
+			if (mapDomEventNames[a[0]]) {
+				//console.log('we have a DOM event: ' + event_name);
+				//console.log('pre call add_dom_event_listener from add_event_listener');
+				//console.log('this.dom.el', !!this.dom.el);
 
+				// Want a way of recording that the event has been added to the DOM?
 
-                this.remove_dom_event_listener(event_name, fn_handler);
-                //super.add_event_listener.apply(that, arguments);
 
 
-            }
+				this.remove_dom_event_listener(event_name, fn_handler);
+				//super.add_event_listener.apply(that, arguments);
 
 
-        }
+			}
 
-        //super.apply(this, arguments);
-        //super(...arguments);
-        Control_Core.prototype.remove_event_listener.apply(this, arguments);
 
-    }
+		}
 
-	'add_event_listener'() {
+		//super.apply(this, arguments);
+		//super(...arguments);
+		Control_Core.prototype.remove_event_listener.apply(this, arguments);
 
-		var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1), that = this;
-        
+	}
+
+	'add_event_listener' () {
+
+		var a = arguments;
+		a.l = arguments.length;
+		var sig = get_a_sig(a, 1),
+			that = this;
+
 		console.log('control-enh add_event_listener sig', sig);
 
 		/*
@@ -795,7 +817,7 @@ class Control extends Control_Core {
 		}
 		if (a.l === 3) {
 			//this._super.apply(this, [a[0], a[2]]);
-            super.add_event_listener(a[0], a[2]);
+			super.add_event_listener(a[0], a[2]);
 		}
 		// then if it appears in the dom events, attach it.
 
@@ -804,9 +826,9 @@ class Control extends Control_Core {
 			var using_dom = true;
 			if (a.l === 3 && a[1] === false) using_dom = false;
 			//console.log('using_dom', using_dom);
-            var fn_handler;
-            if (a.l === 2) fn_handler = a[1];
-            if (a.l === 3) fn_handler = a[2];
+			var fn_handler;
+			if (a.l === 2) fn_handler = a[1];
+			if (a.l === 3) fn_handler = a[2];
 
 			// change is also a DOM event
 			//  that's a tricky one.
@@ -819,53 +841,53 @@ class Control extends Control_Core {
 			console.log('using_dom', using_dom);
 			if (mapDomEventNames[a[0]] && using_dom) {
 				//console.log('we have a DOM event: ' + event_name);
-                //console.log('pre call add_dom_event_listener from add_event_listener');
-                //console.log('this.dom.el', !!this.dom.el);
+				//console.log('pre call add_dom_event_listener from add_event_listener');
+				//console.log('this.dom.el', !!this.dom.el);
 
-                // Want a way of recording that the event has been added to the DOM?
+				// Want a way of recording that the event has been added to the DOM?
 
 
 
-                this.add_dom_event_listener(event_name, fn_handler);
-                //super.add_event_listener.apply(that, arguments);
+				this.add_dom_event_listener(event_name, fn_handler);
+				//super.add_event_listener.apply(that, arguments);
 
-				
-            }
+
+			}
 
 
 		}
-    }
+	}
 
-    'pop_into_body'() {
+	'pop_into_body' () {
 
-        this.show();
-        var bcr = this.bcr();
+		this.show();
+		var bcr = this.bcr();
 
-        // Maybe need to make it visible first.
+		// Maybe need to make it visible first.
 
-        var pos = bcr[0];
-        var left = pos[0];
-        var top = pos[1];
+		var pos = bcr[0];
+		var left = pos[0];
+		var top = pos[1];
 
-        //console.log('bcr', JSON.stringify(bcr));
+		//console.log('bcr', JSON.stringify(bcr));
 
-        this.style({
-            'position': 'absolute',
-            'left': left + 'px',
-            'top': top + 'px',
-            'z-index': 10000
-        });
+		this.style({
+			'position': 'absolute',
+			'left': left + 'px',
+			'top': top + 'px',
+			'z-index': 10000
+		});
 
-        document.body.appendChild(this.dom.el);
+		document.body.appendChild(this.dom.el);
 
-    }
+	}
 
 	// not recursive
 	//  maybe call activate_individual?
 
 	//
 
-	'activate'(el) {
+	'activate' (el) {
 		if (!this.__active) {
 			this.__active = true;
 			//console.log('el', el);
@@ -906,7 +928,7 @@ class Control extends Control_Core {
 
 	//}
 
-	'activate_other_changes_listen'() {
+	'activate_other_changes_listen' () {
 		//var el;
 		var dom_attributes = this.dom.attrs;
 		//console.log('dom_attributes', dom_attributes);
@@ -917,9 +939,10 @@ class Control extends Control_Core {
 		//console.log('dom_attributes.style', dom_attributes.style);
 
 		//dom_attributes.style.on('change', function(e_change) {
-		dom_attributes.on('change', function(e_change) {
+		dom_attributes.on('change', function (e_change) {
 			//console.log('dom_attributes e_change', e_change);
-			var property_name = e_change.name || e_change.key, dval = e_change.value || e_change.new;
+			var property_name = e_change.name || e_change.key,
+				dval = e_change.value || e_change.new;
 			var t_dval = tof(dval);
 
 			if (t_dval == 'string' || t_dval == 'number') {
@@ -935,7 +958,7 @@ class Control extends Control_Core {
 			}
 		});
 	}
-	'activate_content_listen'() {
+	'activate_content_listen' () {
 		//console.log('activate_content_listen');
 		var content = this.content;
 		//console.log('1) content.length()', content.length());
@@ -944,7 +967,7 @@ class Control extends Control_Core {
 		var map_controls = context.map_controls;
 		//console.log('map_controls', map_controls);
 
-		content.on('change', function(e_change) {
+		content.on('change', function (e_change) {
 
 			//console.log('content change', e_change);
 
@@ -1018,7 +1041,7 @@ class Control extends Control_Core {
 						//item.el = itemDomEl;
 
 						//e_change.item.set('dom.el', itemDomEl);
-                        e_change.item.dom.el = itemDomEl;
+						e_change.item.dom.el = itemDomEl;
 
 						item.active();
 					};
@@ -1072,7 +1095,7 @@ class Control extends Control_Core {
 	}
 	*/
 
-	'rec_desc_ensure_ctrl_el_refs'(el) {
+	'rec_desc_ensure_ctrl_el_refs' (el) {
 		el = el || this.dom.el;
 		var context = this.context;
 		var that = this;
@@ -1082,7 +1105,7 @@ class Control extends Control_Core {
 
 			var map_els = {};
 
-			dom_desc(el, function(el) {
+			dom_desc(el, function (el) {
 				//console.log('dom_desc el', el);
 				if (el.getAttribute) {
 					jsgui_id = el.getAttribute('data-jsgui-id');
@@ -1096,7 +1119,7 @@ class Control extends Control_Core {
 				}
 			});
 
-			desc(this, function(ctrl) {
+			desc(this, function (ctrl) {
 				// ensure the control is registered with the context.
 				//console.log('desc ctrl', ctrl);
 				var t_ctrl = tof(ctrl);
@@ -1108,7 +1131,7 @@ class Control extends Control_Core {
 					//console.log('map_els[id]', !!map_els[id]);
 					if (map_els[id]) {
 
-						
+
 
 						if (ctrl.dom.el !== map_els[id]) {
 							ctrl.dom.el = map_els[id];
@@ -1129,8 +1152,8 @@ class Control extends Control_Core {
 		}
 	}
 
-	'rec_desc_activate'() {
-		desc(this, function(ctrl) {
+	'rec_desc_activate' () {
+		desc(this, function (ctrl) {
 			// ensure the control is registered with the context.
 			//console.log('desc ctrl', ctrl);
 			var t_ctrl = tof(ctrl);
@@ -1141,7 +1164,7 @@ class Control extends Control_Core {
 		});
 	}
 
-	'activate_content_controls'() {
+	'activate_content_controls' () {
 		// This could do with some enhancement, so that it automatically does a recursive activation.
 		// ensure content dom el refs
 		//  recursively ensures the DOM node references for the elements inside.
@@ -1200,7 +1223,7 @@ class Control extends Control_Core {
 							if (ctrl_id) {
 
 
-								content.each(function(v, i) {
+								content.each(function (v, i) {
 									if (v.__id) {
 										if (v.__id == ctrl_id) found = true;
 									}
@@ -1211,6 +1234,8 @@ class Control extends Control_Core {
 								my_content.add(cctrl);
 							}
 							//cctrl.activate();
+
+							cctrl.parent = this;
 						}
 					}
 					if (nt == 3) {
@@ -1225,7 +1250,7 @@ class Control extends Control_Core {
 		this.rec_desc_activate();
 	}
 
-	'activate_dom_attributes'() {
+	'activate_dom_attributes' () {
 		// Needs to get the class out of the DOM properly.
 		//console.log('activate_dom_attributes');
 
@@ -1244,9 +1269,11 @@ class Control extends Control_Core {
 
 			// Activate from the element to JSGUI controls.
 
-			for (var i = 0, attrs = el.attributes, l = attrs.length; i < l; i++){
+			for (var i = 0, attrs = el.attributes, l = attrs.length; i < l; i++) {
 				//arr.push(attrs.item(i).nodeName);
-				item = attrs.item(i); name = item.name; value = item.value;
+				item = attrs.item(i);
+				name = item.name;
+				value = item.value;
 				//console.log('name', name);
 
 				if (name == 'data-jsgui-id') {
@@ -1254,7 +1281,7 @@ class Control extends Control_Core {
 				} else if (name == 'data-jsgui-type') {
 					// ^
 				} else if (name == 'style') {
-					
+
 					// Could have this in the style setter.
 
 					/*
@@ -1299,7 +1326,7 @@ class Control extends Control_Core {
 
 					//dom_attributes.set(name, value);
 
-                    dom_attributes[name] = value;
+					dom_attributes[name] = value;
 				}
 			}
 
@@ -1309,15 +1336,15 @@ class Control extends Control_Core {
 			//console.log('that.dom.attrs', that.dom.attrs);
 
 			//each(that.dom.attrs, (attr, i) => {
-				//console.log('attr', attr);
-				//console.log('i', i);
+			//console.log('attr', attr);
+			//console.log('i', i);
 			//})
 
 
 		}
 	}
 
-	'attach_dom_events'() {
+	'attach_dom_events' () {
 		// Attaches the bound events to the DOM.
 		//  Called after the control has been assigned an element.
 
@@ -1330,8 +1357,8 @@ class Control extends Control_Core {
 				//console.log('handler', handler);
 				//console.trace();
 
-                // add_dom_event_listener
-                that.add_dom_event_listener(name, handler);
+				// add_dom_event_listener
+				that.add_dom_event_listener(name, handler);
 
 				//that.add_event_listener(name, handler);
 			});
@@ -1339,23 +1366,23 @@ class Control extends Control_Core {
 
 	}
 
-	'hide'() {
+	'hide' () {
 		//console.log('hide');
 		this.add_class('hidden');
 	}
-	'show'() {
+	'show' () {
 		//console.log('show');
 		this.remove_class('hidden');
 	}
 
-	'descendants'(search) {
+	'descendants' (search) {
 		// assembles a list of the descendents that match the search
 		//  (search by .__type_name)
 		// eg get a list of menu_node objects.
 		// basically need to recursively go through the descendents, with a callback in here, and see if they match the search.
 		// recursive iteration of the control(s)
 
-		var recursive_iterate = function(ctrl, item_callback) {
+		var recursive_iterate = function (ctrl, item_callback) {
 			// callback on all of the child controls, and then iterate those.
 			//console.log('recursive_iterate');
 			var content = ctrl.content;
@@ -1370,7 +1397,7 @@ class Control extends Control_Core {
 
 					//console.log('content.length()', content.length());
 					// iterate through those child nodes as well.
-					content.each(function(item, i) {
+					content.each(function (item, i) {
 						//console.log('item', item);
 						item_callback(item);
 						recursive_iterate(item, item_callback);
@@ -1380,7 +1407,7 @@ class Control extends Control_Core {
 			}
 		}
 		var arr_matching = [];
-		recursive_iterate(this, function(item) {
+		recursive_iterate(this, function (item) {
 			// see if the item matches the search
 
 			//console.log('cb item', item);
@@ -1397,7 +1424,7 @@ class Control extends Control_Core {
 		return arr_matching;
 	}
 
-	'ancestor'(search) {
+	'ancestor' (search) {
 		// could maybe work when not activated too...
 		// need to get the ancestor control matching the search (in type).
 		if (this._parent) {
