@@ -743,7 +743,7 @@ class Control extends Control_Core {
 		var sig = get_a_sig(a, 1),
 			that = this;
 
-		console.log('control-enh add_event_listener sig', sig);
+		//console.log('control-enh add_event_listener sig', sig);
 
 		/*
 		 var el = this.dom.el;
@@ -838,7 +838,7 @@ class Control extends Control_Core {
 
 			//console.log('mapDomEventNames[a[0]]', mapDomEventNames[a[0]]);
 
-			console.log('using_dom', using_dom);
+			//console.log('using_dom', using_dom);
 			if (mapDomEventNames[a[0]] && using_dom) {
 				//console.log('we have a DOM event: ' + event_name);
 				//console.log('pre call add_dom_event_listener from add_event_listener');

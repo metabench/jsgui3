@@ -376,6 +376,7 @@ class Control_Core extends Data_Object {
 		this.dom = new Control_DOM();
 
 		var cf = this._ctrl_fields = this._ctrl_fields || {};
+		var cf = this._fields = this._fields || {};
 
 		// Could have object for internal properties, such as 'resizable'
 
@@ -731,8 +732,14 @@ class Control_Core extends Data_Object {
 				//}).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]"));
 
 
+				let sf = stringify(this._fields).replace(/"/g, "'");
+				//console.log('scf', scf);
+
+				if (sf.length > 2) {
+					dom_attrs['data-jsgui-fields'] = sf;
+				}
 				//this.set('dom.attributes.data-jsgui-fields', stringify(this._fields).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]"));
-				dom_attrs['data-jsgui-fields'] = stringify(this._fields).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]");
+				//dom_attrs['data-jsgui-fields'] = stringify(this._fields).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]");
 
 			}
 			var arr = [];
