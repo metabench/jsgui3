@@ -11,7 +11,7 @@ var get_a_sig = jsgui.get_a_sig;
 
 // Need to find out what this one requires to put it in its own module.
 class Server_Page_Context extends jsgui.Page_Context {
-	'constructor'(spec) {
+	constructor(spec) {
 		spec = spec || {};
 		super(spec);
 		if (spec.req) {

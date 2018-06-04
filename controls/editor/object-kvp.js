@@ -36,7 +36,7 @@ var Control = jsgui.Control;
 
 
 class Object_KVP_Editor extends Object_KVP_Viewer {
-    'constructor'(spec) {
+    constructor(spec) {
         super(spec);
         this.factory = factory;
         this.String = String_Editor;

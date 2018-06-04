@@ -37,7 +37,7 @@ var server = new Server({
 
 
 class Single_Control_Server extends Server {
-    'constructor'(spec) {
+    constructor(spec) {
         //spec['*'] = {
         //    'name': 'html-server'
         //};

@@ -23,12 +23,13 @@ var each = (collection, fn, context) => {
 		//  that would be useful as a third parameter that can get called.
 		//  stop() function
 		var ctu = true;
-		var stop = function() {
+		var stop = function () {
 			ctu = false;
 		};
 
 		if (is_array(collection)) {
-			var res = [], res_item;
+			var res = [],
+				res_item;
 			for (var c = 0, l = collection.length; c < l; c++) {
 				res_item;
 				if (ctu == false) break;
@@ -71,16 +72,16 @@ var is_dom_node = function isDomNode(obj) {
 	return (!!obj && typeof obj.nodeType != 'undefined' && typeof obj.childNodes != 'undefined');
 };
 
-var get_truth_map_from_arr = function(arr) {
+var get_truth_map_from_arr = function (arr) {
 	var res = {};
-	each(arr, function(v, i) {
+	each(arr, function (v, i) {
 		res[v] = true;
 	});
 	return res;
 };
-var get_arr_from_truth_map = function(truth_map) {
+var get_arr_from_truth_map = function (truth_map) {
 	var res = [];
-	each(truth_map, function(v, i) {
+	each(truth_map, function (v, i) {
 		res.push(i);
 	});
 	return res;
@@ -88,7 +89,7 @@ var get_arr_from_truth_map = function(truth_map) {
 
 // not a truth map because 0 == false. Could use this but do different
 // check, like is_defined.
-var get_map_from_arr = function(arr) {
+var get_map_from_arr = function (arr) {
 	var res = {};
 	for (var c = 0, l = arr.length; c < l; c++) {
 		res[arr[c]] = c;
@@ -101,7 +102,7 @@ var get_map_from_arr = function(arr) {
 
 //var arrSliceCall = Array.prototype.slice.call;
 
-var arr_like_to_arr = function(arr_like) {
+var arr_like_to_arr = function (arr_like) {
 	var res = new Array(arr_like.length);
 	for (var c = 0, l = arr_like.length; c < l; c++) {
 		//res.push(arr_like[c]);
@@ -116,7 +117,7 @@ var arr_like_to_arr = function(arr_like) {
 //  But a more advanced jsgui level could do this check, and have its own tof function.
 //  That would be jsgui-lang-html has the check for is control.
 
-var is_ctrl = function(obj) {
+var is_ctrl = function (obj) {
 
 	// something indicating all controls are controls?
 	return (typeof obj != 'undefined' && obj != null && is_defined(obj.__type_name) && is_defined(obj.content) && is_defined(obj.dom));
@@ -145,11 +146,11 @@ var tof = (obj, t1) => {
 			//console.log('typeof obj ' + typeof obj);
 			//console.log('obj === null ' + (obj === null));
 
-            if (obj.__type) {
-                return obj.__type;
-            } else if (obj.__type_name) {
-                return obj.__type_name;
-            } else {
+			if (obj.__type) {
+				return obj.__type;
+			} else if (obj.__type_name) {
+				return obj.__type_name;
+			} else {
 
 				if (is_ctrl(obj)) {
 					//return res;
@@ -212,14 +213,15 @@ var atof = (arr) => {
 };
 
 var is_defined = (value) => {
-	// tof or typeof
+		// tof or typeof
 
-	return typeof (value) != 'undefined';
-}, isdef = is_defined;
+		return typeof (value) != 'undefined';
+	},
+	isdef = is_defined;
 
-var is_data_object = function(obj) {
+var is_data_object = function (obj) {
 
-	if(obj) {
+	if (obj) {
 		if (obj.__type == 'data_object') return true;
 		if (obj.__type == 'collection') return true;
 	}
@@ -232,7 +234,7 @@ var is_data_object = function(obj) {
 
 // will test for control using similar means as well.
 
-var is_collection = function(obj) {
+var is_collection = function (obj) {
 	//if (obj.__type == 'data_object') return true;
 
 	if (obj) {
@@ -254,7 +256,8 @@ var get_a_sig = (a) => {
 	// For arguments
 	// String building optimized for newer JS?
 
-	var c = 0, l = a.length;
+	var c = 0,
+		l = a.length;
 	var res = '[';
 	var first = true;
 	for (c = 0; c < l; c++) {
@@ -432,9 +435,9 @@ var get_item_sig = (i, arr_depth) => {
 						}
 
 
-                    } else {
+					} else {
 
-                        res = '?';
+						res = '?';
 
 
 						//throw 'Unexpected object type ' + t;
@@ -467,7 +470,7 @@ var get_item_sig = (i, arr_depth) => {
 };
 
 
-var trim_sig_brackets = function(sig) {
+var trim_sig_brackets = function (sig) {
 	if (tof(sig) === 'string') {
 		if (sig.charAt(0) == '[' && sig.charAt(sig.length - 1) == ']') {
 			return sig.substring(1, sig.length - 1);
@@ -477,7 +480,7 @@ var trim_sig_brackets = function(sig) {
 	}
 };
 
-var arr_trim_undefined = function(arr_like) {
+var arr_trim_undefined = function (arr_like) {
 	var res = [];
 	var last_defined = -1;
 	var t, v;
@@ -499,7 +502,7 @@ var arr_trim_undefined = function(arr_like) {
 	return res;
 };
 
-var functional_polymorphism = function(options, fn) {
+var functional_polymorphism = function (options, fn) {
 	var a0 = arguments;
 	if (a0.length === 1) {
 		fn = a0[0];
@@ -515,7 +518,7 @@ var functional_polymorphism = function(options, fn) {
 	var arr_slice = Array.prototype.slice;
 	var arr, sig, a2, l, a;
 
-	return function() {
+	return function () {
 
 		//that = this;
 
@@ -562,7 +565,7 @@ var functional_polymorphism = function(options, fn) {
 var fp = functional_polymorphism;
 
 
-var arrayify = fp(function(a, sig) {
+var arrayify = fp(function (a, sig) {
 	// but when the function has it's last parameter as a function...
 	//  can we assume it is a callback?
 	// when given a whole bunch of strings (or numbers) these can be used to make a map for the results.
@@ -575,16 +578,20 @@ var arrayify = fp(function(a, sig) {
 
 	// what about a pf function that provides an 'a' map.
 	// has whatever properties have been provided and asked for.
-	var param_index, num_parallel = 1, delay = 0, fn;
+	var param_index, num_parallel = 1,
+		delay = 0,
+		fn;
 	// (param_index, fn)
 	var res;
-	var process_as_fn = function() {
+	var process_as_fn = function () {
 		//console.log('process_as_fn');
-		res = function() {
+		res = function () {
 			// could use pf here? but maybe not
 			//console.log('arguments.length ' + arguments.length);
 			//console.log('arguments ' + stringify(arguments));
-			var a = arr_like_to_arr(arguments), ts = atof(a), t = this;
+			var a = arr_like_to_arr(arguments),
+				ts = atof(a),
+				t = this;
 			//console.log('a ' + stringify(a));
 			var last_arg = a[a.length - 1];
 			//console.log('last_arg ' + last_arg);
@@ -608,7 +615,7 @@ var arrayify = fp(function(a, sig) {
 
 					var fns = [];
 
-					each(a[param_index], function(v, i) {
+					each(a[param_index], function (v, i) {
 						var new_params = a.slice(0, a.length - 1);
 						new_params[param_index] = v;
 						// the rest of the parameters as normal
@@ -626,9 +633,9 @@ var arrayify = fp(function(a, sig) {
 					//console.log('delay', delay);
 					//throw 'stop';
 
-					call_multiple_callback_functions(fns, num_parallel, delay, function(err, res) {
-                        if (err) {
-                            console.trace();
+					call_multiple_callback_functions(fns, num_parallel, delay, function (err, res) {
+						if (err) {
+							console.trace();
 							throw err;
 						} else {
 							//
@@ -701,7 +708,7 @@ var arrayify = fp(function(a, sig) {
 
 	if (sig == '[o]') {
 		var res = [];
-		each(a[0], function(v, i) {
+		each(a[0], function (v, i) {
 			res.push([v, i]);
 		});
 	} else if (sig == '[f]') {
@@ -731,12 +738,12 @@ var arrayify = fp(function(a, sig) {
 var mapify = (target) => {
 	var tt = tof(target);
 	if (tt == 'function') {
-		var res = fp(function(a, sig) {
+		var res = fp(function (a, sig) {
 			var that = this;
 			//console.log('mapified fn sig ' + sig);
 			if (sig == '[o]') {
 				var map = a[0];
-				each(map, function(v, i) {
+				each(map, function (v, i) {
 					//fn.call(that, v, i);
 					target.call(that, v, i);
 				});
@@ -745,10 +752,10 @@ var mapify = (target) => {
 				// call_multi on the function, using the items in the map, calling with 1 param (+callback).
 				var callback = a[1];
 				var fns = [];
-				each(map, function(v, i) {
+				each(map, function (v, i) {
 					fns.push([target, [v, i]]);
 				});
-				call_multi(fns, function(err_multi, res_multi) {
+				call_multi(fns, function (err_multi, res_multi) {
 					if (err_multi) {
 						callback(err_multi);
 					} else {
@@ -787,11 +794,11 @@ var mapify = (target) => {
 		if (arguments.length == 1) {
 
 			if (is_arr_of_strs(target)) {
-				each(target, function(v, i) {
+				each(target, function (v, i) {
 					res[v] = true;
 				});
 			} else {
-				each(target, function(v, i) {
+				each(target, function (v, i) {
 					res[v[0]] = v[1];
 				});
 			}
@@ -801,7 +808,7 @@ var mapify = (target) => {
 
 		} else {
 			var by_property_name = arguments[1];
-			each(target, function(v, i) {
+			each(target, function (v, i) {
 				res[v[by_property_name]] = v;
 			});
 		}
@@ -831,7 +838,7 @@ var clone = fp((a, sig) => {
 			var res = [];
 
 
-			each(obj, function(v) {
+			each(obj, function (v) {
 				//console.log('i ' + i);
 				res.push(clone(v));
 			});
@@ -957,14 +964,14 @@ var are_equal = () => {
 
 
 
-var set_vals = function(obj, map) {
-	each(map, function(v, i) {
+var set_vals = function (obj, map) {
+	each(map, function (v, i) {
 		obj[i] = v;
 	});
 };
 
 
-var ll_set = function(obj, prop_name, prop_value) {
+var ll_set = function (obj, prop_name, prop_value) {
 	// not setting sub-properties specifically. sub-properties are
 	// properties of a kind
 	// however will not use ll_set inappropriately eg border.width works
@@ -972,8 +979,10 @@ var ll_set = function(obj, prop_name, prop_value) {
 
 	var arr = prop_name.split('.');
 	//console.log('arr ' + arr);
-	var c = 0, l = arr.length;
-	var i = obj._ || obj, s;
+	var c = 0,
+		l = arr.length;
+	var i = obj._ || obj,
+		s;
 
 	while (c < l) {
 		s = arr[c];
@@ -998,7 +1007,7 @@ var ll_set = function(obj, prop_name, prop_value) {
 };
 
 
-var ll_get = function(a0, a1) {
+var ll_get = function (a0, a1) {
 
 	if (a0 && a1) {
 		var i = a0._ || a0;
@@ -1023,7 +1032,9 @@ var ll_get = function(a0, a1) {
 			// shows how much the ll functions get used when they get logged!
 
 			//console.log('ll_get arr ' + arr);
-			var c = 0, l = arr.length, s;
+			var c = 0,
+				l = arr.length,
+				s;
 
 			while (c < l) {
 				s = arr[c];
@@ -1060,11 +1071,11 @@ var ll_get = function(a0, a1) {
 	}
 };
 
-var truth = function(value) {
+var truth = function (value) {
 	return value === true;
 };
 
-var iterate_ancestor_classes = function(obj, callback) {
+var iterate_ancestor_classes = function (obj, callback) {
 
 	/*
 	 if (obj.constructor &! obj._superclass) {
@@ -1080,7 +1091,7 @@ var iterate_ancestor_classes = function(obj, callback) {
 
 	var ctu = true;
 
-	var stop = function() {
+	var stop = function () {
 		ctu = false;
 	}
 
@@ -1092,12 +1103,13 @@ var iterate_ancestor_classes = function(obj, callback) {
 
 
 
-var is_arr_of_t = function(obj, type_name) {
-	var t = tof(obj), tv;
+var is_arr_of_t = function (obj, type_name) {
+	var t = tof(obj),
+		tv;
 	if (t == 'array') {
 		var res = true;
 
-		each(obj, function(v, i) {
+		each(obj, function (v, i) {
 			//console.log('2) v ' + stringify(v));
 			tv = tof(v);
 			//console.log('tv ' + tv);
@@ -1111,12 +1123,12 @@ var is_arr_of_t = function(obj, type_name) {
 
 }
 
-var is_arr_of_arrs = function(obj) {
+var is_arr_of_arrs = function (obj) {
 	return is_arr_of_t(obj, 'array');
 }
 
 
-var is_arr_of_strs = function(obj) {
+var is_arr_of_strs = function (obj) {
 	//console.log('obj ' + stringify(obj));
 	return is_arr_of_t(obj, 'string');
 }
@@ -1129,6 +1141,86 @@ var output_processors = {};
 // for data types...
 //  don't look up the data types directly for the moment.
 //  they are composed of input processors, validation and output processors.
+
+
+
+// observe_multi
+//  want to start up / run the multiple observers.
+
+// will return a single observer.
+//  results will need to say which param they come from?
+//  ability to watch individual results?
+//   giving back the original params would do this.
+
+
+
+
+// Functions that have 
+
+// Not sure we need all of these right now.
+//  Could use the two separate observables.
+//  Do need some way to resolve them both together, but it's more about having an event for when they are all complete.
+// all_complete(observables, cb)
+//  all_complete(observables) returns promise
+//  all_complete(observables) 
+
+
+// Not sure about the point of preparing and then calling observables.
+//  Enables them to be put together and called a specific number at a time.
+
+//  Useful for when we use the results together.
+
+// May want to call multiple observable functions, get the data back as callbacks.
+
+// // Could have an event for obs_all_complete
+
+
+
+// a promise to see that they are all complete
+
+let pr_obs_all_complete = (arr_obs) => {
+	let l = arr_obs.length,
+		c = 0;
+
+	let res = new Promise((resolve, reject) => {
+
+		// and a stop function in the each?
+		each(arr_obs, (obs, i, stop) => {
+			obs.on('complete', () => {
+				c++;
+				if (c === l) {
+					resolve();
+				}
+			});
+			obs.on('error', err => {
+				stop();
+				reject(err);
+			})
+
+		})
+	});
+	return res;
+}
+
+// a callback version?
+
+
+// let obs_all_complete = (arr_obs)
+
+
+
+
+
+let observe_multi = function (fns) {
+	// and number to do in parallel.
+	//  0 means all at once.
+
+	// repeating function that starts the observables.
+
+	// Want to return a single observable
+
+}
+
 
 
 
@@ -1147,7 +1239,7 @@ var output_processors = {};
 //  That seems like a fairly big goal, want to get these things working on a simpler level and in collections.
 //  Will use some kind of polymorphic rearrangement to rearrange where suitable.
 
-var call_multiple_callback_functions = fp(function(a, sig) {
+var call_multiple_callback_functions = fp(function (a, sig) {
 	// will look at the signature and choose what to do.
 	//if (sig == )
 	// need to be checking if the item is an array - nice to have a different way of doing that with fp.
@@ -1168,6 +1260,8 @@ var call_multiple_callback_functions = fp(function(a, sig) {
 	if (a.l == 1) {
 		console.log('a', a);
 		console.log('a[0].length', a[0].length);
+
+		// Could return results through an observable.
 
 
 	}
@@ -1259,9 +1353,9 @@ var call_multiple_callback_functions = fp(function(a, sig) {
 
 	var num_currently_executing = 0;
 
-	var process = function(delay) {
+	var process = function (delay) {
 		num_currently_executing++;
-		var main = function() {
+		var main = function () {
 
 			// they may not be pairs, they could be a triple with a callback.
 			//console.log('num_currently_executing ' + num_currently_executing);
@@ -1358,17 +1452,12 @@ var call_multiple_callback_functions = fp(function(a, sig) {
 					//console.log('missing pair');
 
 				}
-
 				// For some reason the pair can be undefined.
 
 				// We don't have a pair of them.
 				//  Have we called with the wrong data?
 				//   Do a callback, result is false.
-
-
 			}
-
-
 
 			var i = c;
 			// not sure it keeps this same value of i.
@@ -1377,7 +1466,7 @@ var call_multiple_callback_functions = fp(function(a, sig) {
 			c++;
 			//throw 'stop';
 
-			var cb = function(err, res2) {
+			var cb = function (err, res2) {
 				num_currently_executing--;
 				count_unfinished--;
 				//console.log('cb num_currently_executing ' + num_currently_executing + ', c ' + c);
@@ -1476,7 +1565,7 @@ var call_multiple_callback_functions = fp(function(a, sig) {
 	}
 	//console.log('** arr_functions_params_pairs.length ' + arr_functions_params_pairs.length);
 	if (arr_functions_params_pairs.length > 0) {
-		while ((c < l)  && (num_currently_executing < num_parallel)) {
+		while ((c < l) && (num_currently_executing < num_parallel)) {
 			if (delay) {
 				//console.log('sto');
 				//setTimeout(process, delay * c);
@@ -1495,9 +1584,9 @@ var call_multiple_callback_functions = fp(function(a, sig) {
 var multi = call_multiple_callback_functions;
 var call_multi = call_multiple_callback_functions;
 
-var Fns = function(arr) {
+var Fns = function (arr) {
 	var fns = arr || [];
-	fns.go = function(parallel, delay, callback) {
+	fns.go = function (parallel, delay, callback) {
 		// Should have better param checking here.
 
 		//if (!callback) {
@@ -1531,10 +1620,20 @@ var Fns = function(arr) {
 		}
 
 	}
+
+	// Maybe move evented-class to essentials, or refer to it?
+	//  Not so sure as essentials should be the very base layer.
+	//  Seems OK in lang-mini
+
+
+
+
+
+
 	return fns;
 }
 
-var native_constructor_tof = function(value) {
+var native_constructor_tof = function (value) {
 	if (value === String) {
 		return 'String';
 	}
@@ -1559,7 +1658,7 @@ var native_constructor_tof = function(value) {
 //  Not sure if that would allow some kind of global variables (again).
 
 
-var sig_match = function(sig1, sig2) {
+var sig_match = function (sig1, sig2) {
 	// Does sig2 match sig1
 
 	// We go through sig1, checking item by item.
@@ -1586,7 +1685,9 @@ var sig_match = function(sig1, sig2) {
 	var res = true;
 
 	if (sig1_parts.length == sig2_parts.length) {
-		var c = 0, l = sig1_parts.length, i1, i2;
+		var c = 0,
+			l = sig1_parts.length,
+			i1, i2;
 		while (res && c < l) {
 			i1 = sig1_parts[c];
 			i2 = sig2_parts[c];
@@ -1608,7 +1709,7 @@ var sig_match = function(sig1, sig2) {
 	//throw 'stop';
 }
 
-var remove_sig_from_arr_shell = function(sig) {
+var remove_sig_from_arr_shell = function (sig) {
 	// first and last characters?
 	// use regex then regex to extract the middle?
 
@@ -1620,8 +1721,8 @@ var remove_sig_from_arr_shell = function(sig) {
 };
 
 
-var str_arr_mapify = function(fn) {
-	var res = fp(function(a, sig) {
+var str_arr_mapify = function (fn) {
+	var res = fp(function (a, sig) {
 		if (a.l == 1) {
 			if (sig == '[s]') {
 				var s_pn = a[0].split(' ');
@@ -1635,9 +1736,10 @@ var str_arr_mapify = function(fn) {
 			}
 
 			if (tof(a[0]) == 'array') {
-				var res2 = {}, that = this;
+				var res2 = {},
+					that = this;
 
-				each(a[0], function(v, i) {
+				each(a[0], function (v, i) {
 					res2[v] = fn.call(that, v);
 				});
 				return res2;
@@ -1648,11 +1750,11 @@ var str_arr_mapify = function(fn) {
 };
 
 var to_arr_strip_keys = (obj) => {
-    var res = [];
-    each(obj, (v) => {
-        res.push(v);
-    });
-    return res;
+	var res = [];
+	each(obj, (v) => {
+		res.push(v);
+	});
+	return res;
 }
 
 // Array of objects to keys values table
@@ -1660,14 +1762,15 @@ var to_arr_strip_keys = (obj) => {
 
 
 var arr_objs_to_arr_keys_values_table = (arr_objs) => {
-    var keys = Object.keys(arr_objs[0]);
+	var keys = Object.keys(arr_objs[0]);
 
-    var arr_items = [], arr_values;
-    each(arr_objs, (item) => {
-        arr_items.push(to_arr_strip_keys(item));
-    });
+	var arr_items = [],
+		arr_values;
+	each(arr_objs, (item) => {
+		arr_items.push(to_arr_strip_keys(item));
+	});
 
-    return [keys, arr_items];
+	return [keys, arr_items];
 }
 
 // will put functions into the jsgui object.
@@ -1720,7 +1823,7 @@ var deep_arr_iterate = (arr, path = [], callback) => {
 	}
 
 	each(arr, (item, i) => {
-		
+
 		//path = clone(path);
 		//path.push(i);
 		//console.log('path', path);
@@ -1732,7 +1835,7 @@ var deep_arr_iterate = (arr, path = [], callback) => {
 
 		var t = tof(item);
 		//console.log('t', t);
-		
+
 		if (t === 'array') {
 			deep_arr_iterate(item, c_path, callback);
 		} //else if (t === 'number') {
@@ -1746,31 +1849,31 @@ var deep_arr_iterate = (arr, path = [], callback) => {
 
 
 var jsgui = {
-	'each' : each,
-	'is_array' : is_array,
-	'is_dom_node' : is_dom_node,
-	'is_ctrl' : is_ctrl,
-	'clone' : clone,
-	'get_truth_map_from_arr' : get_truth_map_from_arr,
+	'each': each,
+	'is_array': is_array,
+	'is_dom_node': is_dom_node,
+	'is_ctrl': is_ctrl,
+	'clone': clone,
+	'get_truth_map_from_arr': get_truth_map_from_arr,
 	'get_arr_from_truth_map': get_arr_from_truth_map,
 	'arr_trim_undefined': arr_trim_undefined,
-	'get_map_from_arr' : get_map_from_arr,
-	'arr_like_to_arr' : arr_like_to_arr,
-	'tof' : tof,
-	'atof' : atof,
-	'is_defined' : is_defined,
-	'stringify' : stringify,
-	'functional_polymorphism' : functional_polymorphism,
-	'fp' : fp,
-	'arrayify' : arrayify,
-	'mapify' : mapify,
+	'get_map_from_arr': get_map_from_arr,
+	'arr_like_to_arr': arr_like_to_arr,
+	'tof': tof,
+	'atof': atof,
+	'is_defined': is_defined,
+	'stringify': stringify,
+	'functional_polymorphism': functional_polymorphism,
+	'fp': fp,
+	'arrayify': arrayify,
+	'mapify': mapify,
 	'str_arr_mapify': str_arr_mapify,
-	'are_equal' : are_equal,
+	'are_equal': are_equal,
 	'get_a_sig': get_a_sig,
-	'get_item_sig' : get_item_sig,
+	'get_item_sig': get_item_sig,
 	'set_vals': set_vals,
 	'truth': truth,
-	'trim_sig_brackets' : trim_sig_brackets,
+	'trim_sig_brackets': trim_sig_brackets,
 	'll_set': ll_set,
 	'll_get': ll_get,
 	'iterate_ancestor_classes': iterate_ancestor_classes,
@@ -1785,12 +1888,14 @@ var jsgui = {
 	'native_constructor_tof': native_constructor_tof,
 	'Fns': Fns,
 	'sig_match': sig_match,
-    'remove_sig_from_arr_shell': remove_sig_from_arr_shell,
-    'to_arr_strip_keys': to_arr_strip_keys,
+	'remove_sig_from_arr_shell': remove_sig_from_arr_shell,
+	'to_arr_strip_keys': to_arr_strip_keys,
 	'arr_objs_to_arr_keys_values_table': arr_objs_to_arr_keys_values_table,
 	'set_arr_tree_value': set_arr_tree_value,
 	'get_arr_tree_value': get_arr_tree_value,
-	'deep_arr_iterate': deep_arr_iterate
+	'deep_arr_iterate': deep_arr_iterate,
+
+	'pr_obs_all_complete': pr_obs_all_complete
 };
 
 
@@ -1839,4 +1944,3 @@ jsgui.data_types_info = jsgui.data_types_info || {};
 // alert('returning jsgui from jsgui-lang');
 //return jsgui;
 module.exports = jsgui;
-

@@ -25,7 +25,7 @@ var local_server_info_fields = [
 ];
 class Local_Server_Info extends Resource {
 	// A network interfaces field.
-	'constructor'(spec) {
+	constructor(spec) {
 		super(spec);
 		// meta status.
 		//this.meta.set('status', 'off');

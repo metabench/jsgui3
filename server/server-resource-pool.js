@@ -31,7 +31,7 @@ var exec = require('child_process').exec;
 
 
 class Server_Resource_Pool extends Resource_Pool {
-	'constructor'(spec) {
+	constructor(spec) {
 		super(spec);
 
 		// will add the Resource_Local_Server_Information

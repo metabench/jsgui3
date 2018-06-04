@@ -31,7 +31,7 @@ class File_Upload extends Control {
     // Maybe should put this into a form, so that it does a form post.
     //  That could possibly be disabled.
 
-    'constructor'(spec) {
+    constructor(spec) {
         super(spec);
         var make = this.make;
 
@@ -41,7 +41,7 @@ class File_Upload extends Control {
         // 3 large mode
 
         var autosubmit = spec.autosubmit || false;
-        
+
         var mode = 'medium';
         if (spec.mode) mode = spec.mode;
         if (mode == 'icon' || mode == 'mini' || mode == 'compact') autosubmit = true;
@@ -156,7 +156,7 @@ class File_Upload extends Control {
         if (autosubmit) {
             //console.log('autosubmit', autosubmit);
             //console.log('input_file', input_file);
-            input_file.add_event_listener('change', function(e_change) {
+            input_file.add_event_listener('change', function (e_change) {
                 console.log('e_change', e_change);
                 form.dom.el.submit();
             })

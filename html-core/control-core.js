@@ -144,7 +144,7 @@ var new_obj_style = () => {
 // Intercept the changing of the style attribute.
 
 class DOM_Attributes extends Evented_Class {
-	'constructor' (spec) {
+	constructor(spec) {
 		super(spec);
 
 		//this._class = new Data_Value();
@@ -231,7 +231,7 @@ Object.defineProperty(DOM_Attributes.prototype, 'class', {
 // 
 
 class Control_DOM extends Evented_Class {
-	'constructor' () {
+	constructor() {
 
 		// Proxy the attributes, so that it raises an event for changes.
 		super();
@@ -342,7 +342,7 @@ var my_fields = [
 
 class Control_Core extends Data_Object {
 
-	'constructor' (spec, fields) {
+	constructor(spec, fields) {
 		// but process / normalize the spec here?
 		spec = spec || {};
 		spec.__type_name = spec.__type_name || 'control';

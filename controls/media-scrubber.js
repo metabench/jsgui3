@@ -19,7 +19,7 @@ class Media_Scrubber extends Control {
     //  and can have other fields possibly.
 
 
-    'constructor'(spec, add, make) {
+    constructor(spec, add, make) {
         super(spec);
         this.__type_name = 'media_scrubber';
 

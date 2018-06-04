@@ -11,7 +11,7 @@ var Control = jsgui.Control;
 //  Then we can substitute the factory.
 
 class Object_KVP_Viewer extends Control{
-    'constructor'(spec) {
+    constructor(spec) {
 
         // Will have different modes.
         //  Default mode is JSON

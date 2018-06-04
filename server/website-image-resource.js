@@ -162,7 +162,7 @@ var serve_image_file_from_disk = function(filePath, response) {
 class Site_Images extends Resource {
 
 
-    'constructor'(spec) {
+    constructor(spec) {
         super(spec);
 
         //this.meta.set('custom_paths', new Data_Object({}));

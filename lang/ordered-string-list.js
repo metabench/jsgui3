@@ -13,21 +13,21 @@
 
 // Uses private variables.
 class Ordered_String_List {
-	'constructor'(){
+	constructor() {
 		// console.log('init osl sig ' + sig);
 
 		var arr = [];
 		var dict_indexes = {};
 
-		var reindex_dict_indexes = function() {
+		var reindex_dict_indexes = function () {
 			dict_indexes = {};
-			for ( var c = 0, l = arr.length; c < l; c++) {
+			for (var c = 0, l = arr.length; c < l; c++) {
 				dict_indexes[arr[c]] = c;
 			}
 		}
 
 		// (add), remove, get, get_all, has, put, move, splice
-		this.has = function(value) {
+		this.has = function (value) {
 			return (typeof dict_indexes[value] !== 'undefined');
 		}
 
@@ -52,7 +52,7 @@ class Ordered_String_List {
 
 				delete dict_indexes[value];
 
-				for ( var c = idx, l = arr.length; c < l; c++) {
+				for (var c = idx, l = arr.length; c < l; c++) {
 					var i = arr[c];
 					dict_indexes[i]--;
 				}
@@ -89,12 +89,12 @@ class Ordered_String_List {
 					// the index object of the one it
 
 					// for (var c = index, l = arr.length; c < l; c++) {
-					for ( var c = index + 1; c <= old_index; c++) {
+					for (var c = index + 1; c <= old_index; c++) {
 						dict_indexes[arr[c]]++;
 					}
 				} else if (index > old_index) {
 					dict_indexes[arr[index]] = index;
-					for ( var c = old_index; c < index; c++) {
+					for (var c = old_index; c < index; c++) {
 						dict_indexes[arr[c]]--;
 					}
 				}
@@ -104,8 +104,8 @@ class Ordered_String_List {
 		}
 		// for testing
 
-		this._index_scan = function() {
-			for ( var c = 0, l = arr.length; c < l; c++) {
+		this._index_scan = function () {
+			for (var c = 0, l = arr.length; c < l; c++) {
 				console.log('c ' + c + ' arr[c] ' + arr[c] + ' idx '
 					+ dict_indexes[arr[c]]);
 			};

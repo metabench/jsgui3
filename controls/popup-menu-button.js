@@ -24,7 +24,7 @@ class Popup_Menu_Button extends Button {
     //    'name': String
     //}
     // maybe add before make would be better. add will probably be used more.
-    'constructor'(spec, add, make) {
+    constructor(spec, add, make) {
         spec.no_compose = true;
         spec['class'] = 'popup-menu-button';
         super(spec);

@@ -11,7 +11,7 @@ class Resize_Handle extends Control {
     // Though maybe tell it to be an array and it should be an array rather than a collection?
     //  Or a Data_Value that holds an array?
 
-    'constructor'(spec, add, make) {
+    constructor(spec, add, make) {
         spec = spec || {};
         spec.__type_name = spec.__type_name || 'resize_handle';
         super(spec);

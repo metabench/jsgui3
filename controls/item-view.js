@@ -19,8 +19,8 @@ class Item_View extends Control {
 
 	//'class_name': 'item-view',
 
-	'constructor'(spec) {
-        super(spec);
+	constructor(spec) {
+		super(spec);
 
 		// Want it so that the name field can be written during the initialization.
 		//  Will depend on the chained fields.
@@ -43,7 +43,7 @@ class Item_View extends Control {
 
 		//  More work on controls will help.
 		//   Give them more convenient methods. Make them faster too.
-		var ctrl_expand_contract = new Plus_Minus_Toggle_Button({'context': this.context, 'state': '+'});
+		var ctrl_expand_contract = new Plus_Minus_Toggle_Button({ 'context': this.context, 'state': '+' });
 		ctrl_expand_contract.active();
 		//var cec_dom = ctrl_expand_contract.get('dom');
 		this.set('expand_contract', ctrl_expand_contract);
@@ -55,14 +55,14 @@ class Item_View extends Control {
 
 		// an icon, and the name next to it.
 
-		var ctrl_icon = new Control({'context': this.context});
+		var ctrl_icon = new Control({ 'context': this.context });
 		//ctrl_icon.get('dom').set('tagName', 'div');
 		//ctrl_icon.get('dom').get('attributes').set('class', 'icon');
 		ctrl_icon.add_class('icon');
 
 		this.add(ctrl_icon);
 
-		var ctrl_item_info = new Control({'context': this.context});
+		var ctrl_item_info = new Control({ 'context': this.context });
 		//ctrl_item_info.get('dom').set('tagName', 'div');
 		//ctrl_item_info.get('dom').get('attributes').set('class', 'info');
 		ctrl_item_info.add_class('info');
@@ -70,7 +70,7 @@ class Item_View extends Control {
 
 		// then add a name control. this will have a text node inside.
 
-		var ctrl_name = new Control({'context': this.context});
+		var ctrl_name = new Control({ 'context': this.context });
 		//ctrl_name.get('dom').set('tagName', 'div');
 		//ctrl_name.get('dom').get('attributes').set('class', 'name');
 		ctrl_name.add_class('name');
@@ -85,17 +85,17 @@ class Item_View extends Control {
 
 
 
-		var ctrl_tn_name = new jsgui.textNode({'text': name, 'context': this.context});
+		var ctrl_tn_name = new jsgui.textNode({ 'text': name, 'context': this.context });
 		//ctrl_name.content.add(ctrl_tn_name);
 		ctrl_name.add(ctrl_tn_name);
 
-		var ctrl_clearall_0 = new Control({'context': this.context});
+		var ctrl_clearall_0 = new Control({ 'context': this.context });
 		//ctrl_clearall_0.get('dom').set('tagName', 'div');
 		//ctrl_clearall_0.get('dom').get('attributes').set('class', 'clearall');
 		ctrl_clearall_0.add_class('clearall');
 		this.add(ctrl_clearall_0);
 
-		var ctrl_subitems = new Control({'context': this.context});
+		var ctrl_subitems = new Control({ 'context': this.context });
 		//ctrl_subitems.get('dom').set('tagName', 'div');
 		//ctrl_subitems.get('dom').get('attributes').set('class', 'subitems');
 		ctrl_subitems.add_class('subitems');
@@ -105,7 +105,7 @@ class Item_View extends Control {
 
 		this.set('ctrl_subitems', ctrl_subitems);
 
-		var ctrl_clearall = new Control({'context': this.context});
+		var ctrl_clearall = new Control({ 'context': this.context });
 		//ctrl_clearall.get('dom').set('tagName', 'div');
 		//ctrl_clearall.get('dom').get('attributes').set('class', 'clearall');
 		ctrl_clearall.add_class('clearall');
@@ -142,7 +142,7 @@ class Item_View extends Control {
 
 			//expand_contract.activate();
 
-			expand_contract.on('change', function(e_change) {
+			expand_contract.on('change', function (e_change) {
 				//console.log('e_change', e_change);
 
 				if (e_change.name === 'state') {

@@ -16,7 +16,7 @@ class Title_Bar extends Control {
     //  type could specify some kind of validation, or also 'password'.
     // single field?
     //  and can have other fields possibly.
-    'constructor' (spec) {
+    constructor(spec) {
 
         super(spec, fields);
         this.add_class('title-bar title bar');

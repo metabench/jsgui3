@@ -18,7 +18,7 @@ var Selection_Scope = require('./selection-scope');
 
 
 class Client_Page_Context extends jsgui.Page_Context {
-    'constructor' (spec) {
+    constructor(spec) {
         spec = spec || {};
         super(spec);
         //this.set('document', spec.document);
@@ -43,7 +43,7 @@ class Client_Page_Context extends jsgui.Page_Context {
         this.selection_scope_id_counter = 0;
 
     }
-    'new_selection_scope' () {
+    'new_selection_scope'() {
         // create the selection scope, with an assigned id
 
         var res = new Selection_Scope({
@@ -54,7 +54,7 @@ class Client_Page_Context extends jsgui.Page_Context {
         return res;
 
     }
-    'get_selection_scope_by_id' (id) {
+    'get_selection_scope_by_id'(id) {
         if (!this.selection_scopes[id]) {
             this.selection_scopes[id] = new Selection_Scope({
                 'context': this,
@@ -63,7 +63,7 @@ class Client_Page_Context extends jsgui.Page_Context {
         }
         return this.selection_scopes[id];
     }
-    'body' () {
+    'body'() {
         var doc = this.document;
         //console.log('doc', doc);
 

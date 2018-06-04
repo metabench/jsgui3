@@ -21,7 +21,7 @@ class Vertical_Expander extends Control {
 	//  and can have other fields possibly.
 
 
-	'constructor'(spec) {
+	constructor(spec) {
 		super(spec);
 
 		this.add_class('vertical expander');

@@ -16,7 +16,7 @@ class Text_Item extends Control {
     //  type of either text or password.
     // could possibly specify some of the starting field values in this part.
 
-    'constructor'(spec) {
+    constructor(spec) {
         //this._super(spec, fields);
         super(spec, fields);
         this.__type_name = 'text_item';

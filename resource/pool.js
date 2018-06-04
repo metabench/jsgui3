@@ -40,7 +40,7 @@ var Collection = jsgui.Collection;
 
 class Resource_Pool extends Evented_Class {
 
-	'constructor' (spec) {
+	constructor(spec) {
 		super(spec);
 
 		// Sorting them by a Data_Object's.meta name?
@@ -123,7 +123,7 @@ class Resource_Pool extends Evented_Class {
 	}
 	*/
 
-	'_get_resources_by_interface' (i_name) {
+	'_get_resources_by_interface'(i_name) {
 		var res = [];
 
 		this.resources.each(function (i, resource) {
@@ -157,7 +157,7 @@ class Resource_Pool extends Evented_Class {
 
 	}
 
-	'index_resource' (obj) {
+	'index_resource'(obj) {
 		// will get some metadata from the resource.
 
 		// resource will be indexed by its location and its type.
@@ -179,7 +179,7 @@ class Resource_Pool extends Evented_Class {
 
 	}
 
-	'receive_resource_event' () {
+	'receive_resource_event'() {
 		//console.log('receive_resource_event sig ' + sig);
 		var a = arguments;
 		a.l = arguments.length;
@@ -214,7 +214,7 @@ class Resource_Pool extends Evented_Class {
 
 	}
 
-	'add' (obj) {
+	'add'(obj) {
 		// adds the resource obj to the pool.
 
 		// Each resource will have its own individual name within the pool.
@@ -265,10 +265,10 @@ class Resource_Pool extends Evented_Class {
 
 
 	}
-	'push' (obj) {
+	'push'(obj) {
 		return this.add(obj);
 	}
-	'has_resource' () {
+	'has_resource'() {
 		var a = arguments;
 		a.l = arguments.length;
 		var sig = get_a_sig(a, 1);
@@ -308,7 +308,7 @@ class Resource_Pool extends Evented_Class {
 		return res;
 	}
 
-	'get_resource_names' () {
+	'get_resource_names'() {
 		var res = [];
 		each(this.resources, (resource) => {
 			res.push(resource.name);
@@ -317,7 +317,7 @@ class Resource_Pool extends Evented_Class {
 	}
 
 
-	'get_resource' () {
+	'get_resource'() {
 		var a = arguments;
 		a.l = arguments.length;
 		var sig = get_a_sig(a, 1);
@@ -376,14 +376,14 @@ class Resource_Pool extends Evented_Class {
 	//  Means no need for the boilerplate code when it is linked.
 	//'resources'
 
-	'count' () {
+	'count'() {
 		return this.resources.length;
 	}
 
 
 	// May be useful to have a callback parameter here rather than just publish / subscribe.
 
-	'start' (callback) {
+	'start'(callback) {
 
 		//console.log('resource pool start');
 

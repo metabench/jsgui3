@@ -111,7 +111,7 @@ var Worker = require('webworker-threads');
 
 class Website_Resource extends Resource {
 
-    'constructor' (spec) {
+    constructor(spec) {
 
         super(spec);
 

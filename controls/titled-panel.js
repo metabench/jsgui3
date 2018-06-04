@@ -14,7 +14,7 @@ var fields = {
 }
 class Titled_Panel extends Panel {
 
-    'constructor'(spec) {
+    constructor(spec) {
         super(spec);
         this.__type_name = 'titled_panel';
 

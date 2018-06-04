@@ -167,7 +167,7 @@ class Site_JavaScript extends Resource {
 	//	'custom_paths': 'data_object'
 	//},
 
-	'constructor'(spec) {
+	constructor(spec) {
 		super(spec);
 
 		//this.meta.set('custom_paths', new Data_Object({}));

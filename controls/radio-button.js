@@ -60,7 +60,7 @@ class Radio_Button extends Control {
     // Items field could be an array.
 
     // maybe add before make would be better. add will probably be used more.
-    'constructor'(spec, add, make) {
+    constructor(spec, add, make) {
 
 
         super(spec);

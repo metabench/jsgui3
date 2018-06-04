@@ -36,7 +36,7 @@ class Menu_Node extends Control {
     //  and can have other fields possibly.
 
 
-    'constructor'(spec, add, make) {
+    constructor(spec, add, make) {
         // Wont fields have been set?
 
         super(spec);

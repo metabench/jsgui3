@@ -11,7 +11,7 @@ class Start_Stop_Toggle_Button extends Toggle_Button {
 	//],
 	//  and can have other fields possibly.
 
-	'constructor'(spec, add, make) {
+	constructor(spec, add, make) {
 		// Set it so it only has two states
 		//  '+' and '-'
 		spec.states = ['start', 'stop'];

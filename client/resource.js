@@ -87,7 +87,7 @@ class Client_Resource extends Resource {
 	//	'url': String
 	//},
 
-	'constructor' (spec) {
+	constructor(spec) {
 		//this._super(spec);
 		spec = spec || {};
 		super(spec);
@@ -155,7 +155,7 @@ class Client_Resource extends Resource {
 
 
 	}
-	'get' () {
+	'get'() {
 		var a = arguments;
 		a.l = arguments.length;
 		var sig = get_a_sig(a, 1);
@@ -211,7 +211,7 @@ class Client_Resource extends Resource {
 	//  Seems less likely that we will need this function here.
 	//  06/06/2015 - about to make the socks resource connection for the client, it's going to allow for real-time updates, while using generally RESTful addressing.
 
-	'notify_change_from_server' (property_name, property_value) {
+	'notify_change_from_server'(property_name, property_value) {
 		// needs to do some kind of silent set.
 		//console.log('client resource notify_change_from_server');
 		var data = this.data;

@@ -5,7 +5,7 @@
 var Doubly_Linked_List = require('./doubly-linked-list');
 
 class Ordered_KVS {
-	'constructor'() {
+	constructor() {
 		this.dll = new Doubly_Linked_List();
 		this.node_map = {};
 	}
@@ -42,28 +42,28 @@ class Ordered_KVS {
 	}
 	'each'(callback) {
 		// return the key as well as the value in the callback.
-		this.dll.each_node(function(node, stop) {
+		this.dll.each_node(function (node, stop) {
 			callback(node.key, node.value, stop);
 		});
 		//this.dll.each(callback);
 	}
 	'values'() {
 		var res = [];
-		this.each(function(key, value) {
+		this.each(function (key, value) {
 			res.push(value);
 		});
 		return res;
 	}
 	'keys'() {
 		var res = [];
-		this.each(function(key, value) {
+		this.each(function (key, value) {
 			res.push(key);
 		});
 		return res;
 	}
 	'keys_and_values'() {
 		var res = [];
-		this.each(function(key, value) {
+		this.each(function (key, value) {
 			res.push([key, value]);
 		});
 		return res;

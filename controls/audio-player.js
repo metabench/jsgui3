@@ -32,7 +32,7 @@ class Audio_Player extends Control {
 	//  but sending encoded tracks data to the client will be fine.
 
 	// maybe add before make would be better. add will probably be used more.
-	'constructor'(spec, add, make) {
+	constructor(spec, add, make) {
 		super(spec);
 		this.__type_name = 'audio_player';
 
@@ -56,11 +56,11 @@ class Audio_Player extends Control {
 			var albums = site_audio.meta.get('albums');
 			console.log('albums', albums);
 
-			var div_relative = add(Control({'class': 'relative'}));
+			var div_relative = add(Control({ 'class': 'relative' }));
 
 			// have a title bar with both the artist name and the album name
 
-			var titlebar = make(Control({'class': 'titlebar'}));
+			var titlebar = make(Control({ 'class': 'titlebar' }));
 
 			var h1 = make(jsgui.h1({}));
 			titlebar.add(h1);
@@ -72,7 +72,7 @@ class Audio_Player extends Control {
 
 			div_relative.add(titlebar);
 
-			var ctrl_tracks = make(Control({'class': 'tracks'}));
+			var ctrl_tracks = make(Control({ 'class': 'tracks' }));
 
 			this.set('ctrl_tracks', ctrl_tracks);
 
@@ -82,25 +82,25 @@ class Audio_Player extends Control {
 
 			console.log('tracks', tracks);
 
-			each(tracks, function(track, i) {
+			each(tracks, function (track, i) {
 				console.log('track', track);
 
-				var div_track = make(Control({'class': 'track'}));
+				var div_track = make(Control({ 'class': 'track' }));
 				ctrl_tracks.add(div_track);
 
 				// Could have a Track control.
 
-				var div_number = make(Control({'class': 'number'}));
+				var div_number = make(Control({ 'class': 'number' }));
 				div_track.add(div_number);
 
 				var str_number = '' + (i + 1);
 				div_number.add(str_number);
 
-				var div_name = make(Control({'class': 'name'}));
+				var div_name = make(Control({ 'class': 'name' }));
 				div_track.add(div_name);
 				div_name.add(track.name);
 
-				var div_length = make(Control({'class': 'length'}));
+				var div_length = make(Control({ 'class': 'length' }));
 
 				div_track.add(div_length);
 
@@ -121,7 +121,7 @@ class Audio_Player extends Control {
 
 				div_length.add(str_time);
 
-				var dca = make(Control({'class': 'clearall'}));
+				var dca = make(Control({ 'class': 'clearall' }));
 				div_track.add(dca);
 
 
@@ -132,8 +132,8 @@ class Audio_Player extends Control {
 			var ctrl_audio = make(jsgui.audio({}));
 			div_relative.add(ctrl_audio);
 
-			var ctrl_source_mp3 = make(Control({'tagName': 'source'}));
-			var ctrl_source_ogg = make(Control({'tagName': 'source'}));
+			var ctrl_source_mp3 = make(Control({ 'tagName': 'source' }));
+			var ctrl_source_ogg = make(Control({ 'tagName': 'source' }));
 
 			//ctrl_source_mp3.set('dom.attributes.src', '/audio/albums/01/01.mp3');
 			//ctrl_source_ogg.set('dom.attributes.src', '/audio/albums/01/01.ogg');
@@ -145,7 +145,7 @@ class Audio_Player extends Control {
 
 
 
-			var controls = make(Control({'class': 'controls'}));
+			var controls = make(Control({ 'class': 'controls' }));
 			div_relative.add(controls);
 
 			// prev, play/stop, next
@@ -154,13 +154,13 @@ class Audio_Player extends Control {
 			// volume (could be button with popup volume, ubut won't hide it with that to start with)
 			// info
 
-			var buttons = make(Control({'class': 'buttons'}));
+			var buttons = make(Control({ 'class': 'buttons' }));
 			controls.add(buttons);
 
 			// then add various buttons.
-			var btn_previous = make(Control({'class': 'previous button'}));
-			var btn_play_stop = make(Control({'class': 'play button'}));
-			var btn_next = make(Control({'class': 'next button'}));
+			var btn_previous = make(Control({ 'class': 'previous button' }));
+			var btn_play_stop = make(Control({ 'class': 'play button' }));
+			var btn_next = make(Control({ 'class': 'next button' }));
 
 			buttons.add(btn_previous);
 			buttons.add(btn_play_stop);
@@ -270,9 +270,9 @@ class Audio_Player extends Control {
 		var el_audio = ctrl_audio.dom.el;
 		var tracks_content = ctrl_tracks.content;
 
-		ctrl_tracks.set_i_track = function(i_track) {
+		ctrl_tracks.set_i_track = function (i_track) {
 			// 0 indexed interger
-			tracks_content.each(function(ctrl_track, i) {
+			tracks_content.each(function (ctrl_track, i) {
 				//console.log('v', v);
 				//console.log('i', i);
 				var track = tracks[i];
@@ -296,7 +296,7 @@ class Audio_Player extends Control {
 		var album_path = albums[0].path;
 		//console.log('album_path', album_path);
 
-		ctrl_relative.on('touchstart', function(e_touchstart) {
+		ctrl_relative.on('touchstart', function (e_touchstart) {
 			console.log('e_touchstart', e_touchstart);
 		});
 
@@ -304,7 +304,7 @@ class Audio_Player extends Control {
 
 		var i_track = 0;
 
-		tracks_content.each(function(ctrl_track, i) {
+		tracks_content.each(function (ctrl_track, i) {
 			//console.log('v', v);
 			//console.log('i', i);
 
@@ -312,7 +312,7 @@ class Audio_Player extends Control {
 
 			ctrl_track.set('track', track);
 
-			ctrl_track.on('click', function(e_click) {
+			ctrl_track.on('click', function (e_click) {
 
 
 				//console.log('track e_click', e_click);
@@ -357,7 +357,7 @@ class Audio_Player extends Control {
 		var state = 'loading';
 		// need to activate the track controls.
 
-		ctrl_audio.on('canplaythrough', function(e_canplaythrough) {
+		ctrl_audio.on('canplaythrough', function (e_canplaythrough) {
 			//console.log('e_canplaythrough', e_canplaythrough);
 
 			if (initial) {
@@ -384,7 +384,7 @@ class Audio_Player extends Control {
 
 		});
 
-		ctrl_audio.on('timeupdate', function(e_timeupdate) {
+		ctrl_audio.on('timeupdate', function (e_timeupdate) {
 			//console.log('e_timeupdate', e_timeupdate);
 
 			// Have it playing track 1 by default.
@@ -400,7 +400,7 @@ class Audio_Player extends Control {
 			scrubber.ms_time = ms_time;
 		});
 
-		var play_track_by_index = function(i) {
+		var play_track_by_index = function (i) {
 			var track = tracks[i_track];
 			var track_num_str = (i + 1) + '';
 			if (track_num_str.length == 1) track_num_str = '0' + track_num_str;
@@ -413,7 +413,7 @@ class Audio_Player extends Control {
 			ctrl_tracks.set_i_track(i);
 		}
 
-		ctrl_audio.on('ended', function(e_ended) {
+		ctrl_audio.on('ended', function (e_ended) {
 			console.log('e_ended', e_ended);
 
 			if (i_track < tracks.length) {
@@ -422,7 +422,7 @@ class Audio_Player extends Control {
 			}
 		});
 
-		scrubber.on('change', function(e_change) {
+		scrubber.on('change', function (e_change) {
 
 			// Want it so we can tell the difference between changes to the scrubber which this control caused, and
 			//  changes to the scrubber that the user caused.
@@ -470,7 +470,7 @@ class Audio_Player extends Control {
 		});
 		*/
 
-		btn_previous.on('click', function(e_click) {
+		btn_previous.on('click', function (e_click) {
 			//console.log('click btn_play_stop');
 
 			//console.log('state', state);
@@ -501,7 +501,7 @@ class Audio_Player extends Control {
 
 		});
 
-		btn_next.on('click', function(e_click) {
+		btn_next.on('click', function (e_click) {
 			//console.log('click btn_play_stop');
 
 			//console.log('state', state);
@@ -527,7 +527,7 @@ class Audio_Player extends Control {
 			//console.log('2) state', state);
 		});
 
-		btn_play_stop.on('click', function(e_click) {
+		btn_play_stop.on('click', function (e_click) {
 			//console.log('click btn_play_stop');
 
 			//console.log('state', state);

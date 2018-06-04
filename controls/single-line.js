@@ -22,7 +22,7 @@ class Single_Line extends Control {
     //  and can have other fields possibly.
 
 
-    'constructor'(spec) {
+    constructor(spec) {
         super(spec);
 
         this.add_class('single-line');

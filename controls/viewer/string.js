@@ -28,7 +28,7 @@ class String_Viewer extends Control {
     //  That could possibly be disabled.
 
 
-    'constructor'(spec) {
+    constructor(spec) {
         super(spec);
         var make = this.make;
 

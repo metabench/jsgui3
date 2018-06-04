@@ -20,7 +20,7 @@ class Control_Enh_2 extends Control_Enh {
 	//	'scrollbars': String
 	//},
 
-	'constructor' (spec, fields) {
+	constructor(spec, fields) {
 		// The enhanced control can look at the element for data-jsgui-fields
 		//  Those fields will be fed back into the initialization.
 		//console.log('e2 fields', fields);

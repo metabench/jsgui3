@@ -40,7 +40,7 @@ class Item extends Control {
 
 
 
-    'constructor'(spec, add, make) {
+    constructor(spec, add, make) {
         spec['class'] = 'item';
         super(spec);
         this.__type_name = 'item';

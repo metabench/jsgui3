@@ -23,7 +23,7 @@ class Panel extends Control {
     //    'name': String
     //}
     // maybe add before make would be better. add will probably be used more.
-    'constructor'(spec, add, make) {
+    constructor(spec, add, make) {
         super(spec);
         this.__type_name = 'panel';
         //this.add_class('panel');

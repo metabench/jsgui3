@@ -19,7 +19,7 @@ class Array_Editor extends Array_Viewer {
     // Maybe should put this into a form, so that it does a form post.
     //  That could possibly be disabled.
 
-    'constructor'(spec) {
+    constructor(spec) {
     	super();
         var make = this.make;
         this.factory = factory;

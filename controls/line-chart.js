@@ -35,7 +35,7 @@ var Collection = jsgui.Collection;
 
 class Line_Chart extends Control {
 
-    'constructor'(spec) {
+    constructor(spec) {
         super(spec);
         this.__type_name = 'line_chart';
 

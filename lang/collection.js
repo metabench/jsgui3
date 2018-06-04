@@ -238,9 +238,9 @@ var obj_matches_query_obj = function(obj, query) {
 //   Like inserting a control into another control's contents as the first.
 
 
-class Collection extends Data_Object{
+class Collection extends Data_Object {
 
-    'constructor'(spec, arr_values) {
+    constructor(spec, arr_values) {
         // Has problems setting up the index while it is initialising.
         //  Can't call set_index.
         super(spec);
@@ -410,7 +410,7 @@ class Collection extends Data_Object{
             // But we could make a DataValue for the points.
             //  Could specify that points are stored as Data_Values.
             //   Maybe fixed length of 2.
-            each(value, function(v, i) {
+            each(value, function (v, i) {
                 that.push(v);
             });
         } else {
@@ -418,7 +418,7 @@ class Collection extends Data_Object{
                 // need to reindex - though could have optimization that checks to see if the indexes are the same...
                 throw 'stop';
                 this.clear();
-                value.each(function(v, i) {
+                value.each(function (v, i) {
                     that.push(v);
                 });
             } else {
@@ -459,7 +459,7 @@ class Collection extends Data_Object{
             res.push('Collection(');
             //console.log('obj._arr ' + stringify(obj._arr));
             var first = true;
-            this.each(function(v, i) {
+            this.each(function (v, i) {
                 if (!first) {
                     res.push(', ');
                 } else {
@@ -478,7 +478,7 @@ class Collection extends Data_Object{
 
     'toObject'() {
         var res = [];
-        this.each(function(v, i) {
+        this.each(function (v, i) {
             res.push(v.toObject());
         });
         return res;
@@ -549,9 +549,9 @@ class Collection extends Data_Object{
 
         // look it up in the index
 
-        
 
-        
+
+
         var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
 
         // var found = coll_presidents.find([['name', 'Franklin Pierce'], ['party', 'Republican']]);
@@ -591,7 +591,7 @@ class Collection extends Data_Object{
                 // need to go through every object to see if it matches the search query.
                 // Though the results may be better returned as a collection.
                 var foundItems = [];
-                each(this, function(index, item) {
+                each(this, function (index, item) {
                     //console.log('index ' + index);
                     //console.log('item ' + stringify(item));
 
@@ -652,7 +652,7 @@ class Collection extends Data_Object{
             // don't consult the index system.
             var foundItems = [];
             // for each object we need to go deeper into the fields.
-            each(this, function(item, index) {
+            each(this, function (item, index) {
                 //console.log('index ' + index);
                 //console.log('item ' + stringify(item));
 
@@ -695,7 +695,7 @@ class Collection extends Data_Object{
 
                 if (tip2 === 'array') {
                     // possibly should be a collection
-                    each(ip2, function(v, i) {
+                    each(ip2, function (v, i) {
                         //console.log('v ' + stringify(v));
                         var matches = obj_matches_query_obj(v, query);
                         //console.log('matches ' + matches);
@@ -900,7 +900,7 @@ class Collection extends Data_Object{
     'has'(obj_key) {
         // will operate differently depending on how the collection is being used.
         //console.log('this._data_type_constraint ' + stringify(this._data_type_constraint));
-        
+
         /*
 
         if (this._data_type_constraint) {
@@ -1684,7 +1684,7 @@ class Collection extends Data_Object{
 
             */
 
-            var dv = new Data_Value({'value': value});
+            var dv = new Data_Value({ 'value': value });
             //console.log('dv ' + stringify(dv));
             pos = this._arr.length;
             // Should not need a context or ID just to be put in place.
@@ -1753,7 +1753,7 @@ class Collection extends Data_Object{
 
     'value'() {
         var res = [];
-        this.each(function(v, i) {
+        this.each(function (v, i) {
             if (typeof v.value == 'function') {
                 //res[i] = v.value();
                 res.push(v.value());

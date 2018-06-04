@@ -21,7 +21,7 @@ class Text_Field extends Control {
 	//  type could specify some kind of validation, or also 'password'.
 
 	//  and can have other fields possibly.
-	'constructor'(spec) {
+	constructor(spec) {
 		super(spec, fields);
 		this.__type_name = 'text_field';
 		this.add_class('field');

@@ -12,7 +12,7 @@ class Circle extends Control {
     // could have a .view property
     //  string property, can say 'month', 'week',
 
-    'constructor'(spec) {
+    constructor(spec) {
         super();
 
         // should basically be whatever size is specified, with color, and border properties.

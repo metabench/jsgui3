@@ -33,7 +33,7 @@ class List extends Control {
      ],
      */
 
-    'constructor'(spec, add, make) {
+    constructor(spec, add, make) {
         // Wont fields have been set?
         console.log('init list');
 

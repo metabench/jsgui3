@@ -1,7 +1,7 @@
 
 
 class Node {
-	'constructor'(spec) {
+	constructor(spec) {
 		// previous and next held as an array.
 
 		// neighbours
@@ -69,7 +69,7 @@ var nodify = function(fn) {
 
 
 class Doubly_Linked_List {
-	'constructor'(spec) {
+	constructor(spec) {
 		// spec could be the initial items for the list.
 
 		this.first = null;
@@ -88,7 +88,7 @@ class Doubly_Linked_List {
 
 		var node = this.first;
 		var ctu = true;
-		var stop = function() {
+		var stop = function () {
 			ctu = false;
 		};
 		while (node && ctu) {
@@ -98,7 +98,7 @@ class Doubly_Linked_List {
 	}
 
 	'each'(callback) {
-		this.each_node(function(node, stop) {
+		this.each_node(function (node, stop) {
 			callback(node.value, stop);
 		});
 	}
@@ -149,7 +149,7 @@ class Doubly_Linked_List {
 			}
 			return val;
 		} else {
-			var node = new Node({'value': val});
+			var node = new Node({ 'value': val });
 			return this.insert_beginning(node);
 		}
 	}
@@ -175,7 +175,7 @@ class Doubly_Linked_List {
 			}
 			return val;
 		} else {
-			var new_node = new Node({'value': val});
+			var new_node = new Node({ 'value': val });
 			return this.insert_before(new_node, node);
 		}
 
@@ -201,7 +201,7 @@ class Doubly_Linked_List {
 			}
 			return val;
 		} else {
-			var new_node = new Node({'value': val});
+			var new_node = new Node({ 'value': val });
 			return this.insert_after(new_node, node);
 		}
 	}
@@ -239,7 +239,7 @@ class Doubly_Linked_List {
 			}
 			return val;
 		} else {
-			var new_node = new Node({'value': val});
+			var new_node = new Node({ 'value': val });
 			return this.push(new_node);
 		}
 		// the item gets wrapped in a node.?

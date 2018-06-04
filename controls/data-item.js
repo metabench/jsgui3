@@ -17,7 +17,7 @@ class Data_Item extends Control {
 
 
     // this.__type_name = 'text_item';
-    'constructor' (spec) {
+    constructor(spec) {
         super(spec, fields);
         this.__type_name = 'data_item';
         this.add_class('data-item');

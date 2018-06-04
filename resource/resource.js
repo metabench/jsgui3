@@ -48,7 +48,7 @@ class Resource extends Data_Object {
 
     // Problem with how it sets the fields.
 
-    'constructor'(spec) {
+    constructor(spec) {
 
         //console.log('Resource init');
         //

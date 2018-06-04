@@ -36,7 +36,7 @@ class String_Editor extends String_Viewer {
 
 
 
-    'constructor'(spec) {
+    constructor(spec) {
         super(spec);
         var make = this.make;
         var that = this;

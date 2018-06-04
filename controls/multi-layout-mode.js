@@ -53,7 +53,7 @@ class Multi_Layout_Mode extends Control {
 
 
     // maybe add before make would be better. add will probably be used more.
-    'constructor'(spec) {
+    constructor(spec) {
         super(spec);
 
         // Don't register controls on the server?

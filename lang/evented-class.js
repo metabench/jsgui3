@@ -35,11 +35,11 @@ class Evented_Class {
 
     // Needs to initialize the bound events to start with.
 
-    'constructor' () {
+    constructor() {
         this._bound_events = {};
     }
 
-    'raise_event' () {
+    'raise_event'() {
 
         let a = Array.prototype.slice.call(arguments),
             sig = get_item_sig(a, 1);
@@ -191,7 +191,7 @@ class Evented_Class {
         return res;
     }
 
-    'add_event_listener' () {
+    'add_event_listener'() {
         var a = Array.prototype.slice.call(arguments),
             sig = get_item_sig(a, 1);
         a.l = a.length;
@@ -269,7 +269,7 @@ class Evented_Class {
     }
     */
 
-    'remove_event_listener' (event_name, fn_listener) {
+    'remove_event_listener'(event_name, fn_listener) {
 
 
         // TODO
@@ -316,14 +316,14 @@ class Evented_Class {
 
     }
 
-    'off' () {
+    'off'() {
         // However, need to make use of some document events.
         //  With some controls, we need to pass through
 
         return this.remove_event_listener.apply(this, arguments);
 
     }
-    'one' (event_name, fn_handler) {
+    'one'(event_name, fn_handler) {
 
         var inner_handler = function (e) {
 

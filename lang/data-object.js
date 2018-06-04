@@ -74,7 +74,7 @@ var Ordered_String_List = require('./ordered-string-list');
 class Mini_Context {
     // Need quite a simple mechanism to get IDs for objects.
     // They will be typed objects/
-    'constructor' (spec) {
+    constructor(spec) {
         var map_typed_counts = {};
         var typed_id = function (str_type) {
             throw 'stop Mini_Context typed id';
@@ -91,7 +91,7 @@ class Mini_Context {
         this.new_id = typed_id;
         //new_id
     }
-    'make' (abstract_object) {
+    'make'(abstract_object) {
         if (abstract_object._abstract) {
             //var res = new
             // we need the constructor function.
@@ -117,7 +117,7 @@ var is_js_native = function (obj) {
 };
 
 class Data_Object extends Evented_Class {
-    'constructor' (spec, fields) {
+    constructor(spec, fields) {
         //console.log('1* spec', spec);
         super(spec);
 
@@ -290,7 +290,7 @@ class Data_Object extends Evented_Class {
         //console.log('end Data_Object init');
     }
 
-    'set_fields_from_spec' (fields, spec) {
+    'set_fields_from_spec'(fields, spec) {
         let that = this;
         each(fields, field => {
             if (typeof spec[field[0]] !== 'undefined') {
@@ -303,7 +303,7 @@ class Data_Object extends Evented_Class {
         })
     }
 
-    'init_default_events' () {
+    'init_default_events'() {
 
 
     }
@@ -318,17 +318,17 @@ class Data_Object extends Evented_Class {
      }),
      */
 
-    'keys' () {
+    'keys'() {
         return Object.keys(this._);
     }
 
-    'toJSON' () {
+    'toJSON'() {
         var res = [];
         res.push('Data_Object(' + JSON.stringify(this._) + ')');
         return res.join('');
     }
 
-    'toObject' () {
+    'toObject'() {
         // need to go through each of them...
         var res = {};
 
@@ -486,7 +486,7 @@ class Data_Object extends Evented_Class {
         }
         */
 
-    '_id' () {
+    '_id'() {
         // gets the id.
         //console.log('Data_Object _id this.context ' + this.context);
 
@@ -863,7 +863,7 @@ class Data_Object extends Evented_Class {
     // The ._ object makes a lot of sense, for handling each.
 
 
-    'each' (callback) {
+    'each'(callback) {
         // could use for i in...
 
 
@@ -893,7 +893,7 @@ class Data_Object extends Evented_Class {
 
 
     // could make this polymorphic so that it
-    'position_within' (parent) {
+    'position_within'(parent) {
         var p_id = parent._id();
         //console.log('p_id ' + p_id);
         //console.log('this._parents ' + stringify(this._parents));
@@ -917,7 +917,7 @@ class Data_Object extends Evented_Class {
     // Maybe just 'remove' function.
     //  This may be needed with multiple parents, which are not being used at the moment.
 
-    'remove_from' (parent) {
+    'remove_from'(parent) {
         var p_id = parent._id();
 
         if (this._parents && is_defined(this._parents[p_id])) {
@@ -945,7 +945,7 @@ class Data_Object extends Evented_Class {
     //  
     // Maybe only do this with the fields anyway
 
-    'load_from_spec' (spec, arr_item_names) {
+    'load_from_spec'(spec, arr_item_names) {
         var that = this;
         each(arr_item_names, function (v, i) {
             var spec_item = spec[v];
@@ -986,7 +986,7 @@ class Data_Object extends Evented_Class {
     // 19/12/2016 - Not using get or set nearly as much anyway.
 
 
-    'get' () {
+    'get'() {
         var a = arguments;
         a.l = arguments.length;
         var sig = get_a_sig(a, 1);
@@ -1417,7 +1417,7 @@ class Data_Object extends Evented_Class {
     }
 
     //'set': fp(function(a, sig) {
-    'set' () {
+    'set'() {
 
         // Using ll_set or something recursive would be good.
         //  Again, set function is much less important now that ES6 setters have arrived.
@@ -1700,7 +1700,7 @@ class Data_Object extends Evented_Class {
         }
     }
 
-    'has' (property_name) {
+    'has'(property_name) {
         return is_defined(this.get(property_name));
     }
 }

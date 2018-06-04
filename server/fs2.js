@@ -1,5 +1,3 @@
-
-
 // Adding process_copy function
 
 
@@ -29,9 +27,13 @@ var log = console.log;
 
 // removing libxmljs?
 
-var each = jsgui.each, stringify = jsgui.stringify, is_array = jsgui.is_array;
+var each = jsgui.each,
+	stringify = jsgui.stringify,
+	is_array = jsgui.is_array;
 var is_defined = jsgui.is_defined;
-var tof = jsgui.tof, arrayify = jsgui.arrayify, mapify = jsgui.mapify;
+var tof = jsgui.tof,
+	arrayify = jsgui.arrayify,
+	mapify = jsgui.mapify;
 
 var dir_separator = '/';
 //if (process.platform === 'win32') dir_separator = '\\';
@@ -48,14 +50,16 @@ var call_multi = jsgui.call_multi;
 
 var Fns = jsgui.Fns;
 
-var file_checksum = function(file_path, callback) {
+var file_checksum = function (file_path, callback) {
 	var algo = 'sha256';
 	var shasum = crypto.createHash(algo);
 
 	var file = file_path;
 	var s = fs.ReadStream(file);
-	s.on('data', function(d) { shasum.update(d); });
-	s.on('end', function() {
+	s.on('data', function (d) {
+		shasum.update(d);
+	});
+	s.on('end', function () {
 		//var d = shasum.digest('hex');
 		var digest = shasum.digest('base64');
 		//console.log(d);
@@ -66,7 +70,7 @@ var file_checksum = function(file_path, callback) {
 	});
 }
 
-var recursive_xml_traversal = function(xml, el_callback) {
+var recursive_xml_traversal = function (xml, el_callback) {
 	if (xml.root) {
 		var root = xml.root();
 		recursive_xml_traversal(root, el_callback);
@@ -74,7 +78,7 @@ var recursive_xml_traversal = function(xml, el_callback) {
 		if (xml.attrs) {
 			el_callback(xml);
 			var cns = xml.childNodes();
-			each(cns, function(i, v) {
+			each(cns, function (i, v) {
 				recursive_xml_traversal(v, el_callback);
 			});
 		}
@@ -97,21 +101,21 @@ var map_extension_mime_types = {
 	'ogg': 'audio/ogg',
 }
 
-var sequential_execute_fs_child_processes = function(arr_fs_process_commands, callback) {
+var sequential_execute_fs_child_processes = function (arr_fs_process_commands, callback) {
 	// not sure about doing the unused simultaneous method of multithreading.
 	// may do that version later.
 
 	var l = arr_fs_process_commands.length;
 	var c = 0;
 
-	var process = function() {
+	var process = function () {
 		var command = arr_fs_process_commands[c];
 		c++;
 
 		//console.log('pre exec command ' + command);
-		exec(command, function(error, stdout, stderr) {
+		exec(command, function (error, stdout, stderr) {
 			if (error) {
-				throw(error);
+				throw (error);
 			} else {
 				if (c < l) {
 					process();
@@ -125,7 +129,7 @@ var sequential_execute_fs_child_processes = function(arr_fs_process_commands, ca
 }
 
 var fs2 = {
-	'path_parent': function(strPath) {
+	'path_parent': function (strPath) {
 		var dirSep = '/';
 		//console.log('strPath', strPath);
 		var pos1 = strPath.lastIndexOf(dirSep);
@@ -135,7 +139,7 @@ var fs2 = {
 			return beginning;
 		}
 	},
-	'path_last_part': function(strPath) {
+	'path_last_part': function (strPath) {
 		// the last part is not necessarily a file name, it may be.
 		var dirSep = '/';
 		var pos1 = strPath.lastIndexOf(dirSep);
@@ -168,11 +172,11 @@ var fs2 = {
 	// Get all directory names
 	//
 
-	'recursive_dir_names': function(start_path, callback) {
+	'recursive_dir_names': function (start_path, callback) {
 		var arr_dir_names = [];
-		fs2.walk(start_path, function(dir_path, dir_contents) {
+		fs2.walk(start_path, function (dir_path, dir_contents) {
 			arr_dir_names.push(dir_path);
-		}, function(err, res_all) {
+		}, function (err, res_all) {
 			if (err) {
 				callback(err);
 
@@ -182,12 +186,12 @@ var fs2 = {
 		})
 	},
 
-	'recursive_dir_delete': function(start_path, fn_check, callback) {
+	'recursive_dir_delete': function (start_path, fn_check, callback) {
 		var arr_dir_names = [];
 		// Walk, but wait until callback of inner function
 		//  walk, async inner.
 
-		fs2.walk_async_inner(start_path, function(dir_path, dir_contents, cb) {
+		fs2.walk_async_inner(start_path, function (dir_path, dir_contents, cb) {
 			//arr_dir_names.push(dir_path);
 			var to_delete = fn_check(dir_path);
 			if (to_delete) {
@@ -198,7 +202,7 @@ var fs2 = {
 				cb(null, false);
 			}
 
-		}, function(err, res_all) {
+		}, function (err, res_all) {
 			if (err) {
 				callback(err);
 
@@ -218,15 +222,15 @@ var fs2 = {
 
 	// With an asyncronous inner function, where it then checks to see if the directory still exists...?
 
-	'walk_async_inner': function(start_path, dir_callback, callback) {
+	'walk_async_inner': function (start_path, dir_callback, callback) {
 		// May also need to know how many to do asymcronously at once.
 		// may be recursive inside... that could be easier.
 		// think this does need a callback for call_multi to work right.
 		console.log('walk start_path', start_path);
-		var rec = function(path, rcb) {
+		var rec = function (path, rcb) {
 			//console.log('rec path ' + path);
 			// read the contents from that path.
-			fs2.dir_contents(path, function(err, contents) {
+			fs2.dir_contents(path, function (err, contents) {
 				if (err) {
 					callback(err);
 				} else {
@@ -235,13 +239,13 @@ var fs2 = {
 					// What about an async callback function, possibly where it deletes that directory?
 
 
-					dir_callback(path, contents, function(err, res) {
+					dir_callback(path, contents, function (err, res) {
 						if (err) {
 							//callback(err)
 						} else {
 							fs2.exists(path, function (err, exists) {
 								if (exists) {
-									fs2.dir_contents(path, function(err, contents) {
+									fs2.dir_contents(path, function (err, contents) {
 										if (err) {
 											callback(err);
 										} else {
@@ -251,14 +255,14 @@ var fs2 = {
 												var fns = [];
 
 												//console.log('contents.directories.length', contents.directories.length);
-												each(contents.directories, function(directory, i) {
+												each(contents.directories, function (directory, i) {
 													//console.log('directory ' + stringify(directory));
 
 													var dirPath = path + '/' + directory;
 													//log('dirPath ' + dirPath);
 													fns.push([rec, [dirPath]]);
 												});
-												call_multi(1, fns, function(err, res) {
+												call_multi(1, fns, function (err, res) {
 													if (err) {
 														//log('call_multi err ' + err);
 														throw err;
@@ -290,15 +294,15 @@ var fs2 = {
 		rec(start_path, callback);
 	},
 
-	'walk': function(start_path, dir_callback, callback) {
+	'walk': function (start_path, dir_callback, callback) {
 		// May also need to know how many to do asymcronously at once.
 		// may be recursive inside... that could be easier.
 		// think this does need a callback for call_multi to work right.
 		console.log('walk start_path', start_path);
-		var rec = function(path, rcb) {
+		var rec = function (path, rcb) {
 			//console.log('rec path ' + path);
 			// read the contents from that path.
-			fs2.dir_contents(path, function(err, contents) {
+			fs2.dir_contents(path, function (err, contents) {
 				if (err) {
 					callback(err);
 				} else {
@@ -317,14 +321,14 @@ var fs2 = {
 						var fns = [];
 
 						//console.log('contents.directories.length', contents.directories.length);
-						each(contents.directories, function(directory, i) {
+						each(contents.directories, function (directory, i) {
 							//console.log('directory ' + stringify(directory));
 
 							var dirPath = path + '/' + directory;
 							//log('dirPath ' + dirPath);
 							fns.push([rec, [dirPath]]);
 						});
-						call_multi(fns, function(err, res) {
+						call_multi(fns, function (err, res) {
 							if (err) {
 								//log('call_multi err ' + err);
 								throw err;
@@ -343,8 +347,8 @@ var fs2 = {
 		};
 		rec(start_path, callback);
 	},
-	'exists': function(path, callback) {
-		fs.exists(path, function(res) {
+	'exists': function (path, callback) {
+		fs.exists(path, function (res) {
 			callback(null, res);
 		})
 	},
@@ -354,7 +358,7 @@ var fs2 = {
 	//  to load typed arrays.
 	// Seems to work OK.
 	//  Will also want to load binary files.
-	'save_binary': function(file_path, file_content, callback) {
+	'save_binary': function (file_path, file_content, callback) {
 		// the file content could be a typed array.
 		// just try to create a buffer out of it.
 		//console.log('save_binary ' + file_path);
@@ -366,12 +370,17 @@ var fs2 = {
 			// but does it calculate the buffer length correctly?
 			console.log('buf.length', buf.length);
 
-			fs.open(file_path, "w", function(err, fd) {
-				if (err) { callback(err); } else {
+			fs.open(file_path, "w", function (err, fd) {
+				if (err) {
+					callback(err);
+				} else {
 
 					//console.log('file opened');
-					fs.write(fd, buf, 0, buf.length, function(err, res_write) {
-						if (err) { console.log('err', err); callback(err); } else {
+					fs.write(fd, buf, 0, buf.length, function (err, res_write) {
+						if (err) {
+							console.log('err', err);
+							callback(err);
+						} else {
 							//console.log('file written');
 							fs.close(fd);
 							//console.log('written to file_path ' + file_path);
@@ -388,7 +397,7 @@ var fs2 = {
 	// plain mapify to use here I think.
 	//  may need to modify mapify to support callback functions like arrayify.
 	//  Can save a whole bunch of files as strings.
-	'save_file_as_string': mapify(fp(function(a, sig) {
+	'save_file_as_string': mapify(fp(function (a, sig) {
 		//console.log('save_file_as_string sig ' + sig);
 		// and could JSON stringify an object.
 		if (sig == '[s,o,f]' || sig == '[s,a,f]') {
@@ -403,8 +412,8 @@ var fs2 = {
 			var file_content = a[1];
 			var callback = a[2];
 			//console.log('pre write file file_path', file_path);
-			fs.writeFile(file_path, file_content, function(err) {
-				if(err) {
+			fs.writeFile(file_path, file_content, function (err) {
+				if (err) {
 					//console.log(err);
 					callback(err);
 				} else {
@@ -418,8 +427,8 @@ var fs2 = {
 		};
 	})),
 
-	'process_file_as_string': function(file_path, fnProcess, callback) {
-		fs2.load_file_as_string(file_path, function(err, str_file) {
+	'process_file_as_string': function (file_path, fnProcess, callback) {
+		fs2.load_file_as_string(file_path, function (err, str_file) {
 			if (err) {
 				callback(err);
 			} else {
@@ -434,7 +443,7 @@ var fs2 = {
 	// May be easier to carry out operations on a Uint8Array in general though.
 	// Also want to be able to load a file as a buffer.
 
-	'load_file_as_buffer': fp(function(a, sig) {
+	'load_file_as_buffer': fp(function (a, sig) {
 		//source_path, callback
 		// should work as an array...
 		// so when you give it an array of source paths, it loads them all, and returns the result as an array by default.
@@ -445,7 +454,8 @@ var fs2 = {
 		// could have a concurrency_limit argument.
 		//  would be useful to incorporate that into a lot of code as an option.
 
-		var source_path, concurrency_limit = 4, callback;
+		var source_path, concurrency_limit = 4,
+			callback;
 		// console.log('load_file_as_string sig ' + sig);
 
 		if (sig == '[a,n,f]') {
@@ -468,7 +478,7 @@ var fs2 = {
 		}
 
 		if (tof(source_path) == 'string') {
-			fs.readFile(source_path, function(err, data_buffer) {
+			fs.readFile(source_path, function (err, data_buffer) {
 				if (err) {
 					//console.log('error reading file at ' + source_path);
 					//var stack = new Error().stack;
@@ -486,13 +496,13 @@ var fs2 = {
 		} else if (tof(source_path) == 'array') {
 			var res = {};
 			var fns = [];
-			each(source_path, function(i, source_path_item) {
-				fns.push([fs2.load_file_as_buffer, [source_path_item], function(err, res_loaded) {
+			each(source_path, function (i, source_path_item) {
+				fns.push([fs2.load_file_as_buffer, [source_path_item], function (err, res_loaded) {
 					if (err) throw err;
 					res[source_path_item] = res_loaded;
 				}]);
 			});
-			call_multi(fns, function(err, res_multi) {
+			call_multi(fns, function (err, res_multi) {
 				if (err) throw err;
 				callback(null, res);
 			});
@@ -500,9 +510,11 @@ var fs2 = {
 		//fs.readFile(filename, 'utf8', function(err, data_buffer) {
 	}),
 
-	'load_json_as_object': function(path, callback) {
-		this.load_file_as_string(path, function(err, str_file) {
-			if (err) { callback(err); } else {
+	'load_json_as_object': function (path, callback) {
+		this.load_file_as_string(path, function (err, str_file) {
+			if (err) {
+				callback(err);
+			} else {
 				// try/catch?
 				//return JSON.parse(str_file);
 
@@ -511,7 +523,7 @@ var fs2 = {
 		});
 	},
 
-	'load_file_as_string': fp(function(a, sig) {
+	'load_file_as_string': fp(function (a, sig) {
 		//source_path, callback
 
 		// should work as an array...
@@ -525,7 +537,8 @@ var fs2 = {
 		// could have a concurrency_limit argument.
 		//  would be useful to incorporate that into a lot of code as an option.
 
-		var source_path, concurrency_limit = 4, callback;
+		var source_path, concurrency_limit = 4,
+			callback;
 
 		//console.log('load_file_as_string sig ' + sig);
 
@@ -549,7 +562,7 @@ var fs2 = {
 		}
 
 		if (tof(source_path) == 'string') {
-			fs.readFile(source_path, function(err, data_buffer) {
+			fs.readFile(source_path, function (err, data_buffer) {
 				if (err) {
 					callback(err);
 				} else {
@@ -562,15 +575,15 @@ var fs2 = {
 		} else if (tof(source_path) == 'array') {
 			var res = {};
 			var fns = [];
-			each(source_path, function(source_path_item) {
-				fns.push([fs2.load_file_as_string, [source_path_item], function(err, res_loaded) {
+			each(source_path, function (source_path_item) {
+				fns.push([fs2.load_file_as_string, [source_path_item], function (err, res_loaded) {
 					if (err) throw err;
 
 					res[source_path_item] = res_loaded;
 
 				}]);
 			});
-			call_multi(fns, function(err, res_multi) {
+			call_multi(fns, function (err, res_multi) {
 				if (err) throw err;
 				callback(null, res);
 			});
@@ -580,19 +593,19 @@ var fs2 = {
 
 	}),
 
-	'dir_dirs_beginning': function(dir_path, beginning_text, callback) {
+	'dir_dirs_beginning': function (dir_path, beginning_text, callback) {
 		//console.log('dir_path ' + dir_path);
 		//console.log('dir_path ' + tof(dir_path));
 
 		// dir_contents has been arrayified, need to make sure it still works.
 		//console.log('pre dir_contents');
-		fs2.dir_contents(dir_path, function(err, dir_contents) {
+		fs2.dir_contents(dir_path, function (err, dir_contents) {
 			if (err) {
 				throw err;
 			} else {
 				var directories = dir_contents.directories;
 				var target_directories = [];
-				each(directories, function(i, v) {
+				each(directories, function (i, v) {
 					if (v.substr(0, beginning_text.length) == beginning_text) target_directories.push(v);
 				});
 				callback(null, target_directories);
@@ -600,15 +613,17 @@ var fs2 = {
 		})
 	},
 
-	'ensure_directory_exists': function(dir_path, callback) {
-		fs.exists(dir_path, function(exists) {
+	'ensure_directory_exists': function (dir_path, callback) {
+		fs.exists(dir_path, function (exists) {
 			if (exists) {
 				callback(null, true);
 			} else {
 				// Maybe go backwards recursively and make sure parents exist.
-				fs.mkdir(dir_path, function(err) {
+				fs.mkdir(dir_path, function (err) {
 					if (err) {
-						throw(err);
+						console.trace();
+						console.log('dir_path', dir_path);
+						throw (err);
 					} else {
 						callback(null, true);
 					}
@@ -618,19 +633,19 @@ var fs2 = {
 	},
 
 	// could use an arrayify function for functions with callbacks.
-	'dir_ensure': function(dir_path, callback) {
+	'dir_ensure': function (dir_path, callback) {
 		if (tof(dir_path) == 'array') {
 			var fns = [];
-			each(dir_path, function(i, v) {
+			each(dir_path, function (i, v) {
 				fns.push([fs2.dir_ensure, [v]]);
 			});
 			call_multiple_callback_functions(fns, callback)
 		} else {
-			fs.exists(dir_path, function(exists) {
+			fs.exists(dir_path, function (exists) {
 				if (exists) {
 					callback(null, dir_path);
 				} else {
-					fs.mkdir(dir_path, function(err, res) {
+					fs.mkdir(dir_path, function (err, res) {
 						if (err) {
 							throw err;
 						} else {
@@ -644,21 +659,22 @@ var fs2 = {
 
 	// dir_ensure_named_numbered
 
-	'dir_ensure_named_numbered': function(parentPath, name, callback) {
+	'dir_ensure_named_numbered': function (parentPath, name, callback) {
 		// get the list of directories in the parent, make a map.
-		this.dir_dirs_beginning(parentPath, name, function(err, resDirsBeginning) {
+		this.dir_dirs_beginning(parentPath, name, function (err, resDirsBeginning) {
 			if (err) {
 				callback(err);
 			} else {
 				//console.log('resDirsBeginning ' + stringify(resDirsBeginning));
 				var map_dirs_beginning = {};
-				each(resDirsBeginning, function(i, v) {
+				each(resDirsBeginning, function (i, v) {
 					map_dirs_beginning[v] = true;
 				});
 				//console.log('map_dirs_beginning ' + stringify(map_dirs_beginning));
 
 				// then loop to generate the name
-				var c = 0, genName = name + '_' + c;
+				var c = 0,
+					genName = name + '_' + c;
 				while (map_dirs_beginning[genName]) {
 					c++;
 					genName = name + '_' + c;
@@ -677,8 +693,11 @@ var fs2 = {
 	//  that way could also do a traversal_depth, so it looks in subdirectories
 
 
-	'dir_files_by_extension': fp(function(a, sig) {
-		var path = a[0], extension = a[1], include_metadata = false, callback;
+	'dir_files_by_extension': fp(function (a, sig) {
+		var path = a[0],
+			extension = a[1],
+			include_metadata = false,
+			callback;
 		if (a.l == 3) {
 			callback = a[2];
 		}
@@ -686,14 +705,14 @@ var fs2 = {
 			include_metadata = a[2];
 			callback = a[3];
 		}
-		var contents_cb = function(err, dir_contents) {
+		var contents_cb = function (err, dir_contents) {
 			if (err) {
 
 			} else {
 				//console.log('dir_contents ' + stringify(dir_contents));
 
 				var res = [];
-				each(dir_contents.files, function(i, v) {
+				each(dir_contents.files, function (i, v) {
 					//console.log('v ' + stringify(v));
 
 					var file_name;
@@ -734,7 +753,7 @@ var fs2 = {
 	// and have this arrayified on param 0?
 	//  we may then want to get the contents of a bunch of dirs.
 
-	'dir_dirs': fp(function(a, sig) {
+	'dir_dirs': fp(function (a, sig) {
 		// can still apply to multiple dirs.
 		// source_dir, callback
 
@@ -744,7 +763,9 @@ var fs2 = {
 		if (sig == '[s,f]') {
 			source_dir = a[0];
 			callback = a[1];
-			this.dir_contents(source_dir, {'files_or_directories': 'directories'}, callback);
+			this.dir_contents(source_dir, {
+				'files_or_directories': 'directories'
+			}, callback);
 		}
 		if (sig == '[s,o,f]') {
 			source_dir = a[0];
@@ -759,10 +780,13 @@ var fs2 = {
 	// want to be able to load the file contents too.
 
 	// could have this get directory contents recursively to a path... or maybe use the specialised function for that.
-	'dir_contents': arrayify(0, fp(function(a, sig) {
+	'dir_contents': arrayify(0, fp(function (a, sig) {
 		// path, callback
 
-		var path = a[0], filter, include_metadata = false, include_file_contents = false, callback, t_filter;
+		var path = a[0],
+			filter, include_metadata = false,
+			include_file_contents = false,
+			callback, t_filter;
 		var fs_paths = false;
 		// with an extension filter...
 
@@ -895,12 +919,12 @@ var fs2 = {
 		//  or have this function arrayified?
 		//console.log('pre fs.readdir');
 		//throw 'stop';
-		fs.readdir(path, function(err, files) {
+		fs.readdir(path, function (err, files) {
 			if (err) {
 				//console.log('err ' + err);
 				var stack = new Error().stack;
 				console.log(stack);
-				throw('err ' + err);
+				throw ('err ' + err);
 			} else {
 
 				//console.log('files ' + stringify(files));
@@ -912,7 +936,7 @@ var fs2 = {
 				var c = files.length;
 				//console.log('c ' + c);
 				//console.log ('!2callback ' + tof(callback));
-				var cb = function() {
+				var cb = function () {
 					//console.log('cb ');
 					//console.log('files_or_directories', files_or_directories);
 					if (files_or_directories == 'files') {
@@ -952,7 +976,7 @@ var fs2 = {
 
 
 
-				each(files, function(v, i) {
+				each(files, function (v, i) {
 					var file_name = v;
 					//console.log('file_name', file_name);
 					var file_or_dir_full_path;
@@ -991,7 +1015,7 @@ var fs2 = {
 
 					if (proceed) {
 
-						fs.stat(file_or_dir_full_path, function(err, stats) {
+						fs.stat(file_or_dir_full_path, function (err, stats) {
 							//console.log('stats', stats);
 
 							if (err) {
@@ -1055,7 +1079,7 @@ var fs2 = {
 									}
 									//console.log('fns.length ' + fns.length);
 									if (fns.length > 0) {
-										fns.go(function(err, fns_res) {
+										fns.go(function (err, fns_res) {
 											if (err) {
 												throw err;
 											} else {
@@ -1186,14 +1210,14 @@ var fs2 = {
 
 	// possibly keep in the core... but it would look into a variety of file formats.
 	//  possibly have a core version that gets data such as last modified and file size.
-	'metadata': function(path, callback) {
+	'metadata': function (path, callback) {
 		// this may have options, like including the path in the results?
 		// calling metadata on a directory...
 		//  should this get the metadata for files in the dir?
 		// mainly for file metadata.
 		// check to see if it exists.
 		//console.log('metadata path ' + path);
-		fs.exists(path, function(exists) {
+		fs.exists(path, function (exists) {
 			if (!exists) {
 				//console.log('file does not exist ' + path);
 				//throw('file not found');
@@ -1201,7 +1225,7 @@ var fs2 = {
 			} else {
 				//var pos1 = path.lastIndexOf()
 				// just get the node.js file stats first.
-				fs.stat(path, function(err, stats) {
+				fs.stat(path, function (err, stats) {
 					var extname = node_path.extname(path);
 					var basename = node_path.basename(path);
 					//console.log('extname ' + extname);
@@ -1222,20 +1246,20 @@ var fs2 = {
 	// copy a file as well.
 	// This could be arrayified? But it would need parameter pairs?
 
-	'copy_file': function(source_path, dest_path, callback) {
+	'copy_file': function (source_path, dest_path, callback) {
 		//console.log('source_path ' + source_path);
 		//console.log('dest_path ' + dest_path);
 
 		var r = fs.createReadStream(source_path).pipe(fs.createWriteStream(dest_path));
 
-		r.on('close', function() {
+		r.on('close', function () {
 			//if (err) throw err;
 			//throw 'stop';
 			callback(null, true);
 		});
 	},
 
-	'instruct': fp(function(a, sig) {
+	'instruct': fp(function (a, sig) {
 		// if it is just an array, and a callback...
 		//console.log('instruct sig ' + sig);
 		var is_multi_callback = false;
@@ -1248,11 +1272,11 @@ var fs2 = {
 				var callback = a[1];
 				is_multi_callback = true;
 
-				each(instructions, function(i, instruction) {
+				each(instructions, function (i, instruction) {
 					fns.push([fs2.instruct, instruction])
 				})
 
-				call_multiple_callback_functions(fns, function(err, res_multi) {
+				call_multiple_callback_functions(fns, function (err, res_multi) {
 					if (err) {
 						throw err;
 					} else {
@@ -1285,8 +1309,8 @@ var fs2 = {
 		}
 	}),
 
-	'process_copy': function(source_path, fn_process, dest_path, callback) {
-		fs2.load_file_as_string(source_path, function(err, strFile) {
+	'process_copy': function (source_path, fn_process, dest_path, callback) {
+		fs2.load_file_as_string(source_path, function (err, strFile) {
 			if (err) {
 				callback(err);
 			} else {
@@ -1296,7 +1320,7 @@ var fs2 = {
 		})
 	},
 
-	'copy': function(source_path, dest_path, callback) {
+	'copy': function (source_path, dest_path, callback) {
 		// dest must be a directory
 		ncp.limit = 16;
 		//console.log('copy source_path ' + source_path);
@@ -1307,7 +1331,7 @@ var fs2 = {
 		var test_for_same_files = false;
 		var ctu = true;
 
-		var the_rest = function() {
+		var the_rest = function () {
 			ncp(source_path, dest_path, function (err) {
 				if (err) {
 					return console.error(err);
@@ -1320,8 +1344,8 @@ var fs2 = {
 		if (test_for_same_files) {
 			// get the checksum for the source, and the dest.
 
-			checksum(source_path, function(err, source_checksum) {
-				checksum(dest_path, function(err, dest_checksum) {
+			checksum(source_path, function (err, source_checksum) {
+				checksum(dest_path, function (err, dest_checksum) {
 					if (source_checksum != dest_checksum) {
 						the_rest();
 					} else {
@@ -1374,11 +1398,11 @@ var fs2 = {
 		// when copying a directory, copy all directories inside it as well (recursively).
 
 	},
-	'delete': function(path, callback) {
+	'delete': function (path, callback) {
 		// needs to be a versitile delete function.
 
 		// use rimraf if it's a directory.
-		fs2.metadata(path, function(err, md) {
+		fs2.metadata(path, function (err, md) {
 			if (err) {
 				callback(err);
 			} else {
@@ -1389,7 +1413,7 @@ var fs2 = {
 					console.log('md.isDirectory ' + md.isDirectory);
 					if (md[1].isDirectory) {
 						console.log('pre rimraf path', path);
-						rimraf(path, function(err) {
+						rimraf(path, function (err) {
 							if (err) {
 								callback(err);
 							} else {
@@ -1403,7 +1427,7 @@ var fs2 = {
 		})
 	},
 
-	'exists': function(path, callback) {
+	'exists': function (path, callback) {
 		fs.stat(path, (err, stat) => {
 			callback(null, !!stat);
 		});
@@ -1411,7 +1435,7 @@ var fs2 = {
 
 	//  does not try to delete it if its not there to start with
 
-	'ensure_deleted': function(path, callback) {
+	'ensure_deleted': function (path, callback) {
 		fs2.exists(path, (err, exists) => {
 			if (!exists) {
 				callback(null, true);
@@ -1422,10 +1446,12 @@ var fs2 = {
 	},
 	// ensure_deleted
 
-	'move': function(source_path, dest_path, callback) {
+	'move': function (source_path, dest_path, callback) {
 		var that = this;
 		this.copy(source_path, dest_path, (err, res_copy) => {
-			if (err) { callback(err); } else {
+			if (err) {
+				callback(err);
+			} else {
 				that.delete(source_path, callback);
 			}
 		})
@@ -1437,7 +1463,7 @@ var fs2 = {
 	// maybe keep in core for the moment.
 
 
-	'dir_contents_with_metadata_full_tree': function(start_path, callback) {
+	'dir_contents_with_metadata_full_tree': function (start_path, callback) {
 		//  get this from za?
 
 		// I think this will be recursive...
@@ -1471,7 +1497,7 @@ var fs2 = {
 			throw 'the dest path must start with the start path - therefore being a subdirectory';
 		}
 
-		var process_path = function(path_from_start, arr_path, current_res_obj, callback) {
+		var process_path = function (path_from_start, arr_path, current_res_obj, callback) {
 			//console.log('process_path');
 			//console.log('arr_path ' + stringify(arr_path));
 
@@ -1480,7 +1506,7 @@ var fs2 = {
 			// will need to put the items into the res properly.
 			//console.log('current_path ' + current_path);
 			//throw 'stop';
-			fs2.dir_contents_with_metadata(current_path, function(err, dir_contents) {
+			fs2.dir_contents_with_metadata(current_path, function (err, dir_contents) {
 				if (err) {
 					throw (err);
 				} else {
@@ -1490,7 +1516,7 @@ var fs2 = {
 
 					if (dir_contents.files && dir_contents.files.length > 0) {
 						current_res_obj.files = current_res_obj.files || [];
-						each(dir_contents.files, function(i, file_info) {
+						each(dir_contents.files, function (i, file_info) {
 							//console.log('file_info ' + stringify(file_info));
 							var file_name = file_info[0];
 							var file_md = file_info[1];
@@ -1517,7 +1543,7 @@ var fs2 = {
 
 						var fns = [];
 
-						each(dir_contents.directories, function(i, directory_info) {
+						each(dir_contents.directories, function (i, directory_info) {
 							//console.log('directory_info ' + stringify(directory_info));
 
 							if (tof(directory_info == 'string')) {
@@ -1554,7 +1580,7 @@ var fs2 = {
 						});
 						//console.log('fns.length ' + fns.length);
 						if (fns.length > 0) {
-							call_multiple_callback_functions(fns, function(err, fns_res) {
+							call_multiple_callback_functions(fns, function (err, fns_res) {
 								//console.log('fns_res ' + stringify(fns_res));
 								callback(null, res);
 							});
@@ -1574,7 +1600,7 @@ var fs2 = {
 
 		}
 
-		process_path('', [], res, function(err, res_process_path) {
+		process_path('', [], res, function (err, res_process_path) {
 			//throw 'stop';
 
 			callback(null, res_process_path);
@@ -1588,7 +1614,7 @@ var fs2 = {
 
 	// this is unrestricted from that path.
 
-	'dir_contents_with_metadata_to_path': function(start_path, dest_path, callback) {
+	'dir_contents_with_metadata_to_path': function (start_path, dest_path, callback) {
 		// find the sequence of paths to get
 
 		// get them in sequence, then construct them into the object.
@@ -1644,7 +1670,7 @@ var fs2 = {
 
 		var depth = 0;
 
-		var process_path = function(path_from_start, arr_path, current_res_obj, depth, callback) {
+		var process_path = function (path_from_start, arr_path, current_res_obj, depth, callback) {
 			//console.log('process_path');
 			//console.log('arr_path ' + stringify(arr_path));
 
@@ -1653,7 +1679,7 @@ var fs2 = {
 			// will need to put the items into the res properly.
 			//console.log('current_path ' + current_path);
 			//throw 'stop';
-			fs2.dir_contents_with_metadata(current_path, function(err, dir_contents) {
+			fs2.dir_contents_with_metadata(current_path, function (err, dir_contents) {
 				if (err) {
 					throw (err);
 				} else {
@@ -1663,7 +1689,7 @@ var fs2 = {
 
 					if (dir_contents.files && dir_contents.files.length > 0) {
 						current_res_obj.files = current_res_obj.files || [];
-						each(dir_contents.files, function(file_info, i) {
+						each(dir_contents.files, function (file_info, i) {
 							//console.log('file_info ' + stringify(file_info));
 							var file_name = file_info[0];
 							var file_md = file_info[1];
@@ -1690,7 +1716,7 @@ var fs2 = {
 
 						var fns = [];
 
-						each(dir_contents.directories, function(i, directory_info) {
+						each(dir_contents.directories, function (i, directory_info) {
 							//console.log('directory_info ' + stringify(directory_info));
 
 							if (tof(directory_info == 'string')) {
@@ -1720,7 +1746,7 @@ var fs2 = {
 						});
 						//console.log('fns.length ' + fns.length);
 						if (fns.length > 0) {
-							call_multiple_callback_functions(fns, function(err, fns_res) {
+							call_multiple_callback_functions(fns, function (err, fns_res) {
 								//console.log('fns_res ' + stringify(fns_res));
 								callback(null, res);
 							});
@@ -1741,7 +1767,7 @@ var fs2 = {
 
 		}
 
-		process_path('', [], res, depth, function(err, res_process_path) {
+		process_path('', [], res, depth, function (err, res_process_path) {
 			//throw 'stop';
 
 			callback(null, res_process_path);
@@ -1753,14 +1779,14 @@ var fs2 = {
 
 	// will use the polymorphism of dir_contents and parameters.
 	// have this returning the object with files and directories.
-	'_dir_contents_with_metadata': function(path, callback) {
+	'_dir_contents_with_metadata': function (path, callback) {
 		//console.log('dir_contents_with_metadata path ' + path);
 
 		if (path.lastIndexOf(dir_separator) != path.length - 1) {
 			path = path + dir_separator;
 		}
 
-		fs2.dir_contents(path, function(err, dir_contents) {
+		fs2.dir_contents(path, function (err, dir_contents) {
 			if (err) {
 				//console.log('dir_contents_with_metadata err ' + err);
 			} else {
@@ -1771,7 +1797,7 @@ var fs2 = {
 					res.directories = dir_contents.directories;
 				}
 
-				var cb = function() {
+				var cb = function () {
 					callback(null, res);
 				};
 
@@ -1784,14 +1810,14 @@ var fs2 = {
 					//  may be a faster way of getting metadata.
 
 					var files_with_paths = [];
-					each(dir_contents.files, function(v, i) {
+					each(dir_contents.files, function (v, i) {
 						var full_path = path + v;
 						files_with_paths.push(full_path);
 					});
 
 					//console.log('files_with_paths ' + stringify(files_with_paths));
 
-					seq_md(files_with_paths, function(err, res2) {
+					seq_md(files_with_paths, function (err, res2) {
 						if (err) {
 
 						} else {

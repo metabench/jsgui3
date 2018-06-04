@@ -11,7 +11,7 @@ var Control = jsgui.Control;
 var Calendar = require('./calendar');
 
 class Date_Picker extends Calendar {
-    'constructor'(spec) {
+    constructor(spec) {
         super();
     }
 }

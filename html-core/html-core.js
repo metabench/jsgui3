@@ -12,7 +12,7 @@ var map_Controls = jsgui.map_Controls = {};
 
 var core_extension = str_arr_mapify(function (tagName) {
     jsgui[tagName] = class extends Control {
-        'constructor' (spec) {
+        constructor(spec) {
             //spec.tagName = tagName;
             //console.log('core extension tagName ' + tagName);
             super(spec);
@@ -31,7 +31,7 @@ var core_extension = str_arr_mapify(function (tagName) {
 
 var core_extension_no_closing_tag = str_arr_mapify(function (tagName) {
     jsgui[tagName] = class extends Control {
-        'constructor' (spec) {
+        constructor(spec) {
             //spec.tagName = tagName;
 
             //console.log('core extension tagName ' + tagName);
@@ -374,7 +374,7 @@ core_extension_no_closing_tag('link input');
 
 // Activated so it can listen for a change in the text?
 class textNode extends Control {
-    'constructor' (spec) {
+    constructor(spec) {
         super(spec);
         spec = spec || {};
         if (typeof spec == 'string') {
@@ -456,7 +456,7 @@ class textNode extends Control {
 class HTML_Document extends jsgui.Control {
     // no tag to render...
     //  but has dtd.
-    'constructor' (spec) {
+    constructor(spec) {
         super(spec);
     }
 
@@ -470,7 +470,7 @@ class HTML_Document extends jsgui.Control {
 
 
 class Blank_HTML_Document extends HTML_Document {
-    'constructor' (spec) {
+    constructor(spec) {
         //console.log('super', typeof super);
         //console.log('Blank_HTML_Document');
 
@@ -545,7 +545,7 @@ class Blank_HTML_Document extends HTML_Document {
 
 
 class Client_HTML_Document extends Blank_HTML_Document {
-    'constructor' (spec) {
+    constructor(spec) {
         //console.log('Client_HTML_Document');
         super(spec);
         //spec.context.ctrl_document = this;

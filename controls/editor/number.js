@@ -28,7 +28,7 @@ class Number_Editor extends Number_Viewer {
     // Maybe should put this into a form, so that it does a form post.
     //  That could possibly be disabled.
 
-    'constructor'(spec) {
+    constructor(spec) {
         super(spec);
         var make = this.make;
         //this._super(spec);

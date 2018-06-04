@@ -14,7 +14,7 @@ var get_window_size = jsgui.get_window_size;
 // this is the enhanced HTML module.
 
 class Page_Context extends jsgui.Evented_Class {
-    'constructor' (spec) {
+    constructor(spec) {
         spec = spec || {};
         super(spec);
         if (spec.browser_info) {

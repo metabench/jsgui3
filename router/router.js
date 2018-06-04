@@ -17,21 +17,21 @@ var get_item_sig = jsgui.get_item_sig;
 
 // May need some general purpose traversal functions?
 class Routing_Tree_Node {
-    'constructor' (spec) {
+    constructor(spec) {
         spec = spec || {};
         if (spec.handler) this.handler = spec.handler;
         this.mapNormalPathChildren = {};
     }
 }
 class Variable_Routing_Tree_Node {
-    'constructor' (spec) {
+    constructor(spec) {
         this.name = spec.name;
         if (spec.handler) this.handler = spec.handler;
         this.mapNormalPathChildren = {};
     }
 }
 class Wildcard_Routing_Tree_Node {
-    'constructor' (spec) {
+    constructor(spec) {
 
     }
 }
@@ -42,13 +42,13 @@ class Wildcard_Routing_Tree_Node {
 // Want to be able to get the Routing_Tree_Node corresponding with a path
 
 class Routing_Tree {
-    'constructor' (spec) {
+    constructor(spec) {
         this.root = new Routing_Tree_Node();
     }
-    'setRoot404' (handler) {
+    'setRoot404'(handler) {
         this.root404Handler = handler;
     }
-    'set' (strRoute, context, handler) {
+    'set'(strRoute, context, handler) {
 
         if (!handler) {
             handler = context;
@@ -116,7 +116,7 @@ class Routing_Tree {
             }
         }
     }
-    'get' (url) {
+    'get'(url) {
         // routes the URL through the tree
         var params;
         if (url == '/') {
@@ -260,7 +260,7 @@ class Router {
     //    'routing_tree': Routing_Tree
     //}
 
-    'constructor' (spec) {
+    constructor(spec) {
 
         spec = spec || {};
         //super(spec);
@@ -272,17 +272,17 @@ class Router {
 
         this.routing_tree = new Routing_Tree();
     }
-    'start' (callback) {
+    'start'(callback) {
         callback(null, true);
     }
-    'set_route' (str_route, context, fn_handler) {
+    'set_route'(str_route, context, fn_handler) {
         //var rt = this.get('routing_tree');
         return this.routing_tree.set(str_route, context, fn_handler);
     }
-    'meets_requirements' () {
+    'meets_requirements'() {
         return true;
     }
-    'process' (req, res) {
+    'process'(req, res) {
         var remoteAddress = req.connection.remoteAddress;
         //var rt = this.get('routing_tree');
         var rt = this.routing_tree;

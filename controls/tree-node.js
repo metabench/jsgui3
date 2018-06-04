@@ -14,7 +14,7 @@ var fields = [
 
 class Tree_Node extends Control {
 
-	'constructor'(spec, add, make) {
+	constructor(spec, add, make) {
 		// Wont fields have been set?
 		super(spec);
 		// Can take an image

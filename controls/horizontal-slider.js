@@ -41,7 +41,7 @@ class Horizontal_Slider extends Control {
 	// Also, want 'ghost' drag mode so that the handle can be dragged, and only changes position on release
 	//  For different scrubber behaviour to what is in the iPod app.
 
-	'constructor'(spec, add, make) {
+	constructor(spec, add, make) {
 		super(spec);
 		this.__type_name = 'horizontal_slider';
 
@@ -49,12 +49,12 @@ class Horizontal_Slider extends Control {
 
 		if (!spec.abstract && !spec.el) {
 
-			var div_relative = add(Control({'class': 'relative'}))
+			var div_relative = add(Control({ 'class': 'relative' }))
 			this.add_class('horizontal slider');
 
 			// Then we add the bar over the width.
-			var h_bar = make(Control({'class': 'h-bar'}));
-			var v_bar = make(Control({'class': 'v-bar'}));
+			var h_bar = make(Control({ 'class': 'h-bar' }));
+			var v_bar = make(Control({ 'class': 'v-bar' }));
 
 			div_relative.add(h_bar);
 			div_relative.add(v_bar);
@@ -164,7 +164,7 @@ class Horizontal_Slider extends Control {
 		var v_bar_center_pos;
 		var v_bar_center_pos_when_pressed;
 
-		var ensure_ctrl_ghost_v_bar = function() {
+		var ensure_ctrl_ghost_v_bar = function () {
 			if (!ctrl_ghost_v_bar) {
 				ctrl_ghost_v_bar = new Control({
 					'context': this.context,
@@ -180,7 +180,7 @@ class Horizontal_Slider extends Control {
 			}
 		}
 
-		var fn_mousemove = function(e_mousemove) {
+		var fn_mousemove = function (e_mousemove) {
 
 
 			var bcr_h_bar = h_bar.bcr();
@@ -225,7 +225,7 @@ class Horizontal_Slider extends Control {
 
 		}
 
-		var fn_mouseup = function(e_mouseup) {
+		var fn_mouseup = function (e_mouseup) {
 
 			console.log('e_mouseup', e_mouseup);
 
@@ -277,7 +277,7 @@ class Horizontal_Slider extends Control {
 			}
 		}
 
-		v_bar.on('mousedown', function(e_mousedown) {
+		v_bar.on('mousedown', function (e_mousedown) {
 			var dm = that.drag_mode;
 			//drag_mode = ;
 			if (dm) {
@@ -304,7 +304,7 @@ class Horizontal_Slider extends Control {
 		//});
 
 
-		this.on('change', function(e_change) {
+		this.on('change', function (e_change) {
 
 			var name = e_change.name, value = e_change.value;
 			//console.log('h slider change', e_change);

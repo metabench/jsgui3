@@ -11,7 +11,7 @@
 
 
 class Combo_Box extends Control {
-    'constructor'(spec) {
+    constructor(spec) {
         super(spec);
 
         // Has various items.

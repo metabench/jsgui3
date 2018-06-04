@@ -15,7 +15,7 @@ class Data_Row extends Control {
     //  type could specify some kind of validation, or also 'password'.
     // single field?
     //  and can have other fields possibly.
-    'constructor' (spec) {
+    constructor(spec) {
         super(spec);
         this.add_class('data-row');
         let context = this.context;

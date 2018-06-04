@@ -18,7 +18,7 @@ var j = jsgui;
 var Class = j.Class;
 
 class Single_Page_App extends jsgui.Evented_Class {
-    'constructor'(spec) {
+    constructor(spec) {
         var name = spec.name;
         var port = spec.port;
         var ctrl_main = spec.ctrl_main;

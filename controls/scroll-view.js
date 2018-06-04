@@ -26,7 +26,7 @@ class Scroll_View extends Control {
     //],
     //  and can have other fields possibly.
 
-    'constructor'(spec, add, make) {
+    constructor(spec, add, make) {
 
         super(spec);
         this.__type_name = 'toggle_button';

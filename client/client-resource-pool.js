@@ -48,7 +48,7 @@ var fields = {
 };
 class Client_Resource_Pool extends Resource_Pool {
 	//'fields': ,
-	'constructor' (spec) {
+	constructor(spec) {
 		//this._super(spec);
 		super(spec);
 
@@ -64,7 +64,7 @@ class Client_Resource_Pool extends Resource_Pool {
 
 
 	}
-	'start' (callback) {
+	'start'(callback) {
 
 
 		// A simple and automatic data resource would be useful.

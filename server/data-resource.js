@@ -43,7 +43,7 @@ var Collection = jsgui.Collection;
 
 class Data_Resource extends Resource {
 
-    'constructor' (spec) {
+    constructor(spec) {
         super(spec);
         //this.meta.set('custom_paths', new Data_Object({}));
         this.custom_paths = new Data_Object({});
@@ -57,10 +57,10 @@ class Data_Resource extends Resource {
 
 
     }
-    'start' (callback) {
+    'start'(callback) {
         callback(null, true);
     }
-    'process' (req, res) {
+    'process'(req, res) {
         console.log('Data_Resource processing HTTP request');
         var remoteAddress = req.connection.remoteAddress;
 

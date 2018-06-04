@@ -7,7 +7,7 @@ var v_subtract = jsgui.v_subtract;
 
 // Extending, with field values being set?
 //  Setting field values in definitions may be a useful thing.
-class Audio_Volume extends jsgui.Control{
+class Audio_Volume extends jsgui.Control {
 	// fields... text, value, type?
 	//  type could specify some kind of validation, or also 'password'.
 
@@ -17,7 +17,7 @@ class Audio_Volume extends jsgui.Control{
 	//],
 	//  and can have other fields possibly.
 
-	'constructor'(spec, add, make) {
+	constructor(spec, add, make) {
 		super(spec);
 		this.__type_name = 'audio_volume';
 

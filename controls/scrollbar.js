@@ -26,7 +26,7 @@ class Scrollbar extends Control {
     //],
     //  and can have other fields possibly.
 
-    'constructor'(spec, add, make) {
+    constructor(spec, add, make) {
 
         super(spec);
         this.__type_name = 'scrollbar';
@@ -69,7 +69,7 @@ class Scrollbar extends Control {
 }
 
 class Horizontal_Scrollbar extends Scrollbar {
-    'constructor'(spec) {
+    constructor(spec) {
         super(spec);
         this.__direction = 'horizontal';
         
@@ -77,7 +77,7 @@ class Horizontal_Scrollbar extends Scrollbar {
 }
 
 class Vertical_Scrollbar extends Scrollbar {
-    'constructor'(spec) {
+    constructor(spec) {
         super(spec);
         this.__direction = 'vertical';
         

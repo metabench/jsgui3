@@ -12,7 +12,7 @@ var tof = jsgui.tof;
 
 class Selection_Scope extends jsgui.Data_Object {
 	//var Selection_Scope = jsgui.Class.extend({
-	'constructor' (spec) {
+	constructor(spec) {
 		super(spec);
 		// A selection scope belongs to a context
 		//  should do
@@ -35,7 +35,7 @@ class Selection_Scope extends jsgui.Data_Object {
 		// set the items by their id to point to the control.
 		//  the control will know its index within its parent, can look up more info there.
 	}
-	'select_only' (ctrl) {
+	'select_only'(ctrl) {
 		//console.log('Selection_Scope select_only ' + ctrl._id());
 
 		// remove the selected class from all that are currently selected (except the target ctrl).
@@ -97,7 +97,7 @@ class Selection_Scope extends jsgui.Data_Object {
 	// When selecting a control, we want to make it so that controls inside it, in the same selection context are not selected.
 	//  The Selection Scope does a fair bit of the management of the selections.
 
-	'deselect_ctrl_content' (ctrl) {
+	'deselect_ctrl_content'(ctrl) {
 		var cs = ctrl.get('selection_scope');
 		var msc = this.map_selected_controls;
 		var that = this;
@@ -123,7 +123,7 @@ class Selection_Scope extends jsgui.Data_Object {
 		//throw 'stop';
 	}
 
-	'select_toggle' (ctrl) {
+	'select_toggle'(ctrl) {
 		//console.log('');
 		//console.log('select_toggle');
 		var sel = ctrl.get('selected').value();

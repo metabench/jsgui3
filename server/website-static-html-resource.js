@@ -30,7 +30,7 @@ var serve_html_file_from_disk = function(filePath, response) {
 
 class Site_Static_HTML extends Resource {
 
-	'constructor'(spec) {
+	constructor(spec) {
 		super(spec);
 
 		this.meta.set('custom_paths', new Data_Object({}));

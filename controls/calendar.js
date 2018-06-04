@@ -15,7 +15,7 @@ class Calendar extends Control {
     // could have a .view property
     //  string property, can say 'month', 'week',
 
-    'constructor'(spec) {
+    constructor(spec) {
         super();
 
         // Should have a few configuration options.

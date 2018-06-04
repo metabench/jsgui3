@@ -31,7 +31,7 @@ var exec = require('child_process').exec;
 //  Maybe just a jsgui package, holding the server too.
 
 class JSGUI_Server extends jsgui.Data_Object {
-    'constructor'(spec, __type_name) {
+    constructor(spec, __type_name) {
         super();
         this.__type_name = __type_name || 'server';
 

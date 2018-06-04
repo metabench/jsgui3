@@ -36,7 +36,7 @@ var clone = jsgui.clone;
 var input_processors = jsgui.input_processors;
 
 class Data_Value extends Evented_Class {
-    'constructor'(spec) {
+    constructor(spec) {
         super(spec);
         this.__data_value = true;
 
@@ -70,7 +70,7 @@ class Data_Value extends Evented_Class {
         //this._val = val;
 
         // This may also need to make use of input_processors
-        
+
         var input_processor = input_processors[this.__type_name];
 
 

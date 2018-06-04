@@ -28,7 +28,7 @@ class Horizontal_Menu extends Control {
 
 
 	// maybe add before make would be better. add will probably be used more.
-	'constructor'(spec, add, make) {
+	constructor(spec, add, make) {
 		super(spec);
 
 		this.__type_name = 'horizontal_menu';
@@ -47,7 +47,7 @@ class Horizontal_Menu extends Control {
 
 			var tobj = tof(obj);
 			if (tobj == 'object') {
-				each(obj, function(v, key) {
+				each(obj, function (v, key) {
 					var menu_node = make(Menu_Node({
 						'text': key,
 						'value': v,
@@ -82,8 +82,8 @@ class Horizontal_Menu extends Control {
 			//  Some kind of notation like that to find any open menu nodes.
 			// The menu items should have 'state' properties
 			var last_clicked;
-			this.content.each(function(v, i) {
-				v.on('click', function(e_click) {
+			this.content.each(function (v, i) {
+				v.on('click', function (e_click) {
 					//console.log('menu item clicked');
 
 					// if it is already open?
@@ -92,28 +92,28 @@ class Horizontal_Menu extends Control {
 
 					// Don't open if we are reclicking on the same menu item?
 					//if (last_clicked !== v) {
-						v.open();
-						// And mousedown anywhere (else) to close.
-						//console.log('pre setup one mousedown anywhere');
-						// mousedown anywhere else?
+					v.open();
+					// And mousedown anywhere (else) to close.
+					//console.log('pre setup one mousedown anywhere');
+					// mousedown anywhere else?
 
-						v.one_mousedown_anywhere(function(e_mousedown) {
-							//console.log('e_mousedown.within_this ' + e_mousedown.within_this);
+					v.one_mousedown_anywhere(function (e_mousedown) {
+						//console.log('e_mousedown.within_this ' + e_mousedown.within_this);
 
-							if (!e_mousedown.within_this) {
-								v.close();
-								//
-							} else {
+						if (!e_mousedown.within_this) {
+							v.close();
+							//
+						} else {
 
-							}
-						});
+						}
+					});
 					//}
 
 					//last_clicked = v;
 
 				})
 
-				v.on('mouseup', function(e_mouseup) {
+				v.on('mouseup', function (e_mouseup) {
 					//setTimeout(function() {
 					//	last_clicked = null;
 					//}, 0);
@@ -127,7 +127,7 @@ class Horizontal_Menu extends Control {
 		console.log('menu close_all');
 		// need to do this recursively I think.
 		//  could call this recursively on all nodes.
-		this.content.each(function(v, i) {
+		this.content.each(function (v, i) {
 			//console.log('i', i);
 			//console.log('v', v);
 			v.close_all();

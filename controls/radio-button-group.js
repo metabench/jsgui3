@@ -30,7 +30,7 @@ class Radio_Button_Group extends Control {
     //},
 
     // maybe add before make would be better. add will probably be used more.
-    'constructor'(spec, add, make) {
+    constructor(spec, add, make) {
         super(spec);
 
         this.__type_name = 'radio_button_group';

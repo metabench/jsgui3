@@ -7,7 +7,7 @@ var mapify = jsgui.mapify;
 var B_Plus_Tree = require('./b-plus-tree/b-plus-tree');
 
 class Sorted_KVS {
-	'constructor'(spec) {
+	constructor(spec) {
 		spec = spec || {};
 		// both a dict and a BTree
 		//  that is used in this case because the BTree only stores string keys.

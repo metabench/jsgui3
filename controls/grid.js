@@ -50,7 +50,7 @@ var group = jsgui.group;
 
 class Grid extends Control {
     // maybe add before make would be better. add will probably be used more.
-    'constructor'(spec, add, make) {
+    constructor(spec, add, make) {
         spec = spec || {};
         spec.__type_name = spec.__type_name || 'grid';
         super(spec);
@@ -197,7 +197,7 @@ class Grid extends Control {
                 cell.add_class('cell');
                 cell.size = cell_size;
                 row_container.add(cell);
-    
+
             }
         }
     }

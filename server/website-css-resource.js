@@ -278,7 +278,7 @@ var serve_css_file_from_disk = function (filePath, response) {
 
 class Site_CSS extends Resource {
 
-	'constructor' (spec) {
+	constructor(spec) {
 		super(spec);
 
 		//this.meta.set('custom_paths', new Data_Object({}));

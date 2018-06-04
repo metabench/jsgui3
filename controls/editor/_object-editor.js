@@ -34,7 +34,7 @@ var String_Editor = String_Viewer.extend({
 	//  That could possibly be disabled.
 
 
-	'constructor'(spec) {
+	constructor(spec) {
 		var make = this.make;
 
 
@@ -57,7 +57,7 @@ var Number_Editor = Number_Viewer.extend({
 	//  That could possibly be disabled.
 
 
-	'constructor'(spec) {
+	constructor(spec) {
 		var make = this.make;
 
 
@@ -78,7 +78,7 @@ var Number_Editor = Number_Viewer.extend({
 });
 
 var Object_KVP_Editor = Object_KVP_Viewer.extend({
-	'constructor'(spec) {
+	constructor(spec) {
 		super(spec);
 		this.add_class('object-vkp-editor');
 		this.__type_name = 'object_vkp_editor';
@@ -97,7 +97,7 @@ var Object_Editor = Object_Viewer.extend({
 	// Maybe should put this into a form, so that it does a form post.
 	//  That could possibly be disabled.
 
-	'constructor'(spec) {
+	constructor(spec) {
 		var make = this.make;
 
 		super(spec);
@@ -118,7 +118,7 @@ var Array_Editor = Array_Viewer.extend({
 	// Maybe should put this into a form, so that it does a form post.
 	//  That could possibly be disabled.
 
-	'constructor'(spec) {
+	constructor(spec) {
 		var make = this.make;
 
 		super(spec);

@@ -23,7 +23,7 @@ class Text_Input extends Control {
     //  type of either text or password.
     // could possibly specify some of the starting field values in this part.
 
-    'constructor'(spec) {
+    constructor(spec) {
         //this._super(spec, fields);
         super(spec, fields);
 
