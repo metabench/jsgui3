@@ -42,6 +42,8 @@ class JSGUI_Server extends jsgui.Data_Object {
             }
         });
 
+        //Object.defineProperty('')
+
         // Maybe the server router should explicitly be a Resource?
         //  Or just treat Objects the same way as Data_Object (if possible) in Collection.
 
@@ -95,11 +97,11 @@ class JSGUI_Server extends jsgui.Data_Object {
         if (this.__type_name === 'server' && t_spec === 'object') {
 
 
-            each(spec, function(app_spec, route) {
+            each(spec, function (app_spec, route) {
 
                 // No, they are not all resources?
                 //  Or different when it's a single control server.
-                
+
 
 
 
@@ -120,6 +122,11 @@ class JSGUI_Server extends jsgui.Data_Object {
         }
     }
 
+    get resource_names() {
+        console.log('this.resource_pool', this.resource_pool);
+        return this.resource_pool.resource_names;
+    }
+
     'start'(port, callback, fnProcessRequest) {
         //throw 'stop';
         // The resource_pool is not just a Data_Value. need to fix some get or create new field value code.
@@ -130,7 +137,7 @@ class JSGUI_Server extends jsgui.Data_Object {
         //throw 'stop';
         var that = this;
         //console.log('pre start resource pool');
-        rp.start(function(err) {
+        rp.start(function (err) {
             if (err) {
                 throw err;
             } else {
@@ -140,7 +147,7 @@ class JSGUI_Server extends jsgui.Data_Object {
                 //console.log('lsi', (lsi));
                 //console.log('rp', rp);
 
-                var resource_names = rp.get_resource_names();
+                var resource_names = rp.resource_names;
                 //console.log('resource_names', resource_names);
 
                 //throw 'stop';
@@ -181,7 +188,7 @@ class JSGUI_Server extends jsgui.Data_Object {
 
                         // Could host on local.
                         //  Host on every ipv4 address for the moment.
-                        
+
                         var arr_ipv4_addresses = [];
                         each(net, (arr_addresses, name) => {
                             each(arr_addresses, (obj_address) => {
@@ -192,12 +199,12 @@ class JSGUI_Server extends jsgui.Data_Object {
                         });
 
                         each(arr_ipv4_addresses, (ipv4_address) => {
-                            var http_server = http.createServer(function(req, res) {
-                            //console.log('process server request');
+                            var http_server = http.createServer(function (req, res) {
+                                //console.log('process server request');
 
-                            var server_routing_res = server_router.process(req, res);
+                                var server_routing_res = server_router.process(req, res);
 
-                            //console.log('server_routing_res', server_routing_res);
+                                //console.log('server_routing_res', server_routing_res);
 
 
 
@@ -210,7 +217,7 @@ class JSGUI_Server extends jsgui.Data_Object {
                             console.log('* Server running at http://' + ipv4_address + ':' + port + '/');
                         });
 
-                        
+
 
 
 
@@ -274,7 +281,7 @@ class JSGUI_Server extends jsgui.Data_Object {
         //console.log('s_url ' + stringify(s_url));
 
         var a_path = [];
-        each(s_url, function(v, i) {
+        each(s_url, function (v, i) {
             if (v.length > 0) {
                 a_path.push(v);
             }

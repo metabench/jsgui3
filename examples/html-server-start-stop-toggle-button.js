@@ -18,13 +18,26 @@ var Server = jsgui.Server;
 var port = 8000;
 var Server_Page_Context = Server.Page_Context;
 
-var server = new Server({
+// Multi app server
+//  Then html application server
+
+var root_server = new Server({
 	'*': {
-		'name': 'html-server'
+		'name': 'HTML Server'
 	}
 });
 
-var resource_pool = server.resource_pool;
+var resource_pool = root_server.resource_pool;
+
+// link these getters with the resource pool resource getters?
+
+let app_server = resource_pool['HTML Server'];
+
+//console.log('app_server', app_server);
+//throw 'stop';
+
+//console.log('app_server.resource_names', app_server.resource_names);
+//console.log('!!app_server.resource_pool', !!app_server.resource_pool);
 
 // Rendering single page controls makes a lot of sense.
 //  It means the activation code can be contained better there.
@@ -49,13 +62,11 @@ var resource_pool = server.resource_pool;
 
 //console.log('\n\n');
 
-console.log('resource_names', resource_pool.get_resource_names());
+//console.log('resource_names', resource_pool.resource_names);
 //throw 'stop';
 var server_router = resource_pool.get_resource('Server Router');
 
-
-
-console.log('server_router', server_router);
+//console.log('server_router', server_router);
 
 if (!server_router) {
 	throw 'no server_router';
@@ -63,7 +74,7 @@ if (!server_router) {
 
 var routing_tree = server_router.routing_tree;
 
-routing_tree.set('/', function(req, res) {
+routing_tree.set('/', function (req, res) {
 	//console.log('root path / request');
 	var server_page_context = new Server_Page_Context({
 		'req': req,
@@ -82,7 +93,7 @@ routing_tree.set('/', function(req, res) {
 	});
 	//var ctrl2 = new jsgui.Control({});
 	body.add(ctrl);
-	hd.all_html_render(function(err, deferred_html) {
+	hd.all_html_render(function (err, deferred_html) {
 		if (err) {
 			throw err;
 		} else {
@@ -96,7 +107,7 @@ routing_tree.set('/', function(req, res) {
 });
 
 console.log('pre server start');
-server.start(port, function(err, cb_start) {
+root_server.start(port, function (err, cb_start) {
 	if (err) {
 		throw err;
 	} else {

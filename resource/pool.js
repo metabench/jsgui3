@@ -67,8 +67,6 @@ class Resource_Pool extends Evented_Class {
 		//  Keep an object type in the prototype, not in initialization?
 		//   Working around the new super() restriction.
 
-
-
 		this.resources = new Collection({
 			/*
 
@@ -226,18 +224,26 @@ class Resource_Pool extends Evented_Class {
 		//var obj_name = obj.meta.get('name');
 		var obj_name = obj.name;
 
-		console.log('** obj_name ' + obj_name);
+		let log_trace = () => {
+			console.log('');
+			console.log('** obj_name ' + obj_name);
+			console.trace();
+			console.log('');
+		}
+		//log_trace();
+
+		if (obj_name === undefined) {
+			console.trace();
+			throw 'Resource_Pool.add(undefined) error';
+		}
 
 		if (this.has_resource(obj_name)) {
 			throw 'Resource pool already has resource with name ' + obj_name;
 		} else {
-
 			//this._dict_resources[obj_name] = obj;
-
 			// raise an event saying that the resource was added.
 
 			this.resources.add(obj);
-
 
 			// Resources have an indexing function?
 
@@ -251,6 +257,18 @@ class Resource_Pool extends Evented_Class {
 			//obj.meta.set('pool', this);
 
 			obj.pool = this;
+
+			if (obj.name !== undefined) {
+				Object.defineProperty(this, obj.name, {
+					get() {
+						return obj;
+					}
+				});
+			}
+
+
+
+
 
 
 
@@ -308,6 +326,9 @@ class Resource_Pool extends Evented_Class {
 		return res;
 	}
 
+
+	/*
+
 	'get_resource_names'() {
 		var res = [];
 		each(this.resources, (resource) => {
@@ -315,6 +336,7 @@ class Resource_Pool extends Evented_Class {
 		})
 		return res;
 	}
+	*/
 
 
 	'get_resource'() {

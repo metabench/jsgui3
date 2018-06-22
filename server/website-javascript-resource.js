@@ -1,8 +1,8 @@
 
 
 var path = require('path'), fs = require('fs'),
-		url = require('url'), jsgui = require('../html/html'), os = require('os'), http = require('http'), libUrl = require('url'),
-		Resource = require('../resource/resource'), fs2 = require('./fs2'), UglifyJS = require('uglify-js'), zlib = require('zlib');
+	url = require('url'), jsgui = require('../html/html'), os = require('os'), http = require('http'), libUrl = require('url'),
+	Resource = require('../resource/resource'), fs2 = require('./fs2'), UglifyJS = require('uglify-js'), zlib = require('zlib');
 
 
 var stringify = jsgui.stringify, each = jsgui.each, arrayify = jsgui.arrayify, tof = jsgui.tof;
@@ -75,7 +75,7 @@ var zlib = require('zlib');
 // 21/02/2018 - Need site JavaScript to be able to send a specified Buffer for a specified JS path.
 
 
-var serve_js_file_from_disk_updated_refs = function(filePath, response, callback) {
+var serve_js_file_from_disk_updated_refs = function (filePath, response, callback) {
 	fs2.load_file_as_string(filePath, function (err, data) {
 		if (err) {
 			throw err;
@@ -86,14 +86,14 @@ var serve_js_file_from_disk_updated_refs = function(filePath, response, callback
 			//console.log('data ' + data);
 			//var servableJs = updateReferencesForServing(data);
 
-			response.writeHead(200, {'Content-Type': 'text/javascript'});
+			response.writeHead(200, { 'Content-Type': 'text/javascript' });
 			//response.end(servableJs);
 			response.end(data);
 		}
 	});
 }
 
-var check_served_directories_for_requested_file = function(arr_served_paths, split_path_within_js, callback) {
+var check_served_directories_for_requested_file = function (arr_served_paths, split_path_within_js, callback) {
 	//console.log('check_served_directories_for_requested_file');
 	//console.log('split_path_within_js ' + stringify(split_path_within_js));
 	//console.log('arr_served_paths ' + stringify(arr_served_paths));
@@ -104,7 +104,7 @@ var check_served_directories_for_requested_file = function(arr_served_paths, spl
 
 	]
 
-	var checkPath = function(path, callback) {
+	var checkPath = function (path, callback) {
 		// check to see if an existing file matches up with the path that is requested.
 		// so, from that path, we use the split_path_within_js for the rest of the file path.
 
@@ -116,12 +116,12 @@ var check_served_directories_for_requested_file = function(arr_served_paths, spl
 	// Not so sure I can use the exists function like this...
 	var reconstitutedPathWithinJs = split_path_within_js.join('/');
 	var firstFoundPath;
-	each(arr_served_paths, function(i, fsPath) {
-		fns.push([function(callback) {
+	each(arr_served_paths, function (i, fsPath) {
+		fns.push([function (callback) {
 			var checkingPath = fsPath + '/' + reconstitutedPathWithinJs;
-			fs.exists(checkingPath, function(exists) {
+			fs.exists(checkingPath, function (exists) {
 				//console.log('cb fsPath ' + checkingPath + ' exists ' + exists)
-				if (exists &! firstFoundPath) {
+				if (exists & !firstFoundPath) {
 					firstFoundPath = checkingPath;
 				}
 				callback(null, exists);
@@ -129,7 +129,7 @@ var check_served_directories_for_requested_file = function(arr_served_paths, spl
 		}, []]);
 	});
 
-	call_multi(fns, function(err, res_multi) {
+	call_multi(fns, function (err, res_multi) {
 		if (err) {
 			console.log('err ' + err);
 			throw 'stop';
@@ -179,7 +179,7 @@ class Site_JavaScript extends Resource {
 		// Index the collection by string value?
 
 		//this.meta.set('served_directories', new Collection({'index_by': 'name'}));
-		this.served_directories = new Collection({'index_by': 'name'});
+		this.served_directories = new Collection({ 'index_by': 'name' });
 
 	}
 
@@ -200,6 +200,13 @@ class Site_JavaScript extends Resource {
 		// Let's have it build the client-side code.
 		//  Need the options to ignore various files, as well as to include the source maps in the output.
 	}
+
+	// build client, and serve it from one particular place
+	//  do so with a promise.
+
+
+	// want to give it the file to build.
+	// There will be a variety of jsgui packages.
 
 	'build_client'(callback) {
 		// Need the reference relative to the application directory.
@@ -357,7 +364,7 @@ class Site_JavaScript extends Resource {
 			let t = tof(custom_response_entry._);
 			//console.log('t', t);
 			if (t === 'buffer') {
-				res.writeHead(200, {'Content-Type': 'text/javascript'});
+				res.writeHead(200, { 'Content-Type': 'text/javascript' });
 				//response.end(servableJs);
 				res.end(custom_response_entry._);
 			} else {
@@ -372,7 +379,7 @@ class Site_JavaScript extends Resource {
 					if (err) {
 						throw err;
 					} else {
-						res.writeHead(200, {'Content-Type': 'text/javascript'});
+						res.writeHead(200, { 'Content-Type': 'text/javascript' });
 						//response.end(servableJs);
 						res.end(data);
 					}
@@ -384,15 +391,15 @@ class Site_JavaScript extends Resource {
 			//throw 'stop';
 
 			// we serve the file pointed to.
-			
+
 		} else {
 
 			var served_directories = this.served_directories;
 
 			console.log('served_directories', served_directories);
 
-			console.trace();
-			throw 'stop';
+			//console.trace();
+			//throw 'stop';
 
 
 			var url_parts = url.parse(req.url, true);
@@ -417,7 +424,7 @@ class Site_JavaScript extends Resource {
 				//console.log('require.main.filename', require.main.filename);
 				// Would be good to uglify and gzip what gets served.
 
-                var disk_path = path.dirname(require.main.filename) + '/' + 'js/' + wildcard_value;
+				var disk_path = path.dirname(require.main.filename) + '/' + 'js/' + wildcard_value;
 
 
 
@@ -489,7 +496,7 @@ class Site_JavaScript extends Resource {
 							*/
 
 							//setTimeout(function() {
-								//throw err;
+							//throw err;
 							//}, 5000)
 
 

@@ -133,9 +133,13 @@ class Website_Resource extends Resource {
         //   Website resource pool
         //    Website router
 
+        // And don't need local server info there?
+        //  Connect the local server info back up the resource and resource pool chain?
 
 
-        var resource_pool = new Resource_Pool({});
+        var resource_pool = new Resource_Pool({
+            name: 'Website Resource Pool'
+        });
 
 
 
@@ -216,7 +220,9 @@ class Website_Resource extends Resource {
 
         // Needs to have a router inside it.
 
-        var router = new Router();
+        var router = new Router({
+            'name': 'Site Router'
+        });
 
         this.router = router;
         // termorary fix to get/set problem.
@@ -226,7 +232,6 @@ class Website_Resource extends Resource {
         //throw 'stop';
 
         // May start an admin web resource without a database connection.
-
 
         // Maybe there is no web database resource?
 
@@ -394,7 +399,12 @@ class Website_Resource extends Resource {
 
     }
 
-    'get_resource' (resource_name) {
+    get resource_names() {
+        //console.log('this.resource_pool', this.resource_pool);
+        return this.resource_pool.resource_names;
+    }
+
+    'get_resource'(resource_name) {
         var resource_pool = this.resource_pool;
         //console.log('resource_pool', resource_pool);
 
@@ -404,7 +414,7 @@ class Website_Resource extends Resource {
         return resource_pool.get_resource(resource_name);
     }
 
-    'start' (callback) {
+    'start'(callback) {
 
         // Need to wait until the database has started.
 
@@ -439,7 +449,7 @@ class Website_Resource extends Resource {
 
     }
 
-    'meets_requirements' () {
+    'meets_requirements'() {
         // Likely will be part of Status
 
         //return false;
@@ -448,7 +458,7 @@ class Website_Resource extends Resource {
     }
 
     // Needs to be able to process HTTP requests. A bit like the Router in that way.
-    'process' (req, res) {
+    'process'(req, res) {
         //console.log('website process request req.url', req.url);
         //throw 'stop';
 

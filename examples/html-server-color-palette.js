@@ -21,7 +21,7 @@ var Server_Page_Context = Server.Page_Context;
 
 var server = new Server({
 	'*': {
-		'name': 'html-server'
+		'name': 'HTML Server'
 	}
 });
 
@@ -64,7 +64,7 @@ if (!server_router) {
 
 var routing_tree = server_router.routing_tree;
 
-routing_tree.set('/', function(req, res) {
+routing_tree.set('/', function (req, res) {
 	//console.log('root path / request');
 	var server_page_context = new Server_Page_Context({
 		'req': req,
@@ -87,7 +87,7 @@ routing_tree.set('/', function(req, res) {
 	ctrl.resizable = true;
 	body.add(ctrl);
 	ctrl.active();
-	hd.all_html_render(function(err, deferred_html) {
+	hd.all_html_render(function (err, deferred_html) {
 		if (err) {
 			throw err;
 		} else {
@@ -101,7 +101,7 @@ routing_tree.set('/', function(req, res) {
 });
 
 //console.log('pre server start');
-server.start(port, function(err, cb_start) {
+server.start(port, function (err, cb_start) {
 	if (err) {
 		throw err;
 	} else {

@@ -250,7 +250,7 @@ class Collection extends Data_Object {
         // Probably should act differently for an abstract collection.
         this.__type = 'collection';
         this.__type_name = 'collection';
-        var spec = spec || {};
+
         var t_spec = tof(spec);
         if (spec.abstract === true) {
             //console.log('init abstract collection');
@@ -572,8 +572,6 @@ class Collection extends Data_Object {
             var item = this._arr[pos];
 
             //console.log('FIX: COLLECTION find() returning undefined.')
-
-
 
             return item;
 

@@ -40,9 +40,6 @@ class Sorted_KVS {
 		//  the tree does not store objects in the node.
 		//   could make the tree node hold a reference to the object?
 
-
-
-
 		//console.log('put insert_res ' + insert_res);
 		//this.dict[key] = value;
 	}),
@@ -161,8 +158,6 @@ Sorted_KVS.prototype.put = mapify(function (key, value) {
 	// with tree.insert - nice if we can keep the treenode as a result.
 	//  the tree does not store objects in the node.
 	//   could make the tree node hold a reference to the object?
-
-
 
 
 	//console.log('put insert_res ' + insert_res);
