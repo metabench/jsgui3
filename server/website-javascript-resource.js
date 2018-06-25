@@ -14,8 +14,15 @@ var call_multi = jsgui.call_multi, get_truth_map_from_arr = jsgui.get_truth_map_
 
 var browserify = require('browserify');
 var zlib = require('zlib');
+var util = require('util');
+
+const babel = require('babel-core');
 
 // Extends AutoStart_Resource?
+const stream_to_array = require('stream-to-array');
+
+const fnl = require('fnl');
+const prom_or_cb = fnl.prom_or_cb;
 
 
 // This could do with some overhauling.
@@ -204,6 +211,13 @@ class Site_JavaScript extends Resource {
 	// build client, and serve it from one particular place
 	//  do so with a promise.
 
+	// serve_package
+
+	// Need to bundle / build together a package from the disk path, then serve it under a URL route.
+
+
+
+
 
 	// want to give it the file to build.
 	// There will be a variety of jsgui packages.
@@ -272,6 +286,57 @@ class Site_JavaScript extends Resource {
 
 	// However, may set it using a buffer, not a file path.
 	// The app-bundle may be created on application start.
+
+	'serve_package'(url, js_file_path, callback) {
+
+		return prom_or_cb((resolve, reject) => {
+			(async () => {
+				var b = browserify([js_file_path], {
+					'debug': true
+				});
+				let parts = await stream_to_array(b.bundle());
+				const buffers = parts
+					.map(part => util.isBuffer(part) ? part : Buffer.from(part));
+				let buf_js = Buffer.concat(buffers);
+				let str_js = buf_js.toString();
+
+				//console.log('buf_js.length', buf_js.length);
+				//console.log('str_js.length', str_js.length);
+
+				let res_transform = babel.transform(str_js, {
+					//'plugins': ['transform-class']
+					'plugins': ['transform-es2015-object-super', 'transform-es2015-classes', 'remove-comments'],
+					'sourceMaps': 'inline'
+					//'plugins': ['transform-es2015-classes']
+					// transform-es2015-object-super
+				});
+				//console.log('res_transform', res_transform);
+				//console.log('Object.keys(res_transform)', Object.keys(res_transform));
+				let jst_es5 = res_transform.code;
+				//let {jst_es5, map, ast} = babel.transform(str_js);
+				console.log('jst_es5.length', jst_es5.length);
+				//throw 'stop';
+				// Then run it through babel to change the ES6 classes into older style.
+				buf_js = Buffer.from(jst_es5);
+				// then need to serve it under url
+
+				var escaped_url = url.replace(/\./g, '☺');
+				this.custom_paths.set(escaped_url, buf_js);
+
+				resolve(true);
+
+
+
+				// 
+
+				// then need to store that compiled file at that URL.
+
+
+
+
+			})();
+		}, callback);
+	}
 
 
 	'set_custom_path'(url, file_path) {

@@ -175,7 +175,7 @@ class Control extends Control_Core {
 
 	}
 
-	'bcr' () {
+	'bcr'() {
 		//console.log('sig', sig);
 		var a = arguments;
 		a.l = arguments.length;
@@ -245,7 +245,7 @@ class Control extends Control_Core {
 
 	}
 
-	'add_text' (value) {
+	'add_text'(value) {
 		var tn = new Text_Node({
 			'context': this.context,
 			'text': value + ''
@@ -253,7 +253,7 @@ class Control extends Control_Core {
 		this.add(tn);
 		return tn;
 	}
-	'computed_style' () {
+	'computed_style'() {
 		var a = arguments;
 		a.l = arguments.length;
 		var sig = get_a_sig(a, 1);
@@ -271,7 +271,7 @@ class Control extends Control_Core {
 	}
 	// Likely to be within the core.
 	//  Meaning it's not done with progressive enhancement.
-	'padding' () {
+	'padding'() {
 		var a = arguments;
 		a.l = arguments.length;
 		var sig = get_a_sig(a, 1);
@@ -294,7 +294,7 @@ class Control extends Control_Core {
 			}
 		}
 	}
-	'border' () {
+	'border'() {
 		var a = arguments;
 		a.l = arguments.length;
 		var sig = get_a_sig(a, 1);
@@ -308,7 +308,7 @@ class Control extends Control_Core {
 			throw 'stop';
 		}
 	}
-	'border_thickness' () {
+	'border_thickness'() {
 		var a = arguments;
 		a.l = arguments.length;
 		var sig = get_a_sig(a, 1);
@@ -335,7 +335,7 @@ class Control extends Control_Core {
 		}
 	}
 
-	'cover' () {
+	'cover'() {
 		// Makes a cover to this control.
 		//  Relatively positioned div as first child (if it is not there already)
 		//  Absolutely positioned within that relative div.
@@ -345,7 +345,7 @@ class Control extends Control_Core {
 
 	}
 
-	'ghost' () {
+	'ghost'() {
 
 	}
 
@@ -353,7 +353,7 @@ class Control extends Control_Core {
 
 	// can have different monomorphic versions.
 
-	'set' (name, value) {
+	'set'(name, value) {
 		// Used for setting controls, on the server, that get persisted to the client.
 
 		// when the value is a control, we also want to set the ._jsgui_ctrl_fields
@@ -392,7 +392,7 @@ class Control extends Control_Core {
 	// One mousedown elsewhere... needs to respond to all body events, while checking to see if the event originates from within this control.
 	//  Relies on tracing back through the DOM to see if a DOM node is connected to this control, or an inner part of it.
 
-	'one_mousedown_elsewhere' (callback) {
+	'one_mousedown_elsewhere'(callback) {
 		var body = this.context.body();
 
 		var that = this;
@@ -442,7 +442,7 @@ class Control extends Control_Core {
 	// one_click_anywhere
 
 
-	'one_mousedown_anywhere' (callback) {
+	'one_mousedown_anywhere'(callback) {
 		//var ctrl_html_root = this.context.ctrl_document;
 		//console.log('this.context', this.context);
 		var body = this.context.body();
@@ -481,7 +481,7 @@ class Control extends Control_Core {
 	//  Need to get this to work with client-rendered content.
 
 
-	'activate_recursive' () {
+	'activate_recursive'() {
 		//console.log('activate_recursive');
 		var el = this.dom.el;
 
@@ -524,7 +524,7 @@ class Control extends Control_Core {
 		})
 	}
 
-	'add_dom_event_listener' (event_name, fn_handler) {
+	'add_dom_event_listener'(event_name, fn_handler) {
 		//console.log('add_dom_event_listener', event_name, this.__id);
 		var listener = this._bound_events[event_name];
 		var that = this;
@@ -607,7 +607,7 @@ class Control extends Control_Core {
 		}
 	}
 
-	'remove_dom_event_listener' (event_name, fn_handler) {
+	'remove_dom_event_listener'(event_name, fn_handler) {
 		var listener = this._bound_events[event_name];
 		var that = this;
 
@@ -692,7 +692,7 @@ class Control extends Control_Core {
 
 	// Need to remove event listener from the DOM as well.
 
-	'remove_event_listener' () {
+	'remove_event_listener'() {
 		var a = arguments;
 		a.l = arguments.length;
 		var sig = get_a_sig(a, 1),
@@ -736,7 +736,7 @@ class Control extends Control_Core {
 
 	}
 
-	'add_event_listener' () {
+	'add_event_listener'() {
 
 		var a = arguments;
 		a.l = arguments.length;
@@ -834,7 +834,7 @@ class Control extends Control_Core {
 			//  that's a tricky one.
 			//  should make it easy to listen out for DOM changes.
 			// let's include it for the moment.
-			//console.log('a[0]', a[0]);
+			console.log('Ctrl_Enh add_event_listener a[0]', a[0]);
 
 			//console.log('mapDomEventNames[a[0]]', mapDomEventNames[a[0]]);
 
@@ -858,7 +858,7 @@ class Control extends Control_Core {
 		}
 	}
 
-	'pop_into_body' () {
+	'pop_into_body'() {
 
 		this.show();
 		var bcr = this.bcr();
@@ -887,7 +887,7 @@ class Control extends Control_Core {
 
 	//
 
-	'activate' (el) {
+	'activate'(el) {
 		if (!this.__active) {
 			this.__active = true;
 			//console.log('el', el);
@@ -928,7 +928,7 @@ class Control extends Control_Core {
 
 	//}
 
-	'activate_other_changes_listen' () {
+	'activate_other_changes_listen'() {
 		//var el;
 		var dom_attributes = this.dom.attrs;
 		//console.log('dom_attributes', dom_attributes);
@@ -958,7 +958,7 @@ class Control extends Control_Core {
 			}
 		});
 	}
-	'activate_content_listen' () {
+	'activate_content_listen'() {
 		//console.log('activate_content_listen');
 		var content = this.content;
 		//console.log('1) content.length()', content.length());
@@ -1095,7 +1095,7 @@ class Control extends Control_Core {
 	}
 	*/
 
-	'rec_desc_ensure_ctrl_el_refs' (el) {
+	'rec_desc_ensure_ctrl_el_refs'(el) {
 		el = el || this.dom.el;
 		var context = this.context;
 		var that = this;
@@ -1152,7 +1152,7 @@ class Control extends Control_Core {
 		}
 	}
 
-	'rec_desc_activate' () {
+	'rec_desc_activate'() {
 		desc(this, function (ctrl) {
 			// ensure the control is registered with the context.
 			//console.log('desc ctrl', ctrl);
@@ -1164,7 +1164,7 @@ class Control extends Control_Core {
 		});
 	}
 
-	'activate_content_controls' () {
+	'activate_content_controls'() {
 		// This could do with some enhancement, so that it automatically does a recursive activation.
 		// ensure content dom el refs
 		//  recursively ensures the DOM node references for the elements inside.
@@ -1250,7 +1250,7 @@ class Control extends Control_Core {
 		this.rec_desc_activate();
 	}
 
-	'activate_dom_attributes' () {
+	'activate_dom_attributes'() {
 		// Needs to get the class out of the DOM properly.
 		//console.log('activate_dom_attributes');
 
@@ -1344,7 +1344,7 @@ class Control extends Control_Core {
 		}
 	}
 
-	'attach_dom_events' () {
+	'attach_dom_events'() {
 		// Attaches the bound events to the DOM.
 		//  Called after the control has been assigned an element.
 
@@ -1366,16 +1366,16 @@ class Control extends Control_Core {
 
 	}
 
-	'hide' () {
+	'hide'() {
 		//console.log('hide');
 		this.add_class('hidden');
 	}
-	'show' () {
+	'show'() {
 		//console.log('show');
 		this.remove_class('hidden');
 	}
 
-	'descendants' (search) {
+	'descendants'(search) {
 		// assembles a list of the descendents that match the search
 		//  (search by .__type_name)
 		// eg get a list of menu_node objects.
@@ -1424,7 +1424,7 @@ class Control extends Control_Core {
 		return arr_matching;
 	}
 
-	'ancestor' (search) {
+	'ancestor'(search) {
 		// could maybe work when not activated too...
 		// need to get the ancestor control matching the search (in type).
 		if (this._parent) {
@@ -1601,6 +1601,9 @@ class Control extends Control_Core {
 
 
 };
+
+let p = Control.prototype;
+p.on = p.add_event_listener;
 
 module.exports = Control;
 

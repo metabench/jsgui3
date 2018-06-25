@@ -415,23 +415,13 @@ class Website_Resource extends Resource {
     }
 
     'start'(callback) {
-
         // Need to wait until the database has started.
-
         console.log('Website Resource start');
-
         // start the db / web db resources?
-
         // start the resource pool?
-
         var resource_pool = this.resource_pool;
         resource_pool.start(callback);
-
-
         //callback(null, true);
-
-
-
 
         // needs various other resources to have started.
 
@@ -441,9 +431,6 @@ class Website_Resource extends Resource {
         //   I think using the system of names APIs will help here.
 
         // The web db resource needs to have been started.
-
-
-
 
         //throw 'no start function defined for web resource (subclass)'
 
@@ -507,24 +494,17 @@ class Website_Resource extends Resource {
 
                 var static_html_resource = this.resource_pool.get_resource('Static HTML');
                 //console.log('static_html_resource', static_html_resource);
-
                 // And lets get the static resource to process it
-
                 if (static_html_resource) {
                     static_html_resource.process(req, res);
                 }
-
-
             } else {
                 // show a 404
-
                 res.writeHead(404, {
                     "Content-Type": "text/plain"
                 });
                 res.write("404 Not Found\n");
                 res.end();
-
-
             }
         }
     }

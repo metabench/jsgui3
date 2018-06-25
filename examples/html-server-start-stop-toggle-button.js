@@ -34,10 +34,84 @@ var resource_pool = root_server.resource_pool;
 let app_server = resource_pool['HTML Server'];
 
 //console.log('app_server', app_server);
-//throw 'stop';
+//
 
 //console.log('app_server.resource_names', app_server.resource_names);
 //console.log('!!app_server.resource_pool', !!app_server.resource_pool);
+
+let js = app_server.resource_pool['Site JavaScript'];
+
+//console.log('!!js', !!js);
+
+//throw 'stop';
+// Need to package the relevant JavaScript, and then have the JS esource serve it.
+
+
+(async () => {
+	/*
+	var b = browserify(['../jsgui3/client/client.js'], {
+		'debug': true
+	});
+	*/
+	//console.log('pre serve package');
+	await js.serve_package('/js/app.js', '../client/client.js');
+	//console.log('post serve package');
+
+	var server_router = resource_pool.get_resource('Server Router');
+
+	//console.log('server_router', server_router);
+
+	if (!server_router) {
+		throw 'no server_router';
+	}
+
+	var routing_tree = server_router.routing_tree;
+
+	routing_tree.set('/', function (req, res) {
+		//console.log('root path / request');
+		var server_page_context = new Server_Page_Context({
+			'req': req,
+			'res': res,
+			'resource_pool': resource_pool
+		});
+		// Page_Bounds_Specifier
+		var hd = new jsgui.Client_HTML_Document({
+			'context': server_page_context
+		});
+		hd.include_client_css();
+		//hd.include_js('/js/app-bundle-active.js');
+		hd.include_js('/js/app.js');
+
+		var body = hd.body;
+		var ctrl = new Start_Stop_Toggle_Button({
+			'context': server_page_context
+		});
+		//var ctrl2 = new jsgui.Control({});
+		body.add(ctrl);
+		hd.all_html_render(function (err, deferred_html) {
+			if (err) {
+				throw err;
+			} else {
+				//console.log('deferred_html', deferred_html);
+				var mime_type = 'text/html';
+				//console.log('mime_type ' + mime_type);
+				res.writeHead(200, { 'Content-Type': mime_type });
+				res.end('<!DOCTYPE html>' + deferred_html, 'utf-8');
+			}
+		});
+	});
+
+	console.log('pre server start');
+	root_server.start(port, function (err, cb_start) {
+		if (err) {
+			throw err;
+		} else {
+			console.log('master server started');
+		}
+	});
+})();
+
+
 
 // Rendering single page controls makes a lot of sense.
 //  It means the activation code can be contained better there.
@@ -51,12 +125,9 @@ let app_server = resource_pool['HTML Server'];
 
 // Get the website resource
 
-
-
 // Caching items / resources by type?
 
 // Need to give the resources a name.
-
 
 //var website = resource_pool.get_resource('Server Router');
 
@@ -64,53 +135,3 @@ let app_server = resource_pool['HTML Server'];
 
 //console.log('resource_names', resource_pool.resource_names);
 //throw 'stop';
-var server_router = resource_pool.get_resource('Server Router');
-
-//console.log('server_router', server_router);
-
-if (!server_router) {
-	throw 'no server_router';
-}
-
-var routing_tree = server_router.routing_tree;
-
-routing_tree.set('/', function (req, res) {
-	//console.log('root path / request');
-	var server_page_context = new Server_Page_Context({
-		'req': req,
-		'res': res,
-		'resource_pool': resource_pool
-	});
-	// Page_Bounds_Specifier
-	var hd = new jsgui.Client_HTML_Document({
-		'context': server_page_context
-	});
-	hd.include_client_css();
-	hd.include_js('/js/app-bundle-active.js');
-	var body = hd.body;
-	var ctrl = new Start_Stop_Toggle_Button({
-		'context': server_page_context
-	});
-	//var ctrl2 = new jsgui.Control({});
-	body.add(ctrl);
-	hd.all_html_render(function (err, deferred_html) {
-		if (err) {
-			throw err;
-		} else {
-			//console.log('deferred_html', deferred_html);
-			var mime_type = 'text/html';
-			//console.log('mime_type ' + mime_type);
-			res.writeHead(200, { 'Content-Type': mime_type });
-			res.end('<!DOCTYPE html>' + deferred_html, 'utf-8');
-		}
-	});
-});
-
-console.log('pre server start');
-root_server.start(port, function (err, cb_start) {
-	if (err) {
-		throw err;
-	} else {
-		console.log('master server started');
-	}
-});

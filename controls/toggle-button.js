@@ -104,7 +104,7 @@ class Toggle_Button extends Control {
         //console.log('spec.state', spec.state);
 
         if (spec_state) {
-          //console.log('spec_state', spec_state);
+            //console.log('spec_state', spec_state);
             //if (spec_state == 'expanded' || spec_state == 'contracted') {
             //state = this.set('state', spec_state);
 
@@ -139,7 +139,7 @@ class Toggle_Button extends Control {
 
 
             if (!spec.abstract && !spec.el) {
-                var span_state = new jsgui.span({'context': this.context});
+                var span_state = new jsgui.span({ 'context': this.context });
                 span_state.active();
                 span_state.add(state + '');
                 that.add(span_state);
@@ -226,85 +226,87 @@ class Toggle_Button extends Control {
     }
 
     'activate'() {
-      if (!this.__active) {
-        super.activate();
-        console.log('toggle button activate');
-        // Need references?
-        var that = this;
+        if (!this.__active) {
+            super.activate();
+            console.log('toggle button activate');
+            // Need references?
+            var that = this;
 
-        /*
-
-        // Only want jsgui wrappers in some places.
-        // When getting a jsgui Data_Object or Control, we don't want it wrapped within its own Data_Object.
-        var span_state = this.span_state;
-        // read the active fields.
-        //  This is likely to be done in Control in the future.? Or now?
-        // need to listen for the state changing.
-        //  update the UI.
-        // Automatically make strings get set as Data_Objects?
-        var state = that.state;
-
-        // State is just a normal object.
-
-
-
-        that.on('change', function(e_change) {
-          //console.log('e_change', e_change);
-          if (e_change.name === 'state') {
-            //e_change.value;
-              //console.log('e_change.value', e_change.value);
-              //console.log('tof e_change.value', tof(e_change.value));
-              //console.log('');
-              //console.log('1) span_state.__id', span_state.__id);
-
-          }
-        });
-        */
-
-        this.on('click', function(e_click) {
-            console.log('toggle button clicked');
-            // needs to toggle through states.
-            // Need to send the state field from the server to the client.
+            /*
+    
+            // Only want jsgui wrappers in some places.
+            // When getting a jsgui Data_Object or Control, we don't want it wrapped within its own Data_Object.
+            var span_state = this.span_state;
+            // read the active fields.
+            //  This is likely to be done in Control in the future.? Or now?
+            // need to listen for the state changing.
+            //  update the UI.
+            // Automatically make strings get set as Data_Objects?
             var state = that.state;
-            //console.log('state', state);
-            // And need to look at the states.
+    
+            // State is just a normal object.
+    
+    
+    
+            that.on('change', function(e_change) {
+              //console.log('e_change', e_change);
+              if (e_change.name === 'state') {
+                //e_change.value;
+                  //console.log('e_change.value', e_change.value);
+                  //console.log('tof e_change.value', tof(e_change.value));
+                  //console.log('');
+                  //console.log('1) span_state.__id', span_state.__id);
+    
+              }
+            });
+            */
 
-            var states = that.states;
-            // Need to send the state field from the server to the client.
-            //console.log('states', states);
-            //State being stored as a Data_Object,
-            // States being stored as an Array?
-            // still, need to shift between them
-            var i_current_state;
+            // .on
 
-            if (tof(states) === 'array') {
-                each(states, function(i_state, i) {
-                    //console.log('i_state', i_state);
-                    //console.log('tof i_state', tof(i_state));
-                    if (i_state == state) {
-                        i_current_state = i;
-                    }
-                })
-                //console.log('i_current_state', i_current_state);
-                // then choose the next state
-                var i_next_state = i_current_state + 1;
-                if (i_next_state == states.length) i_next_state = 0;
-                var str_next_state = states[i_next_state];
-                console.log('str_next_state', str_next_state);
-                //state.set(str_next_state);
-                that.state = str_next_state;
-                // needs to listen to the change in state
+            this.on('click', function (e_click) {
+                console.log('toggle button clicked');
+                // needs to toggle through states.
+                // Need to send the state field from the server to the client.
+                var state = that.state;
+                //console.log('state', state);
+                // And need to look at the states.
 
-                // field changes need to be observable
+                var states = that.states;
+                // Need to send the state field from the server to the client.
+                //console.log('states', states);
+                //State being stored as a Data_Object,
+                // States being stored as an Array?
+                // still, need to shift between them
+                var i_current_state;
+
+                if (tof(states) === 'array') {
+                    each(states, function (i_state, i) {
+                        //console.log('i_state', i_state);
+                        //console.log('tof i_state', tof(i_state));
+                        if (i_state == state) {
+                            i_current_state = i;
+                        }
+                    })
+                    //console.log('i_current_state', i_current_state);
+                    // then choose the next state
+                    var i_next_state = i_current_state + 1;
+                    if (i_next_state == states.length) i_next_state = 0;
+                    var str_next_state = states[i_next_state];
+                    console.log('str_next_state', str_next_state);
+                    //state.set(str_next_state);
+                    that.state = str_next_state;
+                    // needs to listen to the change in state
+
+                    // field changes need to be observable
 
 
-                // need to listen for a change from the ctrl then.
+                    // need to listen for a change from the ctrl then.
 
-            } else {
-                throw 'stop'
-            }
-        })
-      }
+                } else {
+                    throw 'stop'
+                }
+            })
+        }
     }
 }
 module.exports = Toggle_Button;

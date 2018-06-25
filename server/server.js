@@ -123,7 +123,7 @@ class JSGUI_Server extends jsgui.Data_Object {
     }
 
     get resource_names() {
-        console.log('this.resource_pool', this.resource_pool);
+        //console.log('this.resource_pool', this.resource_pool);
         return this.resource_pool.resource_names;
     }
 
@@ -174,8 +174,6 @@ class JSGUI_Server extends jsgui.Data_Object {
 
                 // The nis could be a Collection, indexed by name.
 
-
-
                 //var nis = lsi.nis;
 
                 //console.log('nis', nis);
@@ -205,9 +203,6 @@ class JSGUI_Server extends jsgui.Data_Object {
                                 var server_routing_res = server_router.process(req, res);
 
                                 //console.log('server_routing_res', server_routing_res);
-
-
-
 
                             });
                             http_server.timeout = 10800000;

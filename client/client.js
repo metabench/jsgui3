@@ -16,7 +16,7 @@ if (typeof window !== 'undefined') {
         var len = textBuffer.length - startOffset;
         var arrayBuffer = new ArrayBuffer(len);
         var ui8a = new Uint8Array(arrayBuffer, 0);
-        for (var i = 0, j = startOffset; i < len; i++, j++)
+        for (var i = 0, j = startOffset; i < len; i++ , j++)
             ui8a[i] = (textBuffer.charCodeAt(j) & 0xff);
 
         let buf = new Buffer(arrayBuffer);
@@ -107,12 +107,9 @@ if (typeof window !== 'undefined') {
                 page_context.update_Controls('grid', jsgui.Grid);
 
                 jsgui.activate(page_context);
+                console.log('post jsgui activate');
             }
             early_load_and_activate();
-
-
-
-
 
 
         }

@@ -102,8 +102,6 @@ class Resource_Pool extends Evented_Class {
 		//   Make collections have a sorted KVS as an index by default anyway.
 
 		// Functional indexing?
-
-
 		//this.resources.index_by('name');
 
 		//console.log('this.resources.index_system.index_map ', JSON.stringify(this.resources.index_system.index_map));
@@ -126,14 +124,11 @@ class Resource_Pool extends Evented_Class {
 
 		this.resources.each(function (i, resource) {
 			console.log('resource ' + resource);
-
 			// Not so sure we should treat 'get' like that for the resource.
 			//  The resource may be a list of items, one of which is called 'interface'
 
 			// Need that one on a lower level.
 			//  Like resource.interface
-
-
 
 			var i = resource.get('interface');
 			if (tof(i) == 'string') {
@@ -147,7 +142,6 @@ class Resource_Pool extends Evented_Class {
 					}
 				})
 			}
-
 		});
 
 		if (res.length > 1) return res;
@@ -186,25 +180,19 @@ class Resource_Pool extends Evented_Class {
 		if (sig == '[D,s,[s,s]]') {
 			var data_object = a[0];
 			//console.log('data_object ' + stringify(data_object));
-
 			//console.log('a[1] ' + a[1]);
 			//console.log('a[2] ' + stringify(a[2]));
-
 		}
 
 		if (sig == '[D,s]') {
 			var data_object = a[0];
 			//console.log('data_object ' + stringify(data_object));
 			//console.log('a[1] ' + a[1]);
-
 			var event_name = a[1];
 			//console.log('event_name ' + event_name);
 			// could be that it has started?
-
 			// then need to raise this event.
-
 			// so if an resource has started, could have a particular handler for that.
-
 			// There will be groups of resources that are needed for other ones to start.
 			//  When one of these resources has loaded, it will check to see if others have also loaded.
 			// This should be done with fairly fast algorithms, we don't want the system to slow down as it is getting going.
@@ -214,7 +202,6 @@ class Resource_Pool extends Evented_Class {
 
 	'add'(obj) {
 		// adds the resource obj to the pool.
-
 		// Each resource will have its own individual name within the pool.
 		//  There may be resources that get put into groups too.
 		var that = this;
@@ -233,6 +220,7 @@ class Resource_Pool extends Evented_Class {
 		//log_trace();
 
 		if (obj_name === undefined) {
+			console.log('obj', obj);
 			console.trace();
 			throw 'Resource_Pool.add(undefined) error';
 		}
@@ -266,22 +254,13 @@ class Resource_Pool extends Evented_Class {
 				});
 			}
 
-
-
-
-
-
-
 			this.raise_event('added', obj);
 			// listen to events from that resource.
 
 			// Do we want just a general listener for events?
 			//  So we listen to any event from it?
 			//obj.add_event_listener(that.receive_resource_event);
-
 		}
-
-
 	}
 	'push'(obj) {
 		return this.add(obj);
@@ -303,9 +282,6 @@ class Resource_Pool extends Evented_Class {
 			return this.resources.has(obj_lookup_val);
 
 		}
-
-
-
 	}
 
 	// Likely to just be 'get', with it returning resources inside.
