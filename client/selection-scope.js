@@ -19,14 +19,11 @@ class Selection_Scope extends jsgui.Data_Object {
 		// has its control.
 		// various controls point to it.
 		// has various methods to do with selecting and selecting objects
-
 		// Could probably do these as fields.
 
 		// Selection scope should also keep track of its context and its id.
 		if (spec.context) this.context = spec.context;
 		if (typeof spec.id !== 'undefined') this.is = spec.id;
-
-
 		if (spec.control) this.control = spec.control;
 		// Needs to be a list / map of all controls that are selected.
 		// map of selected controls by id?
@@ -37,11 +34,8 @@ class Selection_Scope extends jsgui.Data_Object {
 	}
 	'select_only'(ctrl) {
 		//console.log('Selection_Scope select_only ' + ctrl._id());
-
 		// remove the selected class from all that are currently selected (except the target ctrl).
 		//console.log('this.map_selected_controls ', this.map_selected_controls);
-
-
 		// And need to trigger deselect where appropriate.
 
 		// But not if the control was previously selected.
@@ -70,22 +64,16 @@ class Selection_Scope extends jsgui.Data_Object {
 				currently_selected = v.selected;
 			}
 		});
-
 		this.map_selected_controls = {};
-
 		this.map_selected_controls[ctrl._id()] = ctrl;
-
 		// and then tell the control that it's selected.
-
 		// could possibly set a CSS flag.
 
 		if (!currently_selected) {
 			ctrl.selected = true;
 			ctrl.trigger('select');
-
 			ctrl.add_class('selected');
 		}
-
 		if (count_deselected > 0 & !currently_selected) {
 			this.trigger('change');
 		}
@@ -104,18 +92,13 @@ class Selection_Scope extends jsgui.Data_Object {
 		ctrl.get('content').each(v => {
 			var tv = tof(v);
 			//console.log('tv ' + tv);
-
 			if (tv == 'control') {
-
 				// TODO: Trigger 'deselect' events when selection changes to negitive
-
 				v.remove_class('selected');
 				//v.set('selected', false);
 				v.selected = false;
-
 				var id = v._id();
 				if (msc[id]) msc[id] = false;
-
 				that.deselect_ctrl_content(v);
 			}
 		})
@@ -134,7 +117,6 @@ class Selection_Scope extends jsgui.Data_Object {
 		var id = ctrl._id();
 		if (!sel) {
 			var sel_anc = ctrl.find_selected_ancestor_in_scope();
-
 			if (sel_anc) {
 				console.log('1) not selecting because a selected ancestor in the selection scope has been found.');
 			} else {
@@ -161,7 +143,6 @@ class Selection_Scope extends jsgui.Data_Object {
 					msc[id] = false;
 				} else {
 					var sel_anc = ctrl.find_selected_ancestor_in_scope();
-
 					if (sel_anc) {
 						console.log('2) not selecting because a selected ancestor in the selection scope has been found.');
 					} else {
@@ -172,7 +153,6 @@ class Selection_Scope extends jsgui.Data_Object {
 						//  iterate_ancestors_in_selection_scope
 						//   looking for selected ancestor.
 						// find_selected_ancestor_in_scope
-
 						ctrl.add_class('selected');
 						msc[id] = ctrl;
 					}
@@ -180,7 +160,6 @@ class Selection_Scope extends jsgui.Data_Object {
 				//
 			}
 			if (tsel == 'boolean') {
-
 				if (sel) {
 					ctrl.remove_class('selected');
 					//ctrl.set('selected', false);
@@ -194,14 +173,11 @@ class Selection_Scope extends jsgui.Data_Object {
 						this.deselect_ctrl_content(ctrl);
 						//ctrl.set('selected', true);
 						ctrl.selected = true;
-
 						// Check for a selected ancestor control in the scope.
-
 						//  can try an iterate_ancestors function.
 						//  iterate_ancestors_in_selection_scope
 						//   looking for selected ancestor.
 						// find_selected_ancestor_in_scope
-
 						ctrl.add_class('selected');
 						msc[id] = ctrl;
 					}
