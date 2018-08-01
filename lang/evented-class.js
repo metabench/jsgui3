@@ -57,7 +57,12 @@ class Evented_Class {
             res = [];
             if (bgh) {
                 for (c = 0, l = bgh.length; c < l; c++) {
-                    res.push(bgh[c].call(target, event_name));
+
+
+                    //res.push(bgh[c].call(target, event_name));
+
+                    res.push(bgh[c](event_name));
+
                 }
             }
 
@@ -65,7 +70,10 @@ class Evented_Class {
                 let bei = be[event_name];
                 if (tof(bei) == 'array') {
                     for (c = 0, l = bei.length; c < l; c++) {
-                        res.push(bei[c].call(target));
+                        //res.push(bei[c].call(target));
+
+                        res.push(bei[c]());
+
                     }
                     return res;
                 }
@@ -77,12 +85,13 @@ class Evented_Class {
             let bgh = this._bound_general_handler;
             let event_name = a[0];
 
-            if (!a[1].target) a[1].target = target;
+            //if (!a[1].target) a[1].target = target;
 
             res = [];
             if (bgh) {
                 for (c = 0, l = bgh.length; c < l; c++) {
-                    res.push(bgh[c].call(target, event_name, a[1]));
+                    //res.push(bgh[c].call(target, event_name, a[1]));
+                    res.push(bgh[c](event_name, a[1]));
                 }
             }
 
@@ -90,7 +99,8 @@ class Evented_Class {
                 let bei = be[event_name];
                 if (tof(bei) === 'array') {
                     for (c = 0, l = bei.length; c < l; c++) {
-                        res.push(bei[c].call(target, a[1]));
+                        //res.push(bei[c].call(target, a[1]));
+                        res.push(bei[c](a[1]));
                     }
                 }
             }
@@ -106,7 +116,8 @@ class Evented_Class {
             res = [];
             if (bgh) {
                 for (c = 0, l = bgh.length; c < l; c++) {
-                    res.push(bgh[c].call(target, event_name, a[1]));
+                    //res.push(bgh[c].call(target, event_name, a[1]));
+                    res.push(bgh[c](event_name, a[1]));
                 }
             }
 
@@ -114,7 +125,8 @@ class Evented_Class {
                 let bei = be[event_name];
                 if (tof(bei) === 'array') {
                     for (c = 0, l = bei.length; c < l; c++) {
-                        res.push(bei[c].call(target, a[1]));
+                        //res.push(bei[c].call(target, a[1]));
+                        res.push(bei[c](a[1]));
                     }
                 }
             }
@@ -133,7 +145,8 @@ class Evented_Class {
             res = [];
             if (bgh) {
                 for (c = 0, l = bgh.length; c < l; c++) {
-                    res.push(bgh[c].call(target, event_name, a[1]));
+                    //res.push(bgh[c].call(target, event_name, a[1]));
+                    res.push(bgh[c](event_name, a[1]));
                 }
             }
 
@@ -141,7 +154,7 @@ class Evented_Class {
                 let bei = be[event_name];
                 if (tof(bei) === 'array') {
                     for (c = 0, l = bei.length; c < l; c++) {
-                        res.push(bei[c].call(target, a[1]));
+                        res.push(bei[c](a[1]));
                     }
                 }
             }
@@ -160,7 +173,9 @@ class Evented_Class {
 
                 if (bgh) {
                     for (c = 0, l = bgh.length; c < l; c++) {
-                        res.push(bgh[c].apply(target, bgh_args));
+
+                        //res.push(bgh[c].apply(target, bgh_args));
+                        res.push(bgh[c](bgh_args))
                     }
                 }
                 if (be) {

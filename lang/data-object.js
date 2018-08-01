@@ -494,12 +494,18 @@ class Data_Object extends Evented_Class {
         //  Need to have it as the item is added, I think.
         if (this.__id) return this.__id;
 
+        //if (!this.context) {
+        //    if (this.parent.context) 
+        //}
+
         if (this.context) {
             this.__id = this.context.new_id(this.__type_name || this.__type);
         } else {
             if (this._abstract) {
                 return undefined;
             } else if (!is_defined(this.__id)) {
+
+                // try the context of the parent.
 
                 // What does not have the abstract?
 
@@ -1502,12 +1508,15 @@ class Data_Object extends Evented_Class {
 
 
                     var data_object_next = this.get(property_name);
-                    console.log('data_object_next', data_object_next);
+                    //console.log('data_object_next', data_object_next);
 
 
                     if (data_object_next) {
 
-                        var field = this.field(property_name);
+                        //console.log('property_name', property_name);
+
+                        //var field = this.field(property_name);
+                        var field = this[property_name];
                         //console.log('field', field);
                         if (field) {
 

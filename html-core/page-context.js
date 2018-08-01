@@ -122,6 +122,7 @@ class Page_Context extends jsgui.Evented_Class {
         //console.log('registering control id', id);
         this.map_controls[id] = control;
     }
+    
     'first_ctrl_matching_type' (type_name) {
         // Want to iterate through the controls.
         var res;

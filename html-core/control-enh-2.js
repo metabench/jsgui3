@@ -13,6 +13,10 @@ var tof = jsgui.tof;
 
 var v_subtract = jsgui.util.v_subtract;
 var v_add = jsgui.util.v_add;
+
+
+// Could add, make functions in the params?
+
 class Control_Enh_2 extends Control_Enh {
 	//'fields': {
 	//	'selection_scope': Object,
@@ -238,6 +242,7 @@ class Control_Enh_2 extends Control_Enh {
 	}
 	*/
 
+	/*
 
 	'hide' () {
 		//console.log('hide');
@@ -247,6 +252,7 @@ class Control_Enh_2 extends Control_Enh {
 		//console.log('show');
 		this.remove_class('hidden');
 	}
+	*/
 
 	/*
 	'context_menu'() {
@@ -740,19 +746,29 @@ class Control_Enh_2 extends Control_Enh {
 		// Do this before activation?
 
 
-		var that = this;
+		//var that = this;
 		ctrl = ctrl || this;
 
 		if (typeof document === 'undefined') {
 			//that._fields = that._fields || {};
 			//that._fields['is_selectable'] = true;
-			that.is_selectable = true;
+			this.is_selectable = true;
+
+			// send this over to the client as a property.
+			//  a field to send to the client.
+
+
+
+
 
 		} else {
 
-			that.click(function (e) {
+			this.click(function (e) {
 
-				//console.log('e', e);
+				console.log('selectable click e', e);
+
+
+
 
 				var ctrl_key = e.ctrlKey;
 				var meta_key = e.metaKey;
@@ -761,13 +777,16 @@ class Control_Enh_2 extends Control_Enh {
 				} else {
 					ctrl.action_select_only();
 				}
+
+				e.stopPropagation();
 			});
 		}
 	}
 
 	'action_select_only' () {
+		console.log('action_select_only');
 		var ss = this.find_selection_scope();
-		//console.log('ss', ss);
+		console.log('!!ss', !!ss);
 		ss.select_only(this);
 		//this.find_selection_scope().select_only(this);
 	}
@@ -777,6 +796,9 @@ class Control_Enh_2 extends Control_Enh {
 	}
 
 	// So I think the resource-pool will have a selection scope.
+
+	/*
+
 	'find_selection_scope' () {
 		//console.log('find_selection_scope');
 		var res = this.selection_scope;
@@ -789,6 +811,7 @@ class Control_Enh_2 extends Control_Enh {
 
 		if (this.parent && this.parent.find_selection_scope) return this.parent.find_selection_scope();
 	}
+	*/
 
 	// Nice, this works. Not that efficiently yet.
 

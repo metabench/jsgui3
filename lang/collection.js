@@ -432,9 +432,10 @@ class Collection extends Data_Object {
         this._arr_idx = 0;
         this._arr = [];
 
-
         this.index.clear();
 
+
+        // listner class hears the event but then loses access to its own this.
 
         this.raise('change', {
             'type': 'clear'

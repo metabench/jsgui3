@@ -98,10 +98,11 @@ class Selection_Scope extends jsgui.Data_Object {
 	//  The Selection Scope does a fair bit of the management of the selections.
 
 	'deselect_ctrl_content'(ctrl) {
-		var cs = ctrl.get('selection_scope');
+		//var cs = ctrl.get('selection_scope');
+		var cs = ctrl.selection_scope;
 		var msc = this.map_selected_controls;
 		var that = this;
-		ctrl.get('content').each(function (i, v) {
+		ctrl.get('content').each(v => {
 			var tv = tof(v);
 			//console.log('tv ' + tv);
 
@@ -110,7 +111,8 @@ class Selection_Scope extends jsgui.Data_Object {
 				// TODO: Trigger 'deselect' events when selection changes to negitive
 
 				v.remove_class('selected');
-				v.set('selected', false);
+				//v.set('selected', false);
+				v.selected = false;
 
 				var id = v._id();
 				if (msc[id]) msc[id] = false;
@@ -126,7 +128,8 @@ class Selection_Scope extends jsgui.Data_Object {
 	'select_toggle'(ctrl) {
 		//console.log('');
 		//console.log('select_toggle');
-		var sel = ctrl.get('selected').value();
+		//var sel = ctrl.get('selected').value();
+		var sel = ctrl.selected;
 		//console.log('tof(sel) ' + tof(sel));
 		var msc = this.map_selected_controls;
 		var id = ctrl._id();
@@ -136,7 +139,8 @@ class Selection_Scope extends jsgui.Data_Object {
 			if (sel_anc) {
 				console.log('1) not selecting because a selected ancestor in the selection scope has been found.');
 			} else {
-				ctrl.set('selected', true);
+				//ctrl.set('selected', true);
+				ctrl.selected = true;
 				// Check for a selected ancestor control in the scope.
 				this.deselect_ctrl_content(ctrl);
 				//  can try an iterate_ancestors function.
@@ -180,7 +184,8 @@ class Selection_Scope extends jsgui.Data_Object {
 
 				if (sel) {
 					ctrl.remove_class('selected');
-					ctrl.set('selected', false);
+					//ctrl.set('selected', false);
+					ctrl.selected = false;
 					msc[id] = false;
 				} else {
 					var sel_anc = ctrl.find_selected_ancestor_in_scope();
@@ -188,7 +193,8 @@ class Selection_Scope extends jsgui.Data_Object {
 						console.log('2) not selecting because a selected ancestor in the selection scope has been found.');
 					} else {
 						this.deselect_ctrl_content(ctrl);
-						ctrl.set('selected', true);
+						//ctrl.set('selected', true);
+						ctrl.selected = true;
 
 						// Check for a selected ancestor control in the scope.
 

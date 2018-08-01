@@ -17,15 +17,29 @@ class Title_Bar extends Control {
     // single field?
     //  and can have other fields possibly.
     constructor(spec) {
+        spec = spec || {};
+        spec.__type_name = spec.__type_name || 'title_bar';
 
         super(spec, fields);
-        this.add_class('title-bar title bar');
-        var span = new jsgui.span({
-            'context': this.context
-        })
-        span.add(this.text);
-        //ctrl_title_bar.set('dom.attributes.class', 'titlebar');
-        this.add(span);
+        
+
+        if (!spec.el) {
+            this.add_class('title-bar title bar');
+            var span = new jsgui.span({
+                'context': this.context,
+                'text': this.text
+            })
+
+            /*
+            span.add(new jsgui.textNode({
+                context: this.context,
+                text: this.text
+            }));
+            */
+            //ctrl_title_bar.set('dom.attributes.class', 'titlebar');
+            this.add(span);
+        }
+        
     }
 };
 module.exports = Title_Bar;

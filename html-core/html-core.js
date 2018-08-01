@@ -138,44 +138,48 @@ var activate = function (context) {
         return parseInt(id.substr(id.lastIndexOf('_') + 1), 10);
     }
 
-    recursive_dom_iterate(document, function (el) {
 
-        //console.log('recursive_dom_iterate el', el);
-        //console.log('tof el', tof(el));
-        //console.log('2) el.tagName ' + el.tagName);
-        var nt = el.nodeType;
-        //console.log('nt ' + nt);
+    let map_els = () => {
+        recursive_dom_iterate(document, (el) => {
 
-        // So for the 'HTML' tag name...
-        //  We should make a control for the HTML document - or it should get activated.
-
-
-
-        if (nt == 1) {
-            var jsgui_id = el.getAttribute('data-jsgui-id');
-            // Give the HTML document an ID?
-
-
-            //console.log('jsgui_id ' + jsgui_id);
-            if (jsgui_id) {
-                var ib = id_before__(jsgui_id);
-                var num = num_after(jsgui_id);
-                if (!max_typed_ids[ib]) {
-                    max_typed_ids[ib] = num;
-                } else {
-                    if (num > max_typed_ids[ib]) max_typed_ids[ib] = num;
+            //console.log('recursive_dom_iterate el', el);
+            //console.log('tof el', tof(el));
+            //console.log('2) el.tagName ' + el.tagName);
+            var nt = el.nodeType;
+            //console.log('nt ' + nt);
+    
+            // So for the 'HTML' tag name...
+            //  We should make a control for the HTML document - or it should get activated.
+    
+    
+    
+            if (nt == 1) {
+                var jsgui_id = el.getAttribute('data-jsgui-id');
+                // Give the HTML document an ID?
+    
+    
+                //console.log('jsgui_id ' + jsgui_id);
+                if (jsgui_id) {
+                    var ib = id_before__(jsgui_id);
+                    var num = num_after(jsgui_id);
+                    if (!max_typed_ids[ib]) {
+                        max_typed_ids[ib] = num;
+                    } else {
+                        if (num > max_typed_ids[ib]) max_typed_ids[ib] = num;
+                    }
+    
+                    map_jsgui_els[jsgui_id] = el;
+                    var jsgui_type = el.getAttribute('data-jsgui-type');
+                    //console.log('jsgui_type ' + jsgui_type);
+                    map_jsgui_types[jsgui_id] = jsgui_type;
+                    //console.log('jsgui_type ' + jsgui_type);
                 }
-
-                map_jsgui_els[jsgui_id] = el;
-                var jsgui_type = el.getAttribute('data-jsgui-type');
-                //console.log('jsgui_type ' + jsgui_type);
-                map_jsgui_types[jsgui_id] = jsgui_type;
-                //console.log('jsgui_type ' + jsgui_type);
             }
-        }
-    });
-    context.set_max_ids(max_typed_ids);
+        });
+    }
+    map_els();
 
+    context.set_max_ids(max_typed_ids);
     //console.log('map_controls', map_controls);
     //throw 'stop';
 
@@ -185,7 +189,9 @@ var activate = function (context) {
     // Control construction and registration
 
     //console.log('map_jsgui_types', map_jsgui_types);
-    each(map_jsgui_els, function (el, jsgui_id) {
+    each(map_jsgui_els, (el, jsgui_id) => {
+
+        //console.log('el', el);
         //console.log('jsgui_id ' + jsgui_id);
         //console.log('3) el.tagName ' + el.tagName);
         var l_tag_name = el.tagName.toLowerCase();
@@ -196,7 +202,6 @@ var activate = function (context) {
 
             //var cstr = jsgui.constructor_from_type(type);
             //console.log('!!map_controls[jsgui_id]', !!map_controls[jsgui_id]);
-
             //console.log('cstr ' + cstr);
 
             // use the context's map_Controls
@@ -246,6 +251,10 @@ var activate = function (context) {
                     }
 
                     map_controls[jsgui_id] = ctrl;
+
+
+                    //console.log('ctrl.dom.el', ctrl.dom.el);
+
                     //console.log('\n');
                     //console.log('ctrl._id()', ctrl._id());
                     //console.log('jsgui_id', jsgui_id);
@@ -283,10 +292,6 @@ var activate = function (context) {
             }
 
 
-
-
-
-
             //console.log('jsgui_id ' + jsgui_id);
             //console.log('ctrl._id() ' + ctrl._id());
 
@@ -294,7 +299,7 @@ var activate = function (context) {
         // get the constructor from the id?
     });
 
-    recursive_dom_iterate_depth(document, function (el) {
+    recursive_dom_iterate_depth(document, (el) => {
         //console.log('el ', el);
         var nt = el.nodeType;
         //console.log('nt ' + nt);
@@ -319,7 +324,10 @@ var activate = function (context) {
 
                 // Need to link the controls together in terms of parents (maybe contents?)
 
-                ctrl.activate();
+                // to be sure
+                //ctrl.dom.el = el;
+                //console.log('2) ctrl.dom.el', ctrl.dom.el);
+                ctrl.activate(ctrl.dom.el);
 
                 // Type name being set in initialization?
 
@@ -363,12 +371,85 @@ var escape_html = function (str) {
     return str;
 };
 
+jsgui.span = class span extends Control {
+    constructor(spec) {
+        super(spec);
+        this.dom.tagName = 'span';
+        spec = spec || {};
+
+        //console.log('\nspec.text', spec.text);
+
+        if (typeof spec.text != 'undefined') {
+            this._text = spec.text;
+        } else {
+            this._text = '';
+        }
+
+        let tn = this.tn = this.textNode = this.text_node = new textNode({
+            context: this.context,
+            text: this._text
+        });
+        this.add(tn);
+        
+        
+
+        //this.typeName = pr.typeName;
+        //this.tagName = 'p';
+    }
+    get text() {
+        return this._text;
+    }
+    set text(value) {
+        this._text = value;
+
+        /*
+        this.raise('change', {
+            'name': 'text',
+            'value': value
+        });
+        */
+
+        // Should not really need to respond to such events anyway.
+        //  principles of react etc.
+    }
+
+    all_html_render_internal_controls() {
+        return this._text;
+    }
+
+
+    /*
+    'all_html_render' () {
+        // need to escape the HTML it outputs.
+        var res;
+
+        //var text = this._.text || '';
+        //var text = this.get('text');
+        // These get and set operations should not rely on the page_context.
+
+        //console.log('text ' + text);
+
+        //var nx = this.get('no_escape');
+
+        //console.log('nx ' + nx);
+
+        if (this.nx) {
+            res = this.text || '';
+        } else {
+            res = escape_html(this.text || '') || '';
+        }
+
+        return res;
+    }
+    */
+}
 
 
 
 
 jsgui.activate = activate;
-core_extension('html head title body div span h1 h2 h3 h4 h5 h6 label p a script button form img ul li audio video table tr td caption thead colgroup col');
+//core_extension('html head title body div span h1 h2 h3 h4 h5 h6 label p a script button form img ul li audio video table tr td caption thead colgroup col');
+core_extension('html head title body div h1 h2 h3 h4 h5 h6 label p a script button form img ul li audio video table tr td caption thead colgroup col');
 core_extension_no_closing_tag('link input');
 
 
@@ -400,14 +481,14 @@ class textNode extends Control {
 
         // Proxies could get trickier when they are in the object heirachy.
 
-        this._ = {};
+        //this._ = {};
 
 
 
 
 
-        if (typeof spec.text != 'undefined') {
-            this.text = spec.text;
+        if (typeof spec.text !== 'undefined') {
+            this._text = spec.text;
         }
 
         //this.typeName = pr.typeName;
@@ -415,10 +496,10 @@ class textNode extends Control {
 
     }
     get text() {
-        return this._.text;
+        return this._text;
     }
     set text(value) {
-        this._.text = value;
+        this._text = value;
         this.raise('change', {
             'name': 'text',
             'value': value
@@ -439,9 +520,9 @@ class textNode extends Control {
         //console.log('nx ' + nx);
 
         if (this.nx) {
-            res = this.text || '';
+            res = this._text || '';
         } else {
-            res = escape_html(this.text || '') || '';
+            res = escape_html(this._text || '') || '';
         }
 
         return res;
@@ -689,10 +770,13 @@ class Client_HTML_Document extends Blank_HTML_Document {
         head.content.add(link);
         // <link rel="stylesheet" type="text/css" href="theme.css">
     }
+
+    
     // also need to include jsgui client css
 }
 
 jsgui.textNode = textNode;
+jsgui.Text_Node = textNode;
 jsgui.HTML_Document = HTML_Document;
 jsgui.Blank_HTML_Document = Blank_HTML_Document;
 jsgui.Client_HTML_Document = Client_HTML_Document;

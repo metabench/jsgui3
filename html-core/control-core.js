@@ -239,6 +239,8 @@ class Control_DOM extends Evented_Class {
 		var that = this;
 
 
+
+
 		var attrs = this.attrs = this.attributes = new Proxy(dom_attributes, {
 			'set': (target, property, value, receiver) => {
 
@@ -398,7 +400,6 @@ class Control_Core extends Data_Object {
 			this.dom.tagName = tagName;
 			this._icss = {};
 			//this._.dom = {'tagName': 'div'};
-
 			// Abstract controls won't have
 
 			// The DOM is a field that it should be getting from the control.
@@ -410,14 +411,13 @@ class Control_Core extends Data_Object {
 				} else if (tsc == 'string' || tsc == 'control') {
 					this.content.add(spec_content);
 				}
-
 			}
 
 			if (spec.el) {
-
 				//console.log('spec.el', spec.el);
 				//this.set('dom.el', spec.el);
 				this.dom.el = spec.el;
+				//console.log('this.dom.el', this.dom.el);
 				//console.log('this._.dom._.el', this._.dom._.el);
 				//throw 'stop';
 			}
@@ -426,7 +426,6 @@ class Control_Core extends Data_Object {
 			var context = this.context || spec.context;
 			//console.log('context', context);
 			if (context) {
-
 				if (context.register_control) context.register_control(this);
 			} else {
 				//console.trace('');
@@ -441,14 +440,12 @@ class Control_Core extends Data_Object {
 				this.dom.attrs['class'] = spec['class'];
 			}
 
-
 			//var content = this.content;
 			//content._parent = this;
-
-
 			// Content collection.
 
-			var content = this.content = this.contents = new Collection({});
+			//var content = this.content = this.contents = new Collection({});
+			var content = this.content = new Collection({});
 
 
 			var that = this;
@@ -851,6 +848,38 @@ class Control_Core extends Data_Object {
 
 	'renderEmptyNodeJqo' () {
 		return [this.renderBeginTagToHtml(), this.renderEndTagToHtml(), this.renderHtmlAppendment()].join('');
+	}
+
+	// register this and subcontrols
+
+	'register_this_and_subcontrols'() {
+		let context = this.context;
+		this.iterate_this_and_subcontrols((ctrl) => {
+			context.register_control(ctrl);
+		});
+	}
+
+	'register_this_and_subels'() {
+		// iterate elements rather than controls.
+		let context = this.context;
+
+		let iterate_els = (el, handler) => {
+			if (el.nodeType === 1) {
+				each(el.childNodes, cn => {
+				
+					iterate_els(cn, handler);
+				})
+				handler(el);
+			}
+			
+		}
+
+		iterate_els(this.dom.el, el => {
+
+			//let jsgui_id = el.getAttribute('data-jsgui-id');
+			//console.log('jsgui_id', jsgui_id);
+			context.register_el(el);
+		});
 	}
 
 	'iterate_this_and_subcontrols' (ctrl_callback) {
@@ -1316,23 +1345,27 @@ class Control_Core extends Data_Object {
 
 	'add' (new_content) {
 		var tnc = tof(new_content);
+		let res;
 		//console.log('control add content tnc', tnc);
 
 		if (tnc == 'array') {
-			var res = [],
-				that = this;
-			each(new_content, function (i, v) {
-				res.push(that.add(v));
+			let res = [];
+			each(new_content, (v) => {
+				res.push(this.add(v));
 			});
-			return new_content;
+			//res = new_content;
 		} else {
 
 			if (new_content) {
+				//console.log('!!new_content', !!new_content);
 
 				if (tnc === 'string') {
 
 				} else {
+					
 					if (!new_content.context) {
+						//console.log('1) !!new_content.context', !!new_content.context);
+						//console.log('!!this.context', !!this.context);
 						if (this.context) {
 							new_content.context = this.context;
 						}
@@ -1341,13 +1374,16 @@ class Control_Core extends Data_Object {
 
 				var inner_control = this.inner_control;
 				if (inner_control) {
-					return inner_control.content.add(new_content);
+					res = inner_control.content.add(new_content);
 				} else {
-					return this.content.add(new_content);
+					//console.log('2) !!new_content.context', !!new_content.context);
+					res = this.content.add(new_content);
 				}
 
+				new_content.parent = this;
 			}
 		}
+		return res;
 	}
 	'insert_before' (target) {
 		//console.log('target', target);
@@ -1600,6 +1636,9 @@ class Control_Core extends Data_Object {
 
 		//var parent = this.get('parent');
 		//console.log('parent ' + tof(parent));
+
+		console.log('this.parent', this.parent);
+
 		if (this.parent && this.parent.find_selection_scope) return this.parent.find_selection_scope();
 
 	}
@@ -1873,13 +1912,13 @@ class Control_Core extends Data_Object {
 		if (s === ps) {
 			// Probably would be much more convenient to get a data value just as its value,
 			//  or have a more convenient data value idiom.
-			var psel = parent.selected;
+			var psel = this.parent.selected;
 			if (psel && psel.value && psel.value() == true) {
 				//throw 'stop';
 
-				return parent;
+				return this.parent;
 			} else {
-				return parent.find_selected_ancestor_in_scope();
+				return this.parent.find_selected_ancestor_in_scope();
 			}
 		}
 		//throw 'stop';
@@ -2014,7 +2053,18 @@ class Control_Core extends Data_Object {
 		// clear all the contents.
 		// ui should react to the change.
 
-		return this.content.clear();
+		//return this.content.clear();
+		this.content.clear();
+		// ui seems not to react to this.
+
+		// remove all dom nodes?
+		
+		// Or have a different part that responds to content events?
+
+		// content event handlers seem important.
+
+
+
 
 	}
 

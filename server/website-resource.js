@@ -79,6 +79,7 @@ var Site_Static_HTML = require('./website-static-html-resource');
 //var DB_Web_Resource = require('../../web/db-resource-postgres');
 //var database_resource_factory = require('../../db/resource/factory');
 
+const Resource_Publisher = require('./resource-publisher');
 
 const Data_Resource = require('./data-resource');
 
@@ -122,70 +123,44 @@ class Website_Resource extends Resource {
 
         var t_spec = tof(spec);
         //console.log('t_spec', t_spec);
-
-
         // A website has a resource pool as well.
         //  That means nested resource pools.
-
         // Server resource pool
         //  Server router
         //  Website resource
         //   Website resource pool
         //    Website router
-
         // And don't need local server info there?
         //  Connect the local server info back up the resource and resource pool chain?
-
-
         var resource_pool = new Resource_Pool({
             name: 'Website Resource Pool'
         });
-
-
-
-
         //console.log('this._.resource_pool', this._.resource_pool);
-
         //throw 'stop';
-
-
-
         // maybe there is not a database.
         var database_spec = spec.database;
-
         var web_database_resource;
-
         if (database_spec) {
             database_spec.name = database_spec.name || database_spec.database_name;
-
             var database_resource = database_resource_factory(database_spec);
-
             database_resource.start();
-
             // should start automatically when in the pool?
             //  does the pool need to be told to start?
-
             // Though probably don't want to start the resource on initialization.
-
-
             resource_pool.add(database_resource);
-
             web_database_resource = new DB_Web_Resource({
                 'database': database_resource,
                 'meta': {
-                    'name': 'Web DB'
+                    'name': 'Web DB',
+                    'pool': resource_pool
                 }
-
             })
         }
-
         // should set the name of meta when we set this up.
         //  That should be part of the general resource code.
-
         //console.log('web_database_resource', web_database_resource);
         //console.log('web_database_resource.meta._.name', web_database_resource.meta._.name);
         //console.log('web_database_resource.meta._.name.value()', web_database_resource.meta._.name);
-
         // So why is the resource pool not indexing it by name
         //throw 'stop';
         if (web_database_resource) {
@@ -262,14 +237,16 @@ class Website_Resource extends Resource {
 
         var img_resource = new Site_Images({
             //'meta': {
-            'name': 'Site Images'
+            'name': 'Site Images',
+            'pool': resource_pool
             // }
         });
 
 
         var js_resource = new Site_JavaScript({
             //'meta': {
-            'name': 'Site JavaScript'
+            'name': 'Site JavaScript',
+            'pool': resource_pool
             //}
         });
 
@@ -297,7 +274,8 @@ class Website_Resource extends Resource {
 
             static_html_resource = new Site_Static_HTML({
                 //'meta': {
-                'name': 'Static HTML'
+                'name': 'Static HTML',
+                'pool': resource_pool
                 //}
             });
 
@@ -318,51 +296,74 @@ class Website_Resource extends Resource {
 
         var css_resource = new Site_CSS({
             //'meta': {
-            'name': 'Site CSS'
+            'name': 'Site CSS',
+            'pool': resource_pool
             //}
         })
 
         var data_resource = new Data_Resource({
             //'meta': {
-            'name': 'Site Data'
+            'name': 'Site Data',
+            'pool': resource_pool
             //}
-        })
+        });
         //resource_pool.push(admin_web_resource);
 
         // javascript and css resources.
         resource_pool.push(router);
         resource_pool.push(img_resource);
         resource_pool.push(js_resource);
-
         resource_pool.push(css_resource);
         resource_pool.push(data_resource);
 
-
         // anything ending in .css as well.
-
         //  Routing maybe wouldn't work like that.
         //router.set_route('*.css', css_resource, css_resource.process);
 
-
         router.set_route('css/*', css_resource, css_resource.process);
-
         router.set_route('js/*', js_resource, js_resource.process);
         // As well as this, it could get the JavaScript resource to serve the JavaScript from the app's js directory.
         js_resource.serve_directory('js');
 
-
         router.set_route('img/*', img_resource, img_resource.process);
         router.set_route('images/*', img_resource, img_resource.process);
         router.set_route('data/*', data_resource, data_resource.process);
+        //router.set_route('resources/*', data_resource, data_resource.process);
 
+        let server_pool = this.pool;
+        router.set_route('resources/:resource_name/*', this, (req, res) => {
+            console.log('website router routing resource request');
+            console.log('route_data.params', req.params);
+            //let resource_name = req.params.resource_name;
+            //console.log('resource_name', resource_name);
+            //console.log('req', req);
+            let {url, method} = req;
+            let s_url = url.split('/');
+            console.log('s_url', s_url);
+            let resource_short_name = s_url[2];
+            console.log('resource_short_name', resource_short_name);
+            console.log('Object.keys(req)', Object.keys(req));
+            console.log('req.params', req.params);
+            console.log('url, method', url, method);
+            //console.log('resource_name', resource_name);
+            // consult the map of published resources
+            // or supposed to be encapsulated
+            // That is the server resource pool.
+            //console.log('this.pool', this.pool);
+            // Route it to a server resource?
 
+            console.log('Object.keys(this.map_resource_publishers)', Object.keys(this.map_resource_publishers));
+
+            let resource_publisher = this.map_resource_publishers[resource_short_name];
+            console.log('!!resource_publisher', !!resource_publisher);
+
+            if (resource_publisher) {
+                resource_publisher.handle_http(req, res);
+            }
+        });
         // The website (admin) resource will make use of the images resource where necessary.
-
         // The website (admin) resource will be able to get the images resource from the resource pool.
-
-
         //router.set_route('admin/*', admin_web_resource, admin_web_resource.process);
-
         /*
         resource_pool.push(new Site_Images({
             'meta': {
@@ -370,32 +371,47 @@ class Website_Resource extends Resource {
             }
         }));
         */
-
         // set up the routes.
-
-
-
-
-
-
-
         if (!is_defined(spec)) spec = {};
         //console.log('pre super');
         //Web_Resource.prototype.init.call(this, spec);
-
-
         //this.router = router;
         this.resource_pool = resource_pool;
         //this.set('router', router);
         //this.set('resource_pool', resource_pool);
-
         // Super call was not working for some reason.
-
-
-
-
-
         //this._super(spec);
+    }
+
+    publish(server_resource, name) {
+        // Need to give it a name to publish it as
+
+
+
+        // server needs a Resource_Publisher.
+        //  Some resources include their own publishing.
+        //   (existing things like javascript-resource)
+
+        // needs a name
+
+        //this.resource_publisher = this.resource_publisher || new Resource_Publisher({
+        let resource_publisher = new Resource_Publisher({
+            resource: server_resource,
+            name: name
+        });
+
+        this.map_resource_publishers = this.map_resource_publishers || {};
+        this.map_resource_publishers[name] = resource_publisher;
+
+        //this.resource_pool.map_resource_publishers = resource_publisher;
+
+        // website resource needs the map of resource publishers.
+
+        // Should actually publish within a Website_Resource...
+        //  Server holds this.
+
+
+
 
     }
 

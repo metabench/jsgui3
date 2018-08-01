@@ -46,7 +46,8 @@ class Server_Resource_Pool extends Resource_Pool {
 			'startup_type': 'auto',
 			'access': {
 				'full': ['server_admin']
-			}
+			},
+			'pool': this
 		});
 
 		this.add(lsi);

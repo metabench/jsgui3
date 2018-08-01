@@ -177,6 +177,10 @@ class Resource_Pool extends Evented_Class {
 		a.l = arguments.length;
 		var sig = get_a_sig(a, 1);
 
+
+		
+
+
 		if (sig == '[D,s,[s,s]]') {
 			var data_object = a[0];
 			//console.log('data_object ' + stringify(data_object));

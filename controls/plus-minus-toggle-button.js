@@ -22,10 +22,13 @@ class Plus_Minus_Toggle_Button extends Toggle_Button {
         spec.states = ['+', '-'];
         spec.state = spec.state || '-';
 
+        //console.log('spec.context', spec.context);
 
         super(spec);
 
-        this.add_class('plus-minus toggle-button');
+        //console.log('Plus_Minus_Toggle_Button context', this.context);
+
+        //this.add_class('plus-minus toggle-button');
 
         // Has the states.
         //  Is set with a state
@@ -45,7 +48,10 @@ class Plus_Minus_Toggle_Button extends Toggle_Button {
         //console.log('spec.state', spec.state);
 
 
-        var state = this.set('state', spec.state);
+        //var state = this.set('state', spec.state);
+
+        let state = this.state = spec.state;
+
         // Set should return the object it sets it as. Possibly a Data_Object.
 
         //console.log('state', state);

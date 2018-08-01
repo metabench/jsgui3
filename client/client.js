@@ -7,6 +7,10 @@ jsgui.Selection_Scope = require('./selection-scope');
 // And then can automatically activate?
 //
 
+jsgui.Client_Resource = require('./resource');
+
+const fnl = require('fnl');
+const prom_or_cb = fnl.prom_or_cb;
 
 
 
@@ -16,15 +20,77 @@ if (typeof window !== 'undefined') {
         var len = textBuffer.length - startOffset;
         var arrayBuffer = new ArrayBuffer(len);
         var ui8a = new Uint8Array(arrayBuffer, 0);
-        for (var i = 0, j = startOffset; i < len; i++ , j++)
+        for (var i = 0, j = startOffset; i < len; i++, j++)
             ui8a[i] = (textBuffer.charCodeAt(j) & 0xff);
 
         let buf = new Buffer(arrayBuffer);
         return buf;
     }
 
+
+    jsgui.http = (url, callback) => {
+        return prom_or_cb((resolve, reject) => {
+            var oReq = new XMLHttpRequest();
+            //console.log('jsgui.http url', url);
+
+            /*
+            oReq.onload = function (res) {
+                //console.log('oReq.responseText ' + oReq.responseText);
+
+                // But is it text?
+
+                //let buf = textToArrayBuffer(oReq.responseText);
+
+                console.log('Object.keys(oReq)', Object.keys(oReq));
+
+
+                // Will need to work on client-side buffer processing.
+                //  Will need to turn this buffer / ArrayBuffer into a Model.
+                //  But not here.
+
+                //console.log('buf', buf);
+
+                //console.log('pre cb client http');
+                //callback(null, buf);
+
+                console.log('res', res);
+                console.log('Object.keys(res)', Object.keys(res));
+
+                //var objResponse = JSON.parse(oReq.responseText);
+
+                // Then for each of them we create an object.
+
+
+
+            };
+            */
+
+            oReq.onreadystatechange = function() {
+                if (this.readyState == 4) {
+                    console.log('this.status', this.status);
+
+                    if (this.status == 200) {
+                        var o = JSON.parse(this.responseText);
+                        //myFunction(myArr);
+                        resolve(o);
+                    } else {
+                        reject(this.status);
+                    }
+                }
+            };
+
+            oReq.open("get", url, true);
+            oReq.send();
+        }, callback);
+    }
+
+    /*
+
     // make some client-side jsgui functionality.
     jsgui.http = (url, callback) => {
+
+
+
         var oReq = new XMLHttpRequest();
         //console.log('jsgui.http url', url);
         oReq.onload = function (res) {
@@ -54,6 +120,7 @@ if (typeof window !== 'undefined') {
         oReq.open("get", url, true);
         oReq.send();
     }
+    */
 
 
 
@@ -64,12 +131,21 @@ if (typeof window !== 'undefined') {
         });
 
 
+
+        // 
+
+
+        // maybe need a different register function.
+
+        /*
+
         jsgui.register_ctrl = (type_name, ctrl_name, Ctrl) => {
             console.log('register_ctrl type_name, ctrl_name', type_name, ctrl_name);
             jsgui[ctrl_name] = Ctrl;
             page_context.update_Controls(type_name, Ctrl);
 
         }
+        */
 
 
 
@@ -99,6 +175,8 @@ if (typeof window !== 'undefined') {
 
                 page_context.update_Controls('resize_handle', jsgui.Resize_Handle);
                 page_context.update_Controls('toggle_button', jsgui.Toggle_Button);
+                page_context.update_Controls('start_stop_toggle_button', jsgui.Start_Stop_Toggle_Button);
+                page_context.update_Controls('plus_minus_toggle_button', jsgui.Plus_Minus_Toggle_Button);
                 page_context.update_Controls('list', jsgui.List);
                 page_context.update_Controls('item', jsgui.Item);
                 page_context.update_Controls('combo_box', jsgui.Combo_Box);

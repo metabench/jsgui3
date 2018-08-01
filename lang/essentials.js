@@ -1862,6 +1862,7 @@ var jsgui = {
 	'tof': tof,
 	'atof': atof,
 	'is_defined': is_defined,
+	'def': is_defined,
 	'stringify': stringify,
 	'functional_polymorphism': functional_polymorphism,
 	'fp': fp,

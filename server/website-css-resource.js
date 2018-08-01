@@ -21,6 +21,8 @@ var path = require('path'),
 	Cookies = require('cookies'),
 	fs2 = require('./fs2');
 
+const fnl = require('fnl');
+
 
 
 var stringify = jsgui.stringify,
@@ -34,6 +36,8 @@ var Class = jsgui.Class,
 var fp = jsgui.fp,
 	is_defined = jsgui.is_defined;
 var Collection = jsgui.Collection;
+
+const prom_or_cb = fnl.prom_or_cb;
 
 // Extends AutoStart_Resource?
 
@@ -63,7 +67,7 @@ var serve_css_file_from_disk = function (filePath, response) {
 	let attempt_load = (path, callback) => {
 		fs2.load_file_as_string(path, function (err, data) {
 			if (err) {
-				//console.log('could not open file jsgui_css_file_path', jsgui_css_file_path);
+				console.log('could not open file path', path);
 
 				//jsgui_css_file_path = '../../' + filePath;
 				//console.log('jsgui_css_file_path', jsgui_css_file_path);
@@ -78,7 +82,7 @@ var serve_css_file_from_disk = function (filePath, response) {
 
 	// 
 
-	let candidate_paths = ['../css/' + filePath, '../../css/' + filePath, './css/' + filePath, './' + filePath, '../../ws/' + filePath, '../../../' + filePath];
+	let candidate_paths = [filePath, '../css/' + filePath, '../../css/' + filePath, './css/' + filePath, './' + filePath, '../../ws/' + filePath, '../../../' + filePath];
 
 	let c = 0,
 		l = candidate_paths.length,
@@ -305,8 +309,6 @@ class Site_CSS extends Resource {
 
 		// May also want to serve a directory under a different path.
 
-
-
 		served_directories.push({
 			'name': path
 		});
@@ -318,6 +320,20 @@ class Site_CSS extends Resource {
 
 
 
+	}
+	'serve' (serve_as, system_file_path, callback) {
+
+		return prom_or_cb((resolve, reject) => {
+			//this.custom_paths.set(serve_as, system_file_path);
+
+
+			this.custom_paths[serve_as] = system_file_path;
+
+			resolve(true);
+		}, callback);
+
+
+		
 	}
 	'process' (req, res) {
 		//console.log('Site_CSS processing HTTP request');
@@ -332,25 +348,40 @@ class Site_CSS extends Resource {
 
 		//var pool_resources = pool.resources();
 		//console.log('pool_resources ' + stringify(pool_resources));
+		console.log('1) rurl', rurl);
 
+
+
+
+
+		console.log('custom_paths', custom_paths);
 
 		var url_parts = url.parse(req.url, true);
-		//console.log('url_parts ' + stringify(url_parts));
+		console.log('url_parts ' + stringify(url_parts));
 		var splitPath = url_parts.path.substr(1).split('/');
-		//console.log('resource site css splitPath ' + stringify(splitPath));
+		console.log('resource site css splitPath ' + stringify(splitPath));
+
+		var custom_response_entry;
+		if (splitPath.length === 2) {
+			if (splitPath[0] === 'css') {
+				custom_response_entry = custom_paths[splitPath[1]];
+			}
+		}
 
 
-		if (rurl.substr(0, 1) == '/') rurl = rurl.substr(1);
-		rurl = rurl.replace(/\./g, '☺');
-		//console.log('rurl ' + rurl);
+		//if (rurl.substr(0, 1) == '/') rurl = rurl.substr(1);
+		//rurl = rurl.replace(/\./g, '☺');
+		//console.log('2) rurl ' + rurl);
 
-		var custom_response_entry = custom_paths[rurl];
-		//console.log('custom_response_entry ' + stringify(custom_response_entry));
+		
+
+
+
+		console.log('custom_response_entry ' + (custom_response_entry));
 
 		if (custom_response_entry) {
 			var tcr = tof(custom_response_entry);
 			//console.log('tcr ' + tcr);
-
 			//throw 'stop';
 
 			if (tcr == 'data_value') {
@@ -363,6 +394,13 @@ class Site_CSS extends Resource {
 					serve_css_file_from_disk(val, res);
 				}
 			}
+
+			if (tcr == 'string') {
+				serve_css_file_from_disk(custom_response_entry, res);
+
+			}
+
+
 		} else {
 			if (splitPath.length > 0) {
 				if (splitPath[0] === 'css') {

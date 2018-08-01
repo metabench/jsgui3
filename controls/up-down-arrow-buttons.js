@@ -11,11 +11,8 @@ define(["../../../../jsgui-html-enh"],
 var jsgui = require('../html-core/html-core');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
-
 var group = jsgui.group;
-
 var Button = require('./button');
-
 
 class Up_Down_Arrow_Buttons extends Control {
     // Maybe should put this into a form, so that it does a form post.
@@ -46,7 +43,6 @@ class Up_Down_Arrow_Buttons extends Control {
         super.activate();
         var that = this;
         //that.click(function(e) { that.action_select_only() })
-
         var btn_up = this.btn_up;
         var btn_down = this.btn_down;
         var that = this;

@@ -1,4 +1,4 @@
-// Want to get the core resources working and tested.
+    // Want to get the core resources working and tested.
 //  Want to run a clock website / service to start with.
 //  The server could have a clock, while clients could connect to it and share the information.
 //  Could also experiment with P2P distribution of the data.
@@ -49,7 +49,6 @@ class Resource extends Data_Object {
     // Problem with how it sets the fields.
 
     constructor(spec) {
-
         //console.log('Resource init');
         //
         if (!is_defined(spec)) spec = {};
@@ -90,6 +89,7 @@ class Resource extends Data_Object {
         }
 
         if (spec.name) this.name = spec.name;
+        if (spec.pool) this.pool = spec.pool;
 
         /*
         this.meta = new Data_Object({
@@ -225,9 +225,6 @@ class Resource extends Data_Object {
             var res = this._super.apply(this, a);
             return res;
         }
-
-
-
 
     }
 

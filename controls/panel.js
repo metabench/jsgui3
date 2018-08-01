@@ -24,8 +24,10 @@ class Panel extends Control {
     //}
     // maybe add before make would be better. add will probably be used more.
     constructor(spec, add, make) {
+        spec = spec || {};
+        spec.__type_name = spec.__type_name || 'panel';
         super(spec);
-        this.__type_name = 'panel';
+        //this.__type_name = 'panel';
         //this.add_class('panel');
         this.add_class('panel');
         // With name as a field, that field should get sent to the client...
@@ -47,6 +49,11 @@ class Panel extends Control {
     'activate'() {
         // May need to register Flexiboard in some way on the client.
         super.activate();
+
+        this.content.on('change', e => {
+            console.log('e', e);
+            console.log('this', this);
+        })
     }
 }
 module.exports = Panel;

@@ -1,25 +1,18 @@
 /**
  * Created by James on 16/09/2016.
  */
-
 // Standard control set
-
 // Addon projects?
 //  Control projects?
 //  Control repos
 //  Control packages?
-
 // Package is the right terminology
-
 // Standard control package
 // Flexiboard control package
-
 // Control packages can be chained so they add to each other, add to jsgui?
 //  Or may be worth breaking out of that object to store controls at some points?
-
 // Get jsgui2 into a more stable core, with useful controls, and then also build control packages.
 // In many cases, it makes sense for controls to be registered with jsgui, but it may be best not to require it when not necessary.
-
 // Could add a lot of controls to the jsgui object here.
 
 var controls = {
@@ -34,6 +27,7 @@ var controls = {
     Horizontal_Slider: require('./horizontal-slider'),
     Data_Item: require('./data-item'),
     Data_Row: require('./data-row'),
+    File_Tree_Node: require('./file-tree-node'),
     Item: require('./item'),
     Item_View: require('./item-view'),
     //Vector: require('./vector'),
@@ -62,6 +56,7 @@ var controls = {
     Title_Bar: require('./title-bar'),
     Titled_Panel: require('./titled-panel'),
     Toggle_Button: require('./toggle-button'),
+    Tree: require('./tree'),
     Tree_Node: require('./tree-node'),
     Vertical_Expander: require('./vertical-expander'),
     Window: require('./window')

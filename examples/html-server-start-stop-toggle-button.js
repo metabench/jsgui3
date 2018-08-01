@@ -88,6 +88,7 @@ let js = app_server.resource_pool['Site JavaScript'];
 		});
 		//var ctrl2 = new jsgui.Control({});
 		body.add(ctrl);
+		ctrl.active()
 		hd.all_html_render(function (err, deferred_html) {
 			if (err) {
 				throw err;

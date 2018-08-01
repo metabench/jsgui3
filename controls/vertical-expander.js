@@ -36,7 +36,15 @@ class Vertical_Expander extends Control {
 
 
 		this.set('states', ['open', 'closed']);
-		this.set('state', spec.state || 'open');
+
+
+		let state = spec.state;
+		if (state === 'expanded') state = 'open';
+		if (state === 'contracted') state = 'closed';
+
+		this.set('state', state || 'open');
+
+
 
 		//var span = new jsgui.span({
 		//	'context': this.context
@@ -47,50 +55,40 @@ class Vertical_Expander extends Control {
 
 	}
 	'activate'() {
-		console.log('Vertical Expander activate');
+		//console.log('Vertical Expander activate');
         super.activate();
 
 		// I think that animation should be handled by Contol, just getting called here.
 		//  Will use css transitions where applicable.
-
-
 		// Listen to the state being changed.
 		// Then update the UI based on that
 		var that = this;
 		var orig_height;
+
+
+		
+
 		var el = that.dom.el;
 		var ui_close = function() {
-
 			var h = el.childNodes[0].offsetHeight;
-
-			console.log('h', h);
-
+			//console.log('h', h);
 			orig_height = h;
-
 			el.style.height = orig_height + 'px';
 			el.style.overflow = 'hidden';
-
-
 			// transition: width 3s linear;
-
-			el.style.transition = 'height 0.08s linear';
-
+			//el.style.transition = 'height 0.08s linear';
+			el.style.transition = 'height 0.5s linear';
 			//el.style['webkit-transition-property'] = 'height';
 			//el.style['webkit-transition-duration'] = '1s';
 			//el.style['webkit-transition-timing-function'] = 'linear';
 			//el.style['transition-delay'] = '2s';
-
 			// And to listen to the animation ending as well.
-
-
 			setTimeout(function() {
 				el.style.height = '0px';
 			}, 0);
-
 			// Better control over styles will help.
 			//  Need the inline css layer.
 			//  Then have the JSGUI style layer on top of that.
-
 		}
 
 
@@ -138,7 +136,7 @@ class Vertical_Expander extends Control {
 		console.log('vertical-expander toggle');
 		var state = this.state;
 		var v_state = state.value();
-		console.log('state', state);
+		//console.log('state', state);
 
 		//console.log('tof state', tof(state));
 
@@ -150,6 +148,13 @@ class Vertical_Expander extends Control {
 			//this.set('state', 'open');
 			state.set('open');
 		}
+	}
+
+	'open'() {
+		this.state.set('open');
+	}
+	'close'() {
+		this.state.set('closed');
 	}
 	// Open, close, expand, contract
 	//  Could have a state variable as well.

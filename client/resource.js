@@ -14,13 +14,29 @@
  define(['../../web/jsgui-html-enh', './resource'],
  function(jsgui, Resource) {
  */
+
+
+/*
+	2018, need to implement / redo some of resources.
+	will make them a bit simpler where poss
+	have resource publisher middleware on the server
+
+*/
+
 var jsgui = require('../lang/lang');
 var Resource = require('../resource/resource');
+
+const fnl = require('fnl');
+const prom_or_cb = fnl.prom_or_cb;
 
 var stringify = jsgui.stringify,
 	each = jsgui.each,
 	arrayify = jsgui.arrayify,
 	tof = jsgui.tof;
+
+
+const get_a_sig = jsgui.get_a_sig;
+
 var filter_map_by_regex = jsgui.filter_map_by_regex;
 var Class = jsgui.Class,
 	Data_Object = jsgui.Data_Object,
@@ -65,7 +81,6 @@ var Collection = jsgui.Collection;
 // With the Resource-Client architure, we could define the back-end in terms of a Resource, and not need to write various pieces of boilerplate for them
 //  to communicate with each other.
 
-
 // Resource_Client may be a necessary JS file.
 //  Would be JavaScript that runs on a page that's for when it's the client for a single resource?
 
@@ -76,7 +91,6 @@ var Collection = jsgui.Collection;
 // Serving a page with a component that connects back to the resource...
 //  I think a lot of the activity will be in the user control,
 //  however, it may be that the user control will just be making use of the client-side resources or client-side resource pool.
-
 
 var ends_with = function (str, suffix) {
 	return str.indexOf(suffix, str.length - suffix.length) !== -1;
@@ -92,19 +106,14 @@ class Client_Resource extends Resource {
 		spec = spec || {};
 		super(spec);
 
-
-
-
 		if (spec.meta) {
 			var meta = spec.meta;
 			console.log('1) meta.url', meta.url);
 			if (meta.url) this.meta.set('url', meta.url);
 			if (meta.type_levels) this.meta.set('type_levels', meta.type_levels);
 
-
 			//console.log('meta.name ' + meta.name);
 		}
-
 
 		// The data resource won't hold the data itself.
 		//  (usually)
@@ -113,16 +122,10 @@ class Client_Resource extends Resource {
 		// Will connect to the more customised server data resource.
 		//  This is the interface between the client's data and the server.
 
-
-
-
 		this.data = new Data_Object();
-
 		var that = this;
 
-
 		// both in one parameter here?
-
 
 		// Why not listen to the resource's data directly?
 		//  Should not be a problem when doing it on the client?
@@ -132,9 +135,7 @@ class Client_Resource extends Resource {
 			//console.log('');
 			//console.log('resource data change property_name', property_name);
 			//console.log('property_value', property_value);
-
 			that.trigger('change', property_name, property_value);
-
 		})
 
 
@@ -155,13 +156,77 @@ class Client_Resource extends Resource {
 
 
 	}
-	'get'() {
+	'get' (path, callback) {
+		return prom_or_cb((resolve, reject) => {
+			console.log('path', path);
+
+			let ends_dot_json = ends_with(path, '.json');
+			//console.log('ends_dot_json', ends_dot_json);
+
+			let json_url;
+
+			if (!ends_dot_json) {
+				json_url = path + '.json';
+			} else {
+				json_url = path;
+			}
+
+
+			console.log('this (Resource)', this);
+
+			json_url = 'resources/' + this.name + '/' + json_url;
+
+			
+
+			//json_url = ''
+
+			console.log('json_url', json_url);
+
+
+			jsgui.http(json_url, function (err, res) {
+				if (err) {
+					//callback(err);
+					reject(err);
+				} else {
+					//console.log('res', res);
+					//callback(null, res);
+
+					// if it's a string, then parse it to JSON...
+
+					//let t = tof(res);
+					//console.log('t', t);
+
+					//let parsed = JSON.parse(res);
+					//console.log('parsed', parsed);
+
+
+					resolve(res);
+				}
+			})
+		}, callback);
+		/*
 		var a = arguments;
 		a.l = arguments.length;
 		var sig = get_a_sig(a, 1);
 		var url, callback;
 		var url_path;
+
+		console.log('client Resource get sig', sig);
+
+		// Should be able to use promises.
+
+
+
+
+
 		if (a.l === 1) {
+
+			if (sig === '[s]') {
+
+			} else {
+
+			}
+
 			url = this.url;
 			callback = a[0];
 		}
@@ -173,13 +238,23 @@ class Client_Resource extends Resource {
 
 			url = this.url + url_path;
 		}
-
 		// should be able to supply the url
 
 		//var
 
 		// jsgui lang essentials ends function
 		//  test if a string ends with something.
+
+		// always be able to get .json?
+		//  would show available resource methods / submethods and addresses.
+		//  an index of functionality.
+
+
+
+		// standard_interfaces: 'subscribe'
+
+		console.log('url', url);
+
 
 		var ends_dot_json = ends_with(url, '.json');
 		//console.log('ends_dot_json', ends_dot_json);
@@ -201,6 +276,31 @@ class Client_Resource extends Resource {
 				callback(null, res);
 			}
 		})
+		*/
+	}
+
+	get status() {
+		return (async () => {
+
+
+			/*
+			jsgui.http('/resources/' + this.name + '/status.json', (err, res) => {
+				if (err) {
+					callback(err);
+				} else {
+
+
+					console.log('http res', res);
+					//callback(null, res);
+
+
+				}
+			})
+			*/
+
+			let res = await jsgui.http('/resources/' + this.name + '/status.json');
+			return res;
+		})();
 	}
 
 	// We don't notify it this way.
@@ -211,7 +311,7 @@ class Client_Resource extends Resource {
 	//  Seems less likely that we will need this function here.
 	//  06/06/2015 - about to make the socks resource connection for the client, it's going to allow for real-time updates, while using generally RESTful addressing.
 
-	'notify_change_from_server'(property_name, property_value) {
+	'notify_change_from_server' (property_name, property_value) {
 		// needs to do some kind of silent set.
 		//console.log('client resource notify_change_from_server');
 		var data = this.data;

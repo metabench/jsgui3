@@ -2,7 +2,7 @@
 
 
 //var sockjs = require('sockjs'), jsgui = require('../html/html'),
-var jsgui = require('../html/html'),
+const jsgui = require('../html/html'),
     os = require('os'), http = require('http'),
     Resource = require('../resource/resource'),
     Server_Resource_Pool = require('./server-resource-pool'),
@@ -12,6 +12,8 @@ var jsgui = require('../html/html'),
 
 // Login = require('../resource/login'),
 var Server = {};
+
+const Resource_Publisher = require('./resource-publisher');
 
 //var Login_Html_Resource = Login.Html;
 // Test if node features are supported?
@@ -42,6 +44,8 @@ class JSGUI_Server extends jsgui.Data_Object {
             }
         });
 
+
+
         //Object.defineProperty('')
 
         // Maybe the server router should explicitly be a Resource?
@@ -52,7 +56,8 @@ class JSGUI_Server extends jsgui.Data_Object {
             // 'meta': {
             //    'name': 'Server Router'
             //}
-            'name': 'Server Router'
+            'name': 'Server Router',
+            'pool': resource_pool
         });
         this.server_router = server_router;
 
@@ -97,7 +102,7 @@ class JSGUI_Server extends jsgui.Data_Object {
         if (this.__type_name === 'server' && t_spec === 'object') {
 
 
-            each(spec, function (app_spec, route) {
+            each(spec, (app_spec, route) => {
 
                 // No, they are not all resources?
                 //  Or different when it's a single control server.
@@ -110,13 +115,16 @@ class JSGUI_Server extends jsgui.Data_Object {
                 // Create a new Application Resource.
                 //console.log('app_spec', app_spec);
 
-                var app = new Website_Resource(app_spec);
+                var app = this.app = new Website_Resource(app_spec);
+
+                // could have multiple apps?
 
 
                 //console.log('app', app);
                 //throw 'stop';
                 resource_pool.add(app);
                 server_router.set_route(route, app, app.process);
+                
                 // And set it to that route in the routing table.
             })
         }
@@ -125,6 +133,48 @@ class JSGUI_Server extends jsgui.Data_Object {
     get resource_names() {
         //console.log('this.resource_pool', this.resource_pool);
         return this.resource_pool.resource_names;
+    }
+
+
+
+    // Do this under website resource?
+    //  May be better that way.
+
+    _publish(server_resource, name) {
+        // Need to give it a name to publish it as
+
+
+
+        // server needs a Resource_Publisher.
+        //  Some resources include their own publishing.
+        //   (existing things like javascript-resource)
+
+        // needs a name
+
+        //this.resource_publisher = this.resource_publisher || new Resource_Publisher({
+        let resource_publisher = new Resource_Publisher({
+            resource: server_resource,
+            name: name
+        });
+
+        this.map_resource_publishers = this.map_resource_publishers || {};
+        this.map_resource_publishers[name] = resource_publisher;
+
+        //this.resource_pool.map_resource_publishers = resource_publisher;
+
+        // website resource needs the map of resource publishers.
+
+        // Should actually publish within a Website_Resource...
+        //  Server holds this.
+
+
+
+
+
+
+
+
+
     }
 
     'start'(port, callback, fnProcessRequest) {
@@ -165,7 +215,7 @@ class JSGUI_Server extends jsgui.Data_Object {
                 //  The Resource itself should be separate from the transport mechanism used to access it.
 
                 var admin = rp.get_resource('Web Admin');
-                var resource_publisher = rp.get_resource('HTTP Resource Publisher');
+                //var resource_publisher = rp.get_resource('HTTP Resource Publisher');
                 var sock_router = rp.get_resource('Server Sock Router');
 
                 var server_router = rp.get_resource('Server Router');
@@ -188,6 +238,7 @@ class JSGUI_Server extends jsgui.Data_Object {
                         //  Host on every ipv4 address for the moment.
 
                         var arr_ipv4_addresses = [];
+                        
                         each(net, (arr_addresses, name) => {
                             each(arr_addresses, (obj_address) => {
                                 if (obj_address.family === 'IPv4') {
@@ -195,6 +246,7 @@ class JSGUI_Server extends jsgui.Data_Object {
                                 }
                             })
                         });
+                        let num_to_start = arr_ipv4_addresses.length;
 
                         each(arr_ipv4_addresses, (ipv4_address) => {
                             var http_server = http.createServer(function (req, res) {
@@ -210,6 +262,13 @@ class JSGUI_Server extends jsgui.Data_Object {
                             //console.log('ipAddress', ipAddress);
                             http_server.listen(port, ipv4_address);
                             console.log('* Server running at http://' + ipv4_address + ':' + port + '/');
+                            num_to_start--;
+
+                            console.log('num_to_start', num_to_start);
+
+                            if (num_to_start === 0) {
+                                callback(null, true);
+                            }
                         });
 
 
@@ -310,9 +369,12 @@ class JSGUI_Server extends jsgui.Data_Object {
     }
 }
 
+JSGUI_Server.Resource = Resource;
+
 JSGUI_Server.Page_Context = Server_Page_Context;
 //Server.JSGUI_Server = JSGUI_Server;
 jsgui.Server = JSGUI_Server;
 jsgui.fs2 = require('./fs2');
+jsgui.Resource = Resource;
 
 module.exports = jsgui;

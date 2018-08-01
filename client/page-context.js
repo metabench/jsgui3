@@ -33,15 +33,25 @@ class Client_Page_Context extends jsgui.Page_Context {
 
         // Should be fixed alongside resource_pool collection indexing.
         this.data_resource = this.resource_pool.resources._arr[0];
-
         this.map_els = {};
-
-
         // The item IDs could be handled here... use the local variable closure here.
         this.selection_scopes = {};
-
         this.selection_scope_id_counter = 0;
 
+        // Client data resource for general purpose data?
+
+
+    }
+    'get_ctrl_el'(ctrl) {
+        return this.map_els[ctrl._id()];
+    }
+    'register_el'(el) {
+        let jsgui_id = el.getAttribute('data-jsgui-id');
+        //console.log('jsgui_id', jsgui_id);
+        if (jsgui_id) {
+            this.map_els[jsgui_id] = el;
+        }
+        //console.log('context registered ' + jsgui_id);
     }
     'new_selection_scope'() {
         // create the selection scope, with an assigned id
@@ -73,7 +83,7 @@ class Client_Page_Context extends jsgui.Page_Context {
 
         var bod = doc.body;
         //var bod = doc.body;
-        console.log('bod', bod);
+        //console.log('bod', bod);
 
         // Then need to see if a control exists.
 
@@ -102,12 +112,7 @@ class Client_Page_Context extends jsgui.Page_Context {
                 this.register_control(ctrl_body);
                 this._body = ctrl_body;
             }
-
-
-
             //console.log('ctrl_body._id()', ctrl_body._id());
-
-
         } else {
 
         }
