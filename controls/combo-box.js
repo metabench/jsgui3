@@ -8,7 +8,10 @@
 // It will be a text box but the selection list appears below.
 //  So we will use List with its own scrollbar.
 
+// Should be made out of component JSGUI controls as necessary. both option control as well as text box.
 
+// text-input
+//  drop-down-list (menu)
 
 class Combo_Box extends Control {
     constructor(spec) {

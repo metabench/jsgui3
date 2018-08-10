@@ -197,7 +197,7 @@ class Multi_Layout_Mode extends Control {
             }
 
             this.title = panel_title;
-            this.navigation = panel_navigation;
+            this.nav = this.navigation = panel_navigation;
             this.main = panel_main;
             this.misc = panel_misc;
 
