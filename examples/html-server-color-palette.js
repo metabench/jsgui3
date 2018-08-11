@@ -20,9 +20,12 @@ var port = 8000;
 var Server_Page_Context = Server.Page_Context;
 
 var server = new Server({
-	'*': {
-		'name': 'HTML Server'
+	'routes': {
+		'*': {
+			'name': 'HTML Server'
+		}
 	}
+	
 });
 
 var resource_pool = server.resource_pool;

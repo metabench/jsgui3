@@ -9,6 +9,10 @@
 // Or we need to have a client-side control?
 //
 // Some of the wiring could be done automatically.
+
+
+// Instead want to build when app starts, and provide that js build to the client.
+
 //
 
 var jsgui = require('../server/server');
@@ -22,9 +26,12 @@ var Server_Page_Context = Server.Page_Context;
 //  Then html application server
 
 var root_server = new Server({
-	'*': {
-		'name': 'HTML Server'
+	'routes': {
+		'*': {
+			'name': 'HTML Server'
+		}
 	}
+	
 });
 
 var resource_pool = root_server.resource_pool;
@@ -39,7 +46,7 @@ let app_server = resource_pool['HTML Server'];
 //console.log('app_server.resource_names', app_server.resource_names);
 //console.log('!!app_server.resource_pool', !!app_server.resource_pool);
 
-let js = app_server.resource_pool['Site JavaScript'];
+
 
 //console.log('!!js', !!js);
 
@@ -54,6 +61,7 @@ let js = app_server.resource_pool['Site JavaScript'];
 	});
 	*/
 	//console.log('pre serve package');
+	let js = app_server.resource_pool['Site JavaScript'];
 	await js.serve_package('/js/app.js', '../client/client.js');
 	//console.log('post serve package');
 

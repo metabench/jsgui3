@@ -62,8 +62,8 @@ class Single_Control_Server extends Server {
             this.Ctrl = spec.Ctrl || spec.ctrl;
             this.port = spec.port || 80;
         }
-        
-        
+
+
         //this.__type_name = 'single-control-server';
 
         var app = new Website_Resource({
@@ -76,78 +76,92 @@ class Single_Control_Server extends Server {
         this.resource_pool.add(app);
         this.server_router.set_route('*', app, app.process);
 
-        
+        this.app_server = app;
 
     }
-    'start'(callback) {
-        
+    'start' (callback) {
+
         //throw 'stop';
 
-        
-        var resource_pool = this.resource_pool;
 
+        var resource_pool = this.resource_pool;
         var server_router = resource_pool.get_resource('Server Router');
 
-        //var resource_pool = this.resource_pool;
+        // Build the client js and include that.
+        //  Could have been given a different client js file too.
+        //  By default want to provide the html client from jsgui.
+        //   /client/client
 
-        
-        
-        //console.log('server_router', server_router);
+        // build the html client code.
 
-        if (!server_router) {
-            throw 'no server_router';
-        }
 
-        var routing_tree = server_router.routing_tree;
+        let js = this.app_server.resource_pool['Site JavaScript'];
+        js.serve_package('/js/app.js', '../client/client.js', (err, served) => {
+            //var resource_pool = this.resource_pool;
+            //console.log('server_router', server_router);
 
-        routing_tree.set('/', (req, res) => {
-            //console.log('root path / request');
-            var server_page_context = new Server_Page_Context({
-                'req': req,
-                'res': res,
-                'resource_pool': resource_pool
+            if (!server_router) {
+                throw 'no server_router';
+            }
+            var routing_tree = server_router.routing_tree;
+
+            routing_tree.set('/', (req, res) => {
+                //console.log('root path / request');
+                var server_page_context = new Server_Page_Context({
+                    'req': req,
+                    'res': res,
+                    'resource_pool': resource_pool
+                });
+                // Page_Bounds_Specifier
+                var hd = new jsgui.Client_HTML_Document({
+                    'context': server_page_context
+                });
+                hd.include_client_css();
+                hd.include_css('/css/basic.css')
+                hd.include_js('/js/app.js');
+                var body = hd.body;
+                var ctrl = new this.Ctrl({
+                    'context': server_page_context
+                });
+                ctrl.active();
+                //var ctrl2 = new jsgui.Control({});
+                body.add(ctrl);
+                hd.all_html_render(function (err, deferred_html) {
+                    if (err) {
+                        throw err;
+                    } else {
+                        //console.log('deferred_html', deferred_html);
+                        var mime_type = 'text/html';
+                        //console.log('mime_type ' + mime_type);
+                        res.writeHead(200, {
+                            'Content-Type': mime_type
+                        });
+                        res.end('<!DOCTYPE html>' + deferred_html, 'utf-8');
+                    }
+                });
             });
-            // Page_Bounds_Specifier
-            var hd = new jsgui.Client_HTML_Document({
-                'context': server_page_context
-            });
-            hd.include_client_css();
-            hd.include_css('/css/app.css')
-            hd.include_js('/js/app.js');
-            var body = hd.body;
-            var ctrl = new this.Ctrl({
-                'context': server_page_context
-            });
-            ctrl.active();
-            //var ctrl2 = new jsgui.Control({});
-            body.add(ctrl);
-            hd.all_html_render(function(err, deferred_html) {
+
+            console.log('pre super start');
+
+            super.start(this.port, (err, res_super_start) => {
                 if (err) {
-                    throw err;
+                    callback(err);
                 } else {
-                    //console.log('deferred_html', deferred_html);
-                    var mime_type = 'text/html';
-                    //console.log('mime_type ' + mime_type);
-                    res.writeHead(200, { 'Content-Type': mime_type });
-                    res.end('<!DOCTYPE html>' + deferred_html, 'utf-8');
+                    console.log('res_super_start', res_super_start);
+                    callback(null, res_super_start);
+
                 }
             });
         });
 
-        console.log('pre super start');
-
-        super.start(this.port, (err, res_super_start) => {
-            if (err) {
-                callback(err);
-            } else {
-                console.log('res_super_start', res_super_start);
-                callback(null, res_super_start);
-
-            }
-        });
 
 
-       // console.log('this.port', this.port);
+
+
+
+
+
+        // console.log('this.port', this.port);
 
 
 

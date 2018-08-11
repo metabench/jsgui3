@@ -45,6 +45,10 @@ const prom_or_cb = fnl.prom_or_cb;
 // May need some more complicated logic to change it to the path for service.
 
 
+// jsgui3 now has its own css in the 'client' folder.
+//  Should be able to just serve css files from there.
+
+
 
 var serve_css_file_from_disk = function (filePath, response) {
 
@@ -80,9 +84,39 @@ var serve_css_file_from_disk = function (filePath, response) {
 		});
 	}
 
-	// 
+	// should get and use the current module path.
 
-	let candidate_paths = [filePath, '../css/' + filePath, '../../css/' + filePath, './css/' + filePath, './' + filePath, '../../ws/' + filePath, '../../../' + filePath];
+	// console.log(__dirname);
+
+	let internal_client_path = path.resolve(__dirname, '../client');
+
+	//
+
+
+	// just the file name
+
+	let filename = path.basename(filePath);
+
+
+	console.log('filePath', filePath);
+
+	let internal_client_file_path = path.join(internal_client_path, filePath);
+	let internal_client_filename = path.join(internal_client_path, filename);
+
+	console.log('internal_client_file_path', internal_client_file_path);
+	console.log('internal_client_filename', internal_client_filename);
+
+	// chould be able to use the path of this module itself for basic / default css.
+	//  Always want jsgui to be able to return its own css.
+
+	// This worked while serving examples from within jsgui.
+	//  Now we need the css to be contained within jsgui itself.
+
+	// just the file name, check if that css file is in the client path.
+
+	// '/css/basic.css' it treats the client path as /css but only will serve css from that path.
+
+	let candidate_paths = [internal_client_file_path, '../../css/' + filePath, './css/' + filePath, './' + filePath, '../../ws/' + filePath, '../../../' + filePath];
 
 	let c = 0,
 		l = candidate_paths.length,
@@ -96,9 +130,6 @@ var serve_css_file_from_disk = function (filePath, response) {
 			//console.log('spath', spath);
 			let rpath = path.resolve(spath);
 			//console.log('rpath', rpath);
-
-
-
 
 			attempt_load(spath, (err, res_load) => {
 				if (res_load === false) {
@@ -333,7 +364,7 @@ class Site_CSS extends Resource {
 		}, callback);
 
 
-		
+
 	}
 	'process' (req, res) {
 		//console.log('Site_CSS processing HTTP request');
@@ -373,7 +404,7 @@ class Site_CSS extends Resource {
 		//rurl = rurl.replace(/\./g, '☺');
 		//console.log('2) rurl ' + rurl);
 
-		
+
 
 
 

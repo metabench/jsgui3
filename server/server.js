@@ -99,7 +99,44 @@ class JSGUI_Server extends jsgui.Data_Object {
         //  And then set some things up on the website resource...
         //   using the app spec.
 
+        if (spec.routes) {
+            each(spec.routes, (app_spec, route) => {
+
+                // No, they are not all resources?
+                //  Or different when it's a single control server.
+
+
+
+
+
+
+                // Create a new Application Resource.
+                //console.log('app_spec', app_spec);
+
+                var app = this.app = new Website_Resource(app_spec);
+
+                // could have multiple apps?
+                //console.log('app', app);
+                //throw 'stop';
+                resource_pool.add(app);
+                server_router.set_route(route, app, app.process);
+                
+                // And set it to that route in the routing table.
+            })
+        }
+
+        /*
+
         if (this.__type_name === 'server' && t_spec === 'object') {
+            // Non-standard. Better to change this.
+            //  Could be a shortcut, but we should have a 'routes' object in the spec at least.
+            //   Could assume a single website.
+            //   Though made it flexible for a reason.
+
+            // .routes would make the most sense in the spec.
+
+
+
 
 
             each(spec, (app_spec, route) => {
@@ -118,8 +155,6 @@ class JSGUI_Server extends jsgui.Data_Object {
                 var app = this.app = new Website_Resource(app_spec);
 
                 // could have multiple apps?
-
-
                 //console.log('app', app);
                 //throw 'stop';
                 resource_pool.add(app);
@@ -128,6 +163,7 @@ class JSGUI_Server extends jsgui.Data_Object {
                 // And set it to that route in the routing table.
             })
         }
+        */
     }
 
     get resource_names() {

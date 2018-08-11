@@ -13,5 +13,25 @@ var Calendar = require('./calendar');
 class Date_Picker extends Calendar {
     constructor(spec) {
         super();
+
+        // Maybe this renders a calendar?
+        //  mini calendar?
+
+
+        // will have month view
+        //  that's the main view
+
+        // Display all of the days of the month in a grid.
+        //  Could use a grid control and render the days into them.
+
+
+        // a month_view component
+
+        // month_view could be used in calendars too.
+
+        
+
+        
+
     }
 }

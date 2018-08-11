@@ -19,9 +19,12 @@ var port = 80;
 var Server_Page_Context = Server.Page_Context;
 
 var server = new Server({
-	'*': {
-		'name': 'html-server'
+	routes: {
+		'*': {
+			'name': 'html-server'
+		}
 	}
+	
 });
 
 var resource_pool = server.resource_pool;
