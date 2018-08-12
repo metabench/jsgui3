@@ -170,7 +170,11 @@ class Grid extends Control {
 
         //throw 'stop';
 
-        var cell_border_thickness = 1;
+        // Nope, easier to use box-sizing internal or whatever css.
+
+        var cell_border_thickness = 0;
+
+
         var _2_cell_border_thickness = cell_border_thickness * 2;
 
         var cell_size = [Math.floor(this.size[0] / num_columns) - _2_cell_border_thickness, Math.floor(this.size[1] / num_rows) - _2_cell_border_thickness];

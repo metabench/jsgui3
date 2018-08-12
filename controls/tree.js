@@ -17,6 +17,10 @@ var fields = [
     ['text', String]
 ];
 
+// Could do with a File_Tree that can integrate with an FS_Resource
+
+
+
 // text alias being title?
 class Tree extends Control {
     // fields... text, value, type?

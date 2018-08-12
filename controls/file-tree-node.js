@@ -9,6 +9,9 @@ class File_Tree_Node extends Tree_Node {
         }
         */
 
+
+        // Could be a directory too?
+
         if (spec.file) {
             let file = spec.file;
             let filename = file.name;

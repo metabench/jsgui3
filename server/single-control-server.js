@@ -120,7 +120,7 @@ class Single_Control_Server extends Server {
                 hd.include_css('/css/basic.css')
                 hd.include_js('/js/app.js');
                 var body = hd.body;
-                var ctrl = new this.Ctrl({
+                var ctrl = this.ctrl = new this.Ctrl({
                     'context': server_page_context
                 });
                 ctrl.active();

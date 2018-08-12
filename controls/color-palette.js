@@ -709,7 +709,7 @@ class Color_Palette extends Control {
         // Maybe contain a single main area and a drop-down box
 
         if (!spec.abstract && !spec.el) {
-            this.compose();
+            this.compose_color_palette();
         }
 
         this.on('resize', (e_resize) => {
@@ -730,7 +730,7 @@ class Color_Palette extends Control {
 
     }
 
-    compose() {
+    compose_color_palette() {
         // An internal relative frame could help.
         //  Help superimposing anything relative to that DIV, any popup, but not require the DIV itself to have relative positioning.
 

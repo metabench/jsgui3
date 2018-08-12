@@ -16,6 +16,34 @@ body {
     display: none !important;
 }
 
+
+
+
+.multi-layout-mode.fluid-fixed .top.panel {
+    height: 6px;
+}
+
+.multi-layout-mode.fluid-fixed .left-wrapper {
+    float: left;
+    width: 100%;
+}
+
+.multi-layout-mode.fluid-fixed .left-wrapper .left.panel {
+    margin-right: 200px;
+}
+
+.multi-layout-mode.fluid-fixed .right.panel {
+    float: left;
+    width: 200px;
+    margin-left: -200px;
+}
+
+.multi-layout-mode.fluid-fixed .bottom.panel {
+    clear: left;
+}
+
+
+
 .field {
     /* clear: both; */
 }
@@ -752,4 +780,27 @@ table.grid td {
 
 .mid-width {
     width: 450px;
+}
+
+div.grid {
+    user-select: none;
+}
+
+div.grid .header.row .cell {
+    text-align: center
+    
+}
+
+div.grid .header.row .cell span {
+    position: relative;
+    top: 4px;
+    
+}
+
+div.grid .row .cell {
+    float: left;
+    box-sizing: border-box;
+    border-right: 1px solid #AAAAAA;
+    border-bottom: 1px solid #999999;
+    
 }

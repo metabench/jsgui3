@@ -50,6 +50,14 @@
 
 
 
+// An fs Resource would be of use for file system browser.
+//  Could have a client-side fs resource that connects to a veriety of services, could have one that connects to the server-side fs resource.
+
+// Need to connect a data-providing resource to the UI component in cases where it's not secure to do so automatically.
+//  It would be much more secure to bring up an NTP provision service automatically than a file system one. Don't want to take that risk now.
+//  
+
+
 
 
 

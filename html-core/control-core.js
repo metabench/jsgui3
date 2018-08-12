@@ -143,6 +143,11 @@ var new_obj_style = () => {
 
 // Intercept the changing of the style attribute.
 
+// Could code for the style with https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
+//  For the moment it works with proxy, it would probably be faster and more compatible to use property definition with getting and setting a style as a string.
+//   Would have clearer code too.
+
+
 class DOM_Attributes extends Evented_Class {
 	constructor(spec) {
 		super(spec);
@@ -239,6 +244,15 @@ class Control_DOM extends Evented_Class {
 		var that = this;
 
 
+		// Proxy slows things down.
+		//  We can probably use some other es5 or es6 goodness like eventcreate??? or object define.
+		//   getters, setters?
+
+		// Basically looks best to find another way apart from proxies based on benchmarks I saw/did a little while back.
+
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
+		//  instead?
+
 
 
 		var attrs = this.attrs = this.attributes = new Proxy(dom_attributes, {
@@ -316,11 +330,11 @@ class Control_DOM extends Evented_Class {
 				return target[property];
 			}
 		});
-
 		// Then whenever the DOM attributes change...
-
 	}
 }
+
+
 
 //class Control_Size {
 //	'constructr'
@@ -339,6 +353,71 @@ var my_fields = [
 
 
 */
+
+
+// Time to make the Control extend Evented_Class so it raises events?
+//  A bit surprised I've not used or needed Control's events.
+
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
+
+// Outside of dom attributes and style.
+//  Dom attributes / style need to get updated from these properties.
+class Control_Background extends Evented_Class {
+	constructor(spec) {
+		super();
+
+		// color
+		//  a color property
+		// no default color.
+
+		let _color, _opacity;
+		// Possible to set background opacity?
+		//  Would doing so mean we have a background window control as an automatic substitute?
+
+
+		Object.defineProperty(this, 'color', {
+			// Using shorthand method names (ES2015 feature).
+			// This is equivalent to:
+			// get: function() { return bValue; },
+			// set: function(newValue) { bValue = newValue; },
+			get() {
+				return _color;
+			},
+			set(value) {
+
+				// However, should be stored as RGB or better a Color object.
+				//  Just [r, g, b] for the moment.
+				//  Color object with a Typed Array could be nice.
+				//  pixel.color = ...
+				//   could be OK for low level programming.
+
+
+				let old = _color;
+				_color = value;
+				this.raise('change', {
+					'name': 'color',
+					'old': old,
+					'new': _color,
+					'value': _color
+				});
+			},
+			enumerable: true,
+			configurable: true
+		});
+
+	}
+	set(val) {
+		// 
+
+		// Value could be a string.
+		//  Could be a color
+		//  Could be a URL
+		// Could be a programatic object that provides access to an image.
+
+	}
+}
+
 
 
 
@@ -377,6 +456,31 @@ class Control_Core extends Data_Object {
 
 		this.dom = new Control_DOM();
 
+		//this._background = 
+
+		Object.defineProperty(this, '_background', {
+			value: new Control_Background(),
+			enumerable: false,
+			writable: true,
+			configurable: false
+		});
+
+		this._background.on('change', evt => {
+			if (evt.name === 'color') {
+
+				// Except may be better after all to use a Color class that can output to HTML better.
+
+				this.dom.attributes.style['background-color'] = evt.value;
+			}
+		})
+
+		// then listen for background change.
+		//  we then change the dom attributes style background-color
+		//   then it automatically gets updated in the dom.
+
+
+
+
 		var cf = this._ctrl_fields = this._ctrl_fields || {};
 		var cf = this._fields = this._fields || {};
 
@@ -387,11 +491,6 @@ class Control_Core extends Data_Object {
 
 		// Have a Control_Size class?
 		//  have size getters and setters (with a proxy?)
-
-
-
-
-
 
 
 		if (!this._abstract) {
@@ -447,9 +546,6 @@ class Control_Core extends Data_Object {
 			//var content = this.content = this.contents = new Collection({});
 			var content = this.content = new Collection({});
 
-
-			var that = this;
-
 			// Want something in the change event that indicates the bubble level.
 			//  It looks like the changes bubble upwards.
 
@@ -475,6 +571,7 @@ class Control_Core extends Data_Object {
 				this.size = spec.size;
 			}
 
+			/*
 			var set_dom_color = function (color) {
 				var color_css_property = 'background-color';
 				// need to run output processor on the inernal color value
@@ -482,6 +579,7 @@ class Control_Core extends Data_Object {
 				//console.log('out_color');
 				that.style(color_css_property, out_color);
 			};
+			*/
 
 			// This is where it sets the size to begin with.
 			//  Need the same for color.
@@ -489,6 +587,14 @@ class Control_Core extends Data_Object {
 
 
 		}
+	}
+	
+
+	get background() {
+		return this._background;
+	}
+	set background(value) {
+		return this._background.set(value);
 	}
 
 	get size() {
@@ -548,11 +654,17 @@ class Control_Core extends Data_Object {
 	//  more of an enhanced property.
 
 
+	//  with some it would be text or font or foreground color.
+	//   generally divs because they fill space consider it background.
+	// Could be a shortcut for .background.color
+
 	get color() {
 		// Could use some internal property system that's more developed. Can use proxied objects rather than fields.
 
-		return _color;
+		//return this._color;
+		return this.background.color;
 	}
+
 	set color(value) {
 
 		// Don't really have input processors any longer.
@@ -575,11 +687,17 @@ class Control_Core extends Data_Object {
 		//console.log('html_color', html_color);
 		*/
 
+		/*
+
 		this._color = value;
 
 
 		var color_property_name = this.color_property_name || 'background-color';
 		this.style(color_property_name, value);
+
+		*/
+		this.background.color = value;
+
 	}
 
 	'post_init' (spec) {
@@ -852,26 +970,26 @@ class Control_Core extends Data_Object {
 
 	// register this and subcontrols
 
-	'register_this_and_subcontrols'() {
+	'register_this_and_subcontrols' () {
 		let context = this.context;
 		this.iterate_this_and_subcontrols((ctrl) => {
 			context.register_control(ctrl);
 		});
 	}
 
-	'register_this_and_subels'() {
+	'register_this_and_subels' () {
 		// iterate elements rather than controls.
 		let context = this.context;
 
 		let iterate_els = (el, handler) => {
 			if (el.nodeType === 1) {
 				each(el.childNodes, cn => {
-				
+
 					iterate_els(cn, handler);
 				})
 				handler(el);
 			}
-			
+
 		}
 
 		iterate_els(this.dom.el, el => {
@@ -924,11 +1042,11 @@ class Control_Core extends Data_Object {
 
 		//console.log('all render callback', tof(callback));
 		if (callback) {
-			var that = this;
+			//var that = this;
 			// want to recursively iterate through controls and subconstrols.
 			var arr_waiting_controls = [];
 			// Worth setting up the listener on this loop?
-			this.iterate_this_and_subcontrols(function (control) {
+			this.iterate_this_and_subcontrols((control) => {
 				if (control.__status == 'waiting') arr_waiting_controls.push(control);
 			});
 
@@ -941,22 +1059,22 @@ class Control_Core extends Data_Object {
 			} else {
 				var c = arr_waiting_controls.length;
 
-				var complete = function () {
+				var complete = () => {
 					//console.log('complete');
-					that.pre_all_html_render();
+					this.pre_all_html_render();
 
-					var dom = that.dom;
+					var dom = this.dom;
 					//console.log('dom', dom);
 
 					if (dom) {
-						var html = [that.renderBeginTagToHtml(), that.all_html_render_internal_controls(), that.renderEndTagToHtml(), that.renderHtmlAppendment()].join('');
+						var html = [this.renderBeginTagToHtml(), this.all_html_render_internal_controls(), this.renderEndTagToHtml(), this.renderHtmlAppendment()].join('');
 						//console.log('html', html);
 						callback(null, html);
 						//throw ('stop');
 					}
 				}
 
-				each(arr_waiting_controls, function (control, i) {
+				each(arr_waiting_controls, (control, i) => {
 					control.on('ready', function (e_ready) {
 						//console.log('control ready');
 						c--;
@@ -1362,7 +1480,7 @@ class Control_Core extends Data_Object {
 				if (tnc === 'string') {
 
 				} else {
-					
+
 					if (!new_content.context) {
 						//console.log('1) !!new_content.context', !!new_content.context);
 						//console.log('!!this.context', !!this.context);
@@ -2058,7 +2176,7 @@ class Control_Core extends Data_Object {
 		// ui seems not to react to this.
 
 		// remove all dom nodes?
-		
+
 		// Or have a different part that responds to content events?
 
 		// content event handlers seem important.
