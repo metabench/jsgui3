@@ -794,6 +794,8 @@ div.grid .header.row .cell {
 div.grid .header.row .cell span {
     position: relative;
     top: 4px;
+    left: 0px;
+    font-size: 11pt;
     
 }
 
@@ -804,3 +806,14 @@ div.grid .row .cell {
     border-bottom: 1px solid #999999;
     
 }
+
+
+div.grid .row .cell span {
+    position: relative;
+    /* top: 4px; */
+    left: 5px;
+    top: 1px;
+    font-size: 16pt;
+    
+}
+

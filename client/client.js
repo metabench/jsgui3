@@ -183,6 +183,7 @@ if (typeof window !== 'undefined') {
                 page_context.update_Controls('popup_menu_button', jsgui.Popup_Menu_Button);
                 page_context.update_Controls('color_palette', jsgui.Color_Palette);
                 page_context.update_Controls('grid', jsgui.Grid);
+                page_context.update_Controls('month_view', jsgui.Month_View);
 
                 jsgui.activate(page_context);
                 console.log('post jsgui activate');

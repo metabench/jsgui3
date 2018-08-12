@@ -38,7 +38,7 @@ var controls = {
     Login: require('./login'),
     Media_Scrubber: require('./media-scrubber'),
     Menu_Node: require('./menu-node'),
-    Month_view: require('./month-view'),
+    Month_View: require('./month-view'),
     //Multi_Document_Interface: require('./multi-document-interface'),
     Multi_Layout_Mode: require('./multi-layout-mode'),
     Object_Editor: require('./editor/object'),

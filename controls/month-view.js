@@ -37,12 +37,12 @@ class Month_View extends Grid {
         // months are 0 indexed (for consistency with other things.)
 
         if (is_defined(spec.year) && is_defined(spec.month)) {
-            console.log('are defined');
+            //console.log('are defined');
             this.month = spec.month; // 0 indexed
             this.year = spec.year;
         } else {
             let now = new Date();
-            console.log('now', now);
+            //console.log('now', now);
             this.month = now.getMonth(); // 0 indexed
             this.year = now.getFullYear();
         }
@@ -55,6 +55,14 @@ class Month_View extends Grid {
         if (!spec.el) {
             this.compose_month_view();
         }
+
+        //this.selection_scope();
+        //this.selection_scope = this.context.new_selection_scope();
+        this.context.new_selection_scope(this);
+        // putting selection_scope true in the data-jsgui-fields would be nice.
+
+
+        //this.selectable();
 
     }
     compose_month_view() {
@@ -129,9 +137,6 @@ class Month_View extends Grid {
         //  sunday is 0 from JS. I prefer monday to be 0
 
 
-
-
-
         //console.log('d.getDay()', d.getDay());
 
         let got_day = d.getDay() - 1;
@@ -164,24 +169,18 @@ class Month_View extends Grid {
             });
             cell.add(day_span);
 
-            d.setDate(d.getDate() + 1);
+            cell.selectable();
 
+            d.setDate(d.getDate() + 1);
             did_advance = advance_cell() && d.getDate() !== 1;
         }
 
         while (cell_pos[0] <= 6) {
             //console.log('cell_pos[0]', cell_pos[0]);
             ctrl_row.content._arr[cell_pos[0]].background.color = '#DDDDDD';
-
             cell_pos[0]++;
 
         }
-
-
-        // day of week of 1st day in month
-        //  what day is it?
-
-
 
     }
 

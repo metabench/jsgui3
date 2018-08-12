@@ -146,7 +146,6 @@ class Grid extends Control {
                 });
             }
         })
-
     }
 
     'each_row'(cb_row) {

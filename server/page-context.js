@@ -72,6 +72,8 @@ class Server_Page_Context extends jsgui.Page_Context {
 	'new_selection_scope'(ctrl) {
 		var num = this.selection_scope_count++;
 		ctrl.selection_scope = num;
+		ctrl._fields = ctrl._fields || {};
+		ctrl._fields.selection_scope = true;
 		return num;
 	}
 };

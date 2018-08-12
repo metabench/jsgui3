@@ -750,15 +750,14 @@ class Control_Enh_2 extends Control_Enh {
 		ctrl = ctrl || this;
 
 		if (typeof document === 'undefined') {
-			//that._fields = that._fields || {};
-			//that._fields['is_selectable'] = true;
-			this.is_selectable = true;
+			ctrl._fields = ctrl._fields || {};
+			ctrl._fields['selectable'] = true;
+			ctrl.is_selectable = true;
+
+			
 
 			// send this over to the client as a property.
 			//  a field to send to the client.
-
-
-
 
 
 		} else {
