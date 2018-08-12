@@ -29,6 +29,14 @@ class Date_Picker extends Calendar {
 
         // month_view could be used in calendars too.
 
+        // year: left right arrows selector
+        // month: left right arrows selector
+        // day: month view
+
+        // Join them all up together
+        //  Raise external events when the date changes.
+
+
         
 
         

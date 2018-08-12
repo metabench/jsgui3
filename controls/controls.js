@@ -16,6 +16,7 @@
 // Could add a lot of controls to the jsgui object here.
 
 var controls = {
+    Arrow_Button: require('./arrow-button'),
     Audio_Player: require('./audio-player'),
     Audio_Volume: require('./audio-volume'),
     Button: require('./button'),

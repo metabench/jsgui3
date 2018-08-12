@@ -23,8 +23,7 @@ const Arrow_Button = require('../controls/arrow-button');
 var server = new Server({
 	'port': 80,
 	'ctrl': [Arrow_Button, {
-		//'rotation': 180
-		'direction': 'left'
+		'rotation': 180
 	}]
 });
 

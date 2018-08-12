@@ -185,6 +185,9 @@ if (typeof window !== 'undefined') {
                 page_context.update_Controls('grid', jsgui.Grid);
                 page_context.update_Controls('month_view', jsgui.Month_View);
 
+                page_context.update_Controls('button', jsgui.Button);
+                page_context.update_Controls('arrow_button', jsgui.Arrow_Button);
+
                 jsgui.activate(page_context);
                 console.log('post jsgui activate');
             }

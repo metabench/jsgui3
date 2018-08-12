@@ -4,10 +4,11 @@ var Control = jsgui.Control;
 class Button extends Control {
     constructor(spec, add, make) {
         // Wont fields have been set?
-        spec['class'] = spec['class'] || 'button';
+        //spec['class'] = spec['class'] || 'button';
+        spec.__type_name = spec.__type_name || 'button';
         super(spec);
         var that = this;
-        this.__type_name = 'button';
+        
         this.add_class('button');
         //this.add_class('button');
         // Want to have a system of accessing icons.
@@ -22,14 +23,16 @@ class Button extends Control {
         }
 
         if (!spec.no_compose) {
-            if (!this._abstract) {
-                if (this.text) {
-                    console.log('pre add text to button', this.text);
-                    this.add(this.text);
-                }
+            //if (!this._abstract) {}
 
-            }
+            this.compose_button();
 
+        }
+    }
+    'compose_button'() {
+        if (this.text) {
+            //console.log('pre add text to button', this.text);
+            this.add(this.text);
         }
     }
     'activate'() {

@@ -17,7 +17,7 @@
 
 var jsgui = require('./server');
 //var Start_Stop_Toggle_Button = require('../controls/start-stop-toggle-button');
-
+const is_array = jsgui.is_array;
 var Server = jsgui.Server;
 var Website_Resource = require('./website-resource');
 var port = 80;
@@ -55,11 +55,22 @@ class Single_Control_Server extends Server {
         if (typeof spec === 'function') {
             super({}, 'single-control-server');
 
+
+
             this.Ctrl = spec;
             this.port = 80;
         } else {
             super(spec);
-            this.Ctrl = spec.Ctrl || spec.ctrl;
+
+            let Ctrl = spec.Ctrl || spec.ctrl;
+            if (is_array(Ctrl)) {
+                this.Ctrl = Ctrl[0];
+                this.params = Ctrl[1];
+            } else {
+                this.Ctrl = Ctrl;
+            }
+
+            
             this.port = spec.port || 80;
         }
 
@@ -120,9 +131,14 @@ class Single_Control_Server extends Server {
                 hd.include_css('/css/basic.css')
                 hd.include_js('/js/app.js');
                 var body = hd.body;
-                var ctrl = this.ctrl = new this.Ctrl({
+
+
+                let o_params = this.params || {};
+                Object.assign(o_params, {
                     'context': server_page_context
                 });
+
+                var ctrl = this.ctrl = new this.Ctrl(o_params);
                 ctrl.active();
                 //var ctrl2 = new jsgui.Control({});
                 body.add(ctrl);
