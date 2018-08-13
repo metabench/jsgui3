@@ -8,7 +8,7 @@
 
 
 var jsgui = require('../html-core/html-core-enh');
-
+const clone = jsgui.clone;
 // A general purpose grid...
 //  Have something with a similar API to Vectorious?
 //var Data_Grid = jsgui.Data_Grid;
@@ -21,13 +21,37 @@ var Control = jsgui.Control;
 
 const Grid = require('./grid');
 
+const Tile_Slider = require('./tile-slide');
+// Don't want very much logic or code related to tile sliding right here.
+//  
+
+// clone_to_previous
+// clone_to_next
+
+// There can be some ways for controls to support tile sliding.
+
+// A Tile_Slide_View or Tile_Slide_Panel would be useful.
+//  
+
+// Tile_Slide will be Control Transformer.
+//  Transforms a control into another control.
+//  May contain that initial control.
+
+
+// const TS_Month_View = Tile_Slide({
+//  'Ctrl': Month_View,
+//  'previous': function that reduces the spec's month by 1 including handling year breaks
+//  'next': function to increase spec by 1 month
+// })
+
+
 
 
 class Month_View extends Grid {
     constructor(spec) {
 
         // M T W T F S S
-        spec.grid_size = [7, 6];
+        spec.grid_size = [7, 7];
         spec.size = spec.size || [360, 200];
 
         // Up to 5 weeks shows, top row for title
@@ -168,7 +192,6 @@ class Month_View extends Grid {
                 text: d.getDate() + ''
             });
             cell.add(day_span);
-
             cell.selectable();
 
             d.setDate(d.getDate() + 1);
@@ -179,12 +202,60 @@ class Month_View extends Grid {
             //console.log('cell_pos[0]', cell_pos[0]);
             ctrl_row.content._arr[cell_pos[0]].background.color = '#DDDDDD';
             cell_pos[0]++;
+        }
 
+        if (cell_pos[1] < 6) {
+            cell_pos[0] = 0;
+            cell_pos[1] = 6;
+            ctrl_row = this._arr_rows[cell_pos[1]];
+            while (cell_pos[0] <= 6) {
+                //console.log('cell_pos[0]', cell_pos[0]);
+                ctrl_row.content._arr[cell_pos[0]].background.color = '#DDDDDD';
+                cell_pos[0]++;
+    
+            }
         }
 
     }
 
 }
 
+Month_View.Tiled = Tile_Slider.wrap(Month_View, spec => {
+
+    spec = clone(spec);
+
+
+    if (!is_defined(spec.month)) {
+        let now = new Date();
+        //console.log('now', now);
+        spec.month = now.getMonth(); // 0 indexed
+        spec.year = now.getFullYear();
+    }
+    //console.log('spec.month', spec.month);
+
+    spec.month = spec.month - 1;
+    //console.log('spec.month', spec.month);
+    if (spec.month < 0) {
+        spec.month = 11;
+        spec.year = spec.year - 1;
+    }
+    //console.log('spec', spec);
+    return spec;
+}, spec => {
+    spec = clone(spec);
+    if (!is_defined(spec.month)) {
+        let now = new Date();
+        //console.log('now', now);
+        spec.month = now.getMonth(); // 0 indexed
+        spec.year = now.getFullYear();
+    }
+
+    spec.month = spec.month + 1;
+    if (spec.month > 11) {
+        spec.month = 0;
+        spec.year = spec.year + 1;
+    }
+    return spec;
+});
 
 module.exports = Month_View;

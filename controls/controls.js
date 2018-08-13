@@ -57,6 +57,7 @@ var controls = {
     Text_Field: require('./text-field'),
     Text_Item: require('./text-item'),
     Text_Input: require('./text-input'),
+    Tile_Slider: require('./tile-slide'),
     Timespan_Selector: require('./timespan-selector'),
     Title_Bar: require('./title-bar'),
     Titled_Panel: require('./titled-panel'),

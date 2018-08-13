@@ -188,6 +188,8 @@ if (typeof window !== 'undefined') {
                 page_context.update_Controls('button', jsgui.Button);
                 page_context.update_Controls('arrow_button', jsgui.Arrow_Button);
 
+                page_context.update_Controls('tile_slider', jsgui.Tile_Slider);
+
                 jsgui.activate(page_context);
                 console.log('post jsgui activate');
             }

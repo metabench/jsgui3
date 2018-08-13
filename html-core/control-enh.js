@@ -120,6 +120,7 @@ class Control extends Control_Core {
 
 		//console.log('* fields', fields);
 		//throw 'stop';
+		spec = spec || {};
 		super(spec, fields);
 		if (spec.el) {
 			var jgf = spec.el.getAttribute('data-jsgui-fields');
@@ -974,7 +975,7 @@ class Control extends Control_Core {
 
 	'activate_other_changes_listen' () {
 		//var el;
-		var dom_attributes = this.dom.attrs;
+		var dom_attributes = this.dom.attributes;
 		//console.log('dom_attributes', dom_attributes);
 
 		var el = this.dom.el;
@@ -984,10 +985,8 @@ class Control extends Control_Core {
 
 		//dom_attributes.style.on('change', (e_change) {
 
-
-
 		dom_attributes.on('change', (e_change) => {
-			//console.log('dom_attributes e_change', e_change);
+			console.log('dom_attributes e_change', e_change);
 			var property_name = e_change.name || e_change.key,
 				dval = e_change.value || e_change.new;
 			var t_dval = tof(dval);
@@ -1310,19 +1309,20 @@ class Control extends Control_Core {
 		if (el) {
 			var context = this.context;
 			var ctrl_fields = {};
-			var that = this;
+			//var that = this;
 			var c, l;
 			var my_content = this.content;
+
 
 
 			if (el.getAttribute) {
 				var str_ctrl_fields = el.getAttribute('data-jsgui-ctrl-fields');
 				if (str_ctrl_fields) {
-					//console.log('str_ctrl_fields ' + str_ctrl_fields);
+					console.log('str_ctrl_fields ' + str_ctrl_fields);
 					ctrl_fields = JSON.parse(str_ctrl_fields.replace(/'/g, '"'));
 				}
 				var ctrl_fields_keys = Object.keys(ctrl_fields);
-				//console.log('ctrl_fields_keys', ctrl_fields_keys);
+				console.log('ctrl_fields_keys', ctrl_fields_keys);
 
 				var l_ctrl_fields_keys = ctrl_fields_keys.length;
 				var key, value;
@@ -1331,13 +1331,14 @@ class Control extends Control_Core {
 					value = ctrl_fields[key];
 
 					var referred_to_control = context.map_controls[value];
+
 					//console.log('referred_to_control', referred_to_control);
 
 					//that.set(key, referred_to_control);
-
 					// The underscore thing may work better as it could be a proxy object.
 
-					that[key] = referred_to_control;
+					this[key] = referred_to_control;
+					console.log('referred_to_control', referred_to_control);
 
 				}
 				var cns = el.childNodes;

@@ -22,7 +22,7 @@ const Arrow_Button = require('../controls/arrow-button');
 
 var server = new Server({
 	'port': 80,
-	'ctrl': [Arrow_Button, {
+	'ctrl': [Month_View.Tiled, {
 		//'rotation': 180
 		'direction': 'left'
 	}]

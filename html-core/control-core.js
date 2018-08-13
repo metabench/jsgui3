@@ -70,7 +70,9 @@ var style_input_handlers = {
 
 var new_obj_style = () => {
 	//var style = new Evented_Class({});
-	var style = {}
+	//var style = {}
+
+	let style = new Evented_Class({});
 
 	style.__empty = true;
 
@@ -81,7 +83,7 @@ var new_obj_style = () => {
 		each(style, (value, key) => {
 			//console.log('descriptor', Reflect.getOwnPropertyDescriptor(style, key));
 			//console.log('key', key);
-			if (key !== 'toString' && key !== '__empty' && key !== '_bound_events' && key !== 'raise' && key != {}) {
+			if (key !== 'toString' && key !== '__empty' && key !== '_bound_events' && key !== 'on' && key !== 'subscribe' && key !== 'raise' && key !== 'trigger' && key != {}) {
 				if (first) {
 					first = false;
 				} else {
@@ -102,7 +104,7 @@ var new_obj_style = () => {
 
 	var res = new Proxy(style, {
 		set: function (target, property, value, receiver) {
-			//console.log('set style trap');
+			console.log('set style trap');
 
 
 			target['__empty'] = false;
@@ -115,14 +117,14 @@ var new_obj_style = () => {
 
 			// raise an event somehow?
 
-			/*
+			
 			style.raise('change', {
 				'key': property,
 				'old': old_value,
 				'new': value,
 				'value': value
 			});
-			*/
+			
 
 
 			//style.__empty = false;
@@ -162,12 +164,20 @@ class DOM_Attributes extends Evented_Class {
 
 		// Could use proxy object for setting style
 
-
-
 		this.style = new_obj_style();
+
+		this.style.on('change', e_change => {
+
+			// 
+
+			this.raise('change', {
+				'property': 'style',
+				'key': 'style',
+				//'key': e_change.key,
+				'value': this.style.toString()
+			})
+		})
 		//console.log('this.style', this.style);
-
-
 	}
 
 	/*
@@ -253,23 +263,25 @@ class Control_DOM extends Evented_Class {
 		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
 		//  instead?
 
-
+		// Does not seem to be working right.
+		//  On client-side, it's not carrying out 'set' style.
+		//   because we are changing an object within style.
 
 		var attrs = this.attrs = this.attributes = new Proxy(dom_attributes, {
 			'set': (target, property, value, receiver) => {
 
 				// proxy for setting the style with a string.
 
-
-				//console.log('property', property)
+				console.log('property', property)
 
 				if (property === 'style') {
 					//console.log('');
-					//console.log('Control_DOM attrs set style')
-					//console.log('value', value);
+					console.log('Control_DOM attrs set style')
+					console.log('value', value);
 					//console.log('tof(value)', tof(value));
 
 					var t_value = tof(value);
+					console.log('t_value', t_value);
 					if (t_value === 'string') {
 
 						var s_values = value.trim().split(';');
@@ -481,8 +493,8 @@ class Control_Core extends Data_Object {
 
 
 
-		var cf = this._ctrl_fields = this._ctrl_fields || {};
-		var cf = this._fields = this._fields || {};
+		//var cf = this._ctrl_fields = this._ctrl_fields || {};
+		//var cf = this._fields = this._fields || {};
 
 		// Could have object for internal properties, such as 'resizable'
 
@@ -848,7 +860,7 @@ class Control_Core extends Data_Object {
 
 
 				let sf = stringify(this._fields).replace(/"/g, "'");
-				//console.log('scf', scf);
+				console.log('sf', sf);
 
 				if (sf.length > 2) {
 					dom_attrs['data-jsgui-fields'] = sf;
