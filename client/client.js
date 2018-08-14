@@ -120,6 +120,8 @@ if (typeof window !== 'undefined') {
 
                 page_context.update_Controls('tile_slider', jsgui.Tile_Slider);
 
+                page_context.update_Controls('span', jsgui.span);
+
                 jsgui.activate(page_context);
                 console.log('post jsgui activate');
 

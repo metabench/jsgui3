@@ -388,6 +388,7 @@ var escape_html = function (str) {
 
 jsgui.span = class span extends Control {
     constructor(spec) {
+        spec.__type_name = 'span';
         super(spec);
         this.dom.tagName = 'span';
         spec = spec || {};
@@ -400,29 +401,34 @@ jsgui.span = class span extends Control {
             this._text = '';
         }
 
-        let tn = this.tn = this.textNode = this.text_node = new textNode({
-            context: this.context,
-            text: this._text
-        });
-        this.add(tn);
+        if (!spec.el) {
+            this.compose_span();
+        }
+
+        
         
         
 
         //this.typeName = pr.typeName;
         //this.tagName = 'p';
     }
+    compose_span() {
+        let tn = this.tn = this.textNode = this.text_node = new textNode({
+            context: this.context,
+            text: this._text
+        });
+        this.add(tn);
+    }
     get text() {
         return this._text;
     }
     set text(value) {
         this._text = value;
-
-        /*
+        
         this.raise('change', {
             'name': 'text',
             'value': value
         });
-        */
 
         // Should not really need to respond to such events anyway.
         //  principles of react etc.
@@ -430,6 +436,32 @@ jsgui.span = class span extends Control {
 
     all_html_render_internal_controls() {
         return this._text;
+    }
+
+    activate() {
+        // get the text node reference?
+        let dtn = this.dom.el.childNodes[0];
+
+        // Add to array without raising event.
+
+        
+        let tn = this.tn = this.textNode = this.text_node = new textNode({
+            context: this.context,
+            node: dtn
+        });
+        this.content._arr.push(tn);
+        //this.add(tn);
+        
+        this.on('change', e => {
+            if (e.name === 'text') {
+                dtn.nodeValue = e.value;
+            }
+        });
+
+
+
+        // May need to work with the text node element?
+
     }
 
 

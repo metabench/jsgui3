@@ -426,12 +426,8 @@ class Control_Background extends Evented_Class {
 		//  Could be a color
 		//  Could be a URL
 		// Could be a programatic object that provides access to an image.
-
 	}
 }
-
-
-
 
 class Control_Core extends Data_Object {
 
@@ -534,16 +530,13 @@ class Control_Core extends Data_Object {
 				//console.log('this.dom.el', this.dom.el);
 				//console.log('this._.dom._.el', this._.dom._.el);
 				//throw 'stop';
-
 				this.dom.tagName = spec.el.tagName.toLowerCase();
 			}
 
 			var that = this;
 			var context = this.context || spec.context;
 			//console.log('context', context);
-
 			// 
-
 			if (context) {
 				if (context.register_control) context.register_control(this);
 			} else {

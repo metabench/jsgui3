@@ -259,7 +259,12 @@ class Month_View extends Grid {
                         //console.log(cell.content._arr)
 
                         cell.iterate_this_and_subcontrols(ctrl => {
-                            console.log('ctrl.dom.tagName', ctrl.dom.tagName);
+                            //console.log('ctrl', ctrl);
+                            //console.log('ctrl.dom.tagName', ctrl.dom.tagName);
+
+                            if (ctrl.dom.tagName === 'span') {
+                                ctrl.text = '';
+                            }
                         });
 
                     } else {
