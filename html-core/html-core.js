@@ -159,12 +159,12 @@ var activate = function (context) {
                 // Give the HTML document an ID?
     
     
-                console.log('jsgui_id ' + jsgui_id);
+                //console.log('jsgui_id ' + jsgui_id);
                 if (jsgui_id) {
                     var ib = id_before__(jsgui_id);
-                    console.log('ib', ib);
+                    //console.log('ib', ib);
                     var num = num_after(jsgui_id);
-                    console.log('num', num);
+                    //console.log('num', num);
                     if (! def(max_typed_ids[ib])) {
                         max_typed_ids[ib] = num;
                     } else {
@@ -186,7 +186,7 @@ var activate = function (context) {
     //console.log('map_controls', map_controls);
     //throw 'stop';
 
-    console.log('Object.keys(map_jsgui_els)', Object.keys(map_jsgui_els));
+    //console.log('Object.keys(map_jsgui_els)', Object.keys(map_jsgui_els));
 
     // Whenever they get added, they should be added to the context. This appears missing.
 
@@ -236,7 +236,7 @@ var activate = function (context) {
                     // Would re-apply the constructors?
                     //console.log('Cstr', Cstr);
 
-                    console.log('jsgui_id', jsgui_id);
+                    //console.log('jsgui_id', jsgui_id);
 
                     // control not taking the id at the beginning.
 
@@ -248,7 +248,7 @@ var activate = function (context) {
                         'el': el
                     });
 
-                    console.log('ctrl._id()', ctrl._id());
+                    //console.log('ctrl._id()', ctrl._id());
 
 
 

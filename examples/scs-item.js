@@ -46,11 +46,26 @@ let activate_app = (() => {
 		console.log('Object.keys(context)', Object.keys(context));
 		console.log('Object.keys(context.map_controls)', Object.keys(context.map_controls));
 
+
+		let month_view = context.map_controls['month_view_0'];
+		
+		setTimeout(() => {
+			month_view.next_month();
+		}, 4000);
+
 		// Seems like too many items were added to the map.
 		//  Must be created accidently on start.
 
 		// Seems like the control gets constructed twice, or registered with s different id.#
 		//  At least the mainscs control.
+
+		// Could do with some control querying / searching capabilities.
+
+		// control selectors
+
+		// may want to search for all controls that match a particular set of points.
+
+
 
 
 	}

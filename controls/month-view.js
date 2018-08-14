@@ -44,7 +44,11 @@ const Tile_Slider = require('./tile-slide');
 //  'next': function to increase spec by 1 month
 // })
 
+let days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
+
+let bgc_disabled = '#DDDDDD';
+let bgc_enabled = 'inherit';
 
 
 class Month_View extends Grid {
@@ -110,7 +114,7 @@ class Month_View extends Grid {
         // Consider composition of spans separate to filling their data in.
 
 
-        let days = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']
+        
 
         each(days_row.content._arr, (ctrl_header_cell, i) => {
             //console.log('ctrl_header_cell', ctrl_header_cell);
@@ -174,7 +178,7 @@ class Month_View extends Grid {
 
         while (cell_pos[0] < got_day) {
             //console.log('cell_pos[0]', cell_pos[0]);
-            ctrl_row.content._arr[cell_pos[0]].background.color = '#DDDDDD';
+            ctrl_row.content._arr[cell_pos[0]].background.color = bgc_disabled;
             cell_pos[0]++;
         }
 
@@ -199,7 +203,7 @@ class Month_View extends Grid {
 
         while (cell_pos[0] <= 6) {
             //console.log('cell_pos[0]', cell_pos[0]);
-            ctrl_row.content._arr[cell_pos[0]].background.color = '#DDDDDD';
+            ctrl_row.content._arr[cell_pos[0]].background.color = bgc_disabled;
             cell_pos[0]++;
         }
 
@@ -209,7 +213,7 @@ class Month_View extends Grid {
             ctrl_row = this._arr_rows[cell_pos[1]];
             while (cell_pos[0] <= 6) {
                 //console.log('cell_pos[0]', cell_pos[0]);
-                ctrl_row.content._arr[cell_pos[0]].background.color = '#DDDDDD';
+                ctrl_row.content._arr[cell_pos[0]].background.color = bgc_disabled;
                 cell_pos[0]++;
             }
         }
@@ -220,8 +224,55 @@ class Month_View extends Grid {
     // iterate through the grid cells
     
     refresh_month_view() {
+
+        // Day of week of 1st date in month...
+
+        let d = new Date(this.year, this.month, 1);
+        //console.log('d', d);
+        // day of week
+        //  sunday is 0 from JS. I prefer monday to be 0
+        //console.log('d.getDay()', d.getDay());
+
+        let got_day = d.getDay() - 1;
+        if (got_day < 0) got_day = 6;
+        //console.log('got_day', got_day);
+
+        console.log('got_day', got_day);
+
+        let day_name = days[got_day];
+
+
+
         this.each_cell((cell, cell_pos) => {
             console.log('cell_pos', cell_pos);
+            let [x, y] = cell_pos;
+            if (y > 0) {
+
+
+                if (y === 1) {
+                    if (x < got_day) {
+                        cell.background.color = bgc_disabled;
+                        // remove text in the span.
+
+                        //cell.find('span')[0].text = '';
+
+                        //console.log(cell.content._arr)
+
+                        cell.iterate_this_and_subcontrols(ctrl => {
+                            console.log('ctrl.dom.tagName', ctrl.dom.tagName);
+                        });
+
+                    } else {
+                        cell.background.color = bgc_enabled;
+                    }
+                }
+
+                
+
+
+            }
+
+
         });
     }
 

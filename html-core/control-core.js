@@ -534,6 +534,8 @@ class Control_Core extends Data_Object {
 				//console.log('this.dom.el', this.dom.el);
 				//console.log('this._.dom._.el', this._.dom._.el);
 				//throw 'stop';
+
+				this.dom.tagName = spec.el.tagName.toLowerCase();
 			}
 
 			var that = this;
