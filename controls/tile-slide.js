@@ -7,6 +7,9 @@ var stringify = jsgui.stringify,
     tof = jsgui.tof;
 var Control = jsgui.Control;
 
+const fnl = require('fnl');
+const prom_or_cb = fnl.prom_or_cb;
+
 class Tile_Slider extends Control {
     constructor(spec) {
         spec = spec || {};
@@ -88,34 +91,106 @@ class Tile_Slider extends Control {
         }
     }
 
+    // Need repositioning after sliding.
+
+    // So the central slide is now the current one.
+    //  Could be worth keeping these cached?
+    //  For the moment, just want 1 further in each direction.
+
+    // Just the sliding.
+
+    // previous, next
+
+    // previous_major
+    // next_major
+    //  used for changing years
+
+    // previous_year = previous_major
+
+    // prev2
+
+    // Transitions of the non-framed version would be cool.
+
+
+    // move_previous
+
+    // does the slide to the left / right
+    //  rearrange / arrange things so that the next operation is ready.
+
+
+
     slide_to_left() {
-        // This exposes the element to the right.
-        console.log('slide_to_left');
-        console.log('this.size', this.size);
-
-        console.log('this.central.dom.attributes', this.central.dom.attributes);
-
-        this.central.dom.attributes.style.transition = 'transform 0.33s';
-        this.central.dom.attributes.style.transform = 'translate(' + -1 * this.size[0] + 'px, 0px)';
-
-        this.right.dom.attributes.style.transition = 'transform 0.33s';
-        this.right.dom.attributes.style.transform = 'translate(' + -1 * this.size[0] + 'px, 0px)';
-
-        // do it on the el?
-
-    }
-    slide_to_right() {
         // This exposes the element to the right.
         //console.log('slide_to_left');
         //console.log('this.size', this.size);
 
         //console.log('this.central.dom.attributes', this.central.dom.attributes);
 
-        this.central.dom.attributes.style.transition = 'transform 0.33s';
-        this.central.dom.attributes.style.transform = 'translate(' + this.size[0] + 'px, 0px)';
+        return prom_or_cb((resolve, reject) => {
+            let ms = 333;
+            let s = ms / 1000;
 
-        this.left.dom.attributes.style.transition = 'transform 0.33s';
-        this.left.dom.attributes.style.transform = 'translate(' + this.size[0] + 'px, 0px)';
+            this.central.dom.attributes.style.transition = 'transform ' + s + 's';
+            this.central.dom.attributes.style.transform = 'translate(' + -1 * this.size[0] + 'px, 0px)';
+
+            this.right.dom.attributes.style.transition = 'transform ' + s + 's';
+            this.right.dom.attributes.style.transform = 'translate(' + -1 * this.size[0] + 'px, 0px)';
+
+            this.right.one('transitionend', e_end => {
+                //console.log('e_end', e_end);
+                resolve();
+            });
+        }, callback);
+
+
+        /*
+
+        setTimeout(() => {
+            console.log('transition (should be) done');
+        }, ms);
+
+        */
+
+        // do it on the el?
+
+        //transitionend
+        
+
+        /*
+
+        var fnTransitionEnd = (e_end) => {
+            console.log('fnTransitionEnd');
+            //el.style.overflow = 'visible';
+            this.right.dom.el.removeEventListener('transitionend', fnTransitionEnd)
+        }
+
+        this.right.dom.el.addEventListener('transitionend', fnTransitionEnd, false);
+        */
+
+
+
+    }
+    slide_to_right(callback) {
+
+        return prom_or_cb((resolve, reject) => {
+            this.central.dom.attributes.style.transition = 'transform 0.33s';
+            this.central.dom.attributes.style.transform = 'translate(' + this.size[0] + 'px, 0px)';
+
+            this.left.dom.attributes.style.transition = 'transform 0.33s';
+            this.left.dom.attributes.style.transform = 'translate(' + this.size[0] + 'px, 0px)';
+
+            this.left.one('transitionend', e_end => {
+                //console.log('e_end', e_end);
+                resolve();
+            });
+        }, callback);
+        // This exposes the element to the right.
+        //console.log('slide_to_left');
+        //console.log('this.size', this.size);
+
+        //console.log('this.central.dom.attributes', this.central.dom.attributes);
+
+
 
         // do it on the el?
 
@@ -125,8 +200,9 @@ class Tile_Slider extends Control {
         if (!this._active) {
             super.activate();
 
-            setTimeout(() => {
-                this.slide_to_right();
+            setTimeout(async () => {
+                await this.slide_to_right();
+                console.log('awaited slide to right');
             }, 2000);
         }
     }
@@ -163,7 +239,7 @@ const Tile_Slide = function (Ctrl, fn_prev_spec, fn_next_spec, adjacencies = {
             if (spec.size) {
                 slider_spec.size = spec.size;
                 this.size = spec.size;
-                console.log('spec.size', spec.size);
+                //console.log('spec.size', spec.size);
             }
 
             /*
@@ -196,22 +272,11 @@ const Tile_Slide = function (Ctrl, fn_prev_spec, fn_next_spec, adjacencies = {
                 this.compose_tile_sliding_ctrl();
             }
 
-
-
-
-
-
-
-
-
-
             if (spec.size) {
                 //this.central.size = spec.size;
 
 
             }
-
-
 
             // then make versions with modified specs and put them adjacent.
 
@@ -225,7 +290,7 @@ const Tile_Slide = function (Ctrl, fn_prev_spec, fn_next_spec, adjacencies = {
             let prev_spec = fn_prev_spec(this.spec);
             let next_spec = fn_next_spec(this.spec);
 
-            console.log('this.spec.size', this.spec.size);
+            //console.log('this.spec.size', this.spec.size);
 
             if (this.spec.size) {
                 this.central.size = this.spec.size;
@@ -267,7 +332,6 @@ const Tile_Slide = function (Ctrl, fn_prev_spec, fn_next_spec, adjacencies = {
 
 
         }
-
     }
 
 

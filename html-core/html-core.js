@@ -9,6 +9,7 @@ var each = jsgui.each;
 var Control = jsgui.Control = require('./control-enh');
 var tof = jsgui.tof;
 var map_Controls = jsgui.map_Controls = {};
+const def = jsgui.is_defined;
 
 var core_extension = str_arr_mapify(function (tagName) {
     jsgui[tagName] = class extends Control {
@@ -158,11 +159,13 @@ var activate = function (context) {
                 // Give the HTML document an ID?
     
     
-                //console.log('jsgui_id ' + jsgui_id);
+                console.log('jsgui_id ' + jsgui_id);
                 if (jsgui_id) {
                     var ib = id_before__(jsgui_id);
+                    console.log('ib', ib);
                     var num = num_after(jsgui_id);
-                    if (!max_typed_ids[ib]) {
+                    console.log('num', num);
+                    if (! def(max_typed_ids[ib])) {
                         max_typed_ids[ib] = num;
                     } else {
                         if (num > max_typed_ids[ib]) max_typed_ids[ib] = num;
@@ -182,6 +185,8 @@ var activate = function (context) {
     context.set_max_ids(max_typed_ids);
     //console.log('map_controls', map_controls);
     //throw 'stop';
+
+    console.log('Object.keys(map_jsgui_els)', Object.keys(map_jsgui_els));
 
     // Whenever they get added, they should be added to the context. This appears missing.
 
@@ -231,11 +236,21 @@ var activate = function (context) {
                     // Would re-apply the constructors?
                     //console.log('Cstr', Cstr);
 
+                    console.log('jsgui_id', jsgui_id);
+
+                    // control not taking the id at the beginning.
+
+                    // And params for this ctrl?
+
                     var ctrl = new Cstr({
                         'context': context,
                         'id': jsgui_id,
                         'el': el
                     });
+
+                    console.log('ctrl._id()', ctrl._id());
+
+
 
                     arr_controls.push(ctrl);
 

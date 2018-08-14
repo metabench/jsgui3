@@ -153,8 +153,13 @@ class Grid extends Control {
     }
 
     'each_cell'(cb_cell) {
-        each(this._arr_rows, (row) => {
-            row.content.each(cb_cell);
+        // want to return the cell position as an index
+        each(this._arr_rows, (row, i_row) => {
+
+
+            row.content.each((cell, i_cell) => {
+                cb_cell(cell, [i_cell, i_row]);
+            });
 
             //each(row, cb_cell);
         });

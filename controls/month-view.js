@@ -104,6 +104,12 @@ class Month_View extends Grid {
         //console.log('days_row.content', days_row.content);
         //console.log('days_row.content._arr[0]', days_row.content._arr[0]);
 
+        // Creates new spans here.
+        //  At other points, we need to change the values in those spans.
+
+        // Consider composition of spans separate to filling their data in.
+
+
         let days = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']
 
         each(days_row.content._arr, (ctrl_header_cell, i) => {
@@ -152,31 +158,24 @@ class Month_View extends Grid {
             }
             return true;
         }
-
         //console.log('this.year, this.month', this.year, this.month);
-
         let d = new Date(this.year, this.month, 1);
         //console.log('d', d);
         // day of week
         //  sunday is 0 from JS. I prefer monday to be 0
-
-
         //console.log('d.getDay()', d.getDay());
 
         let got_day = d.getDay() - 1;
         if (got_day < 0) got_day = 6;
-
         //console.log('got_day', got_day);
 
         let day_name = days[got_day];
-
         // need to progress until the position is aligned with the beginning of the week.
 
         while (cell_pos[0] < got_day) {
             //console.log('cell_pos[0]', cell_pos[0]);
             ctrl_row.content._arr[cell_pos[0]].background.color = '#DDDDDD';
             cell_pos[0]++;
-
         }
 
         // Still need to make sure it's within the month
@@ -212,11 +211,62 @@ class Month_View extends Grid {
                 //console.log('cell_pos[0]', cell_pos[0]);
                 ctrl_row.content._arr[cell_pos[0]].background.color = '#DDDDDD';
                 cell_pos[0]++;
-    
             }
         }
-
     }
+
+    // refresh_month_view
+    // or update
+    // iterate through the grid cells
+    
+    refresh_month_view() {
+        this.each_cell((cell, cell_pos) => {
+            console.log('cell_pos', cell_pos);
+        });
+    }
+
+    next_month() {
+        if (this.month === 11) {
+            this.month = 0;
+            this.year = this.year + 1;
+        } else {
+            this.month = this.month + 1;
+        }
+        this.refresh_month_view();
+    }
+
+    previous_month() {
+        if (this.month === 0) {
+            this.month = 11;
+            this.year = this.year - 1;
+        } else {
+            this.month = this.month - 1;
+        }
+        this.refresh_month_view();
+    }
+    // a mechanism for refreshing the UI based on changes in data.
+    // can iterate the month cells
+    //  a different algorythm could know which cell corresponds to which.
+
+
+    // previous and next
+
+    // choose a different month, re-render the data in the cells.
+    //  change what's in the spans.
+
+    // Will have a very different transition system to using slides.
+    //  That transition system will change what month is displayed in a single month view in order to do its things.
+
+    // recompose - take a spec, and modify the current object to match that spec.
+    //  recompose seems like it would be very useful for the sliding tile system.
+
+    // recompose_month_view
+
+
+
+
+
+
 
 }
 

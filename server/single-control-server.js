@@ -55,8 +55,6 @@ class Single_Control_Server extends Server {
         if (typeof spec === 'function') {
             super({}, 'single-control-server');
 
-
-
             this.Ctrl = spec;
             this.port = 80;
         } else {
@@ -69,32 +67,25 @@ class Single_Control_Server extends Server {
             } else {
                 this.Ctrl = Ctrl;
             }
-
-            
+            // Ctrl.activate_app
+            //spec.activate_app;
+            if (spec.activate_app) {
+                this.activate_app = spec.activate_app;
+            }
             this.port = spec.port || 80;
         }
-
-
         //this.__type_name = 'single-control-server';
-
         var app = new Website_Resource({
             'name': 'html-server'
         });
-
-
         //console.log('app', app);
         //throw 'stop';
         this.resource_pool.add(app);
         this.server_router.set_route('*', app, app.process);
-
         this.app_server = app;
-
     }
     'start' (callback) {
-
         //throw 'stop';
-
-
         var resource_pool = this.resource_pool;
         var server_router = resource_pool.get_resource('Server Router');
 
@@ -107,7 +98,28 @@ class Single_Control_Server extends Server {
 
 
         let js = this.app_server.resource_pool['Site JavaScript'];
-        js.serve_package('/js/app.js', '../client/client.js', (err, served) => {
+
+        // serve package with replacement options.
+        //  
+
+        // // the activate app function.
+        //  Can be put into place in the served JS.
+
+
+        // with replacement option within serve_package
+
+        let o_serve_package = {
+            'babel': 'mini'
+        }
+
+        if (this.activate_app) {
+            o_serve_package.replace = {
+                '/* -- ACTIVATE-APP -- */': this.activate_app.toString()
+            }
+        }
+
+
+        js.serve_package('/js/app.js', '../client/client.js', o_serve_package, (err, served) => {
             //var resource_pool = this.resource_pool;
             //console.log('server_router', server_router);
 
@@ -157,7 +169,7 @@ class Single_Control_Server extends Server {
                 });
             });
 
-            console.log('pre super start');
+            //console.log('pre super start');
 
             super.start(this.port, (err, res_super_start) => {
                 if (err) {

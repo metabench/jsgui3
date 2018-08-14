@@ -340,8 +340,7 @@ class Evented_Class {
     }
     'one'(event_name, fn_handler) {
 
-        var inner_handler = function (e) {
-
+        var inner_handler = (e) => {
             //var result = fn_handler.call(this, e);
             fn_handler.call(this, e);
             this.off(event_name, inner_handler);

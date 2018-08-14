@@ -1,16 +1,29 @@
+var path = require('path'),
+	fs = require('fs'),
+	url = require('url'),
+	jsgui = require('../html/html'),
+	os = require('os'),
+	http = require('http'),
+	libUrl = require('url'),
+	Resource = require('../resource/resource'),
+	fs2 = require('./fs2'),
+	UglifyJS = require('uglify-js'),
+	zlib = require('zlib');
 
 
-var path = require('path'), fs = require('fs'),
-	url = require('url'), jsgui = require('../html/html'), os = require('os'), http = require('http'), libUrl = require('url'),
-	Resource = require('../resource/resource'), fs2 = require('./fs2'), UglifyJS = require('uglify-js'), zlib = require('zlib');
-
-
-var stringify = jsgui.stringify, each = jsgui.each, arrayify = jsgui.arrayify, tof = jsgui.tof;
+var stringify = jsgui.stringify,
+	each = jsgui.each,
+	arrayify = jsgui.arrayify,
+	tof = jsgui.tof;
 var filter_map_by_regex = jsgui.filter_map_by_regex;
-var Class = jsgui.Class, Data_Object = jsgui.Data_Object, Enhanced_Data_Object = jsgui.Enhanced_Data_Object;
-var fp = jsgui.fp, is_defined = jsgui.is_defined;
+var Class = jsgui.Class,
+	Data_Object = jsgui.Data_Object,
+	Enhanced_Data_Object = jsgui.Enhanced_Data_Object;
+var fp = jsgui.fp,
+	is_defined = jsgui.is_defined;
 var Collection = jsgui.Collection;
-var call_multi = jsgui.call_multi, get_truth_map_from_arr = jsgui.get_truth_map_from_arr;
+var call_multi = jsgui.call_multi,
+	get_truth_map_from_arr = jsgui.get_truth_map_from_arr;
 
 var browserify = require('browserify');
 var zlib = require('zlib');
@@ -23,7 +36,7 @@ const stream_to_array = require('stream-to-array');
 
 const fnl = require('fnl');
 const prom_or_cb = fnl.prom_or_cb;
-
+const fnlfs = require('fnlfs');
 
 // This could do with some overhauling.
 //  Only need to have it do what the applications need from it.
@@ -93,7 +106,9 @@ var serve_js_file_from_disk_updated_refs = function (filePath, response, callbac
 			//console.log('data ' + data);
 			//var servableJs = updateReferencesForServing(data);
 
-			response.writeHead(200, { 'Content-Type': 'text/javascript' });
+			response.writeHead(200, {
+				'Content-Type': 'text/javascript'
+			});
 			//response.end(servableJs);
 			response.end(data);
 		}
@@ -125,15 +140,17 @@ var check_served_directories_for_requested_file = function (arr_served_paths, sp
 	var firstFoundPath;
 	each(arr_served_paths, function (i, fsPath) {
 		fns.push([function (callback) {
-			var checkingPath = fsPath + '/' + reconstitutedPathWithinJs;
-			fs.exists(checkingPath, function (exists) {
-				//console.log('cb fsPath ' + checkingPath + ' exists ' + exists)
-				if (exists & !firstFoundPath) {
-					firstFoundPath = checkingPath;
-				}
-				callback(null, exists);
-			})
-		}, []]);
+				var checkingPath = fsPath + '/' + reconstitutedPathWithinJs;
+				fs.exists(checkingPath, function (exists) {
+					//console.log('cb fsPath ' + checkingPath + ' exists ' + exists)
+					if (exists & !firstFoundPath) {
+						firstFoundPath = checkingPath;
+					}
+					callback(null, exists);
+				})
+			},
+			[]
+		]);
 	});
 
 	call_multi(fns, function (err, res_multi) {
@@ -186,11 +203,13 @@ class Site_JavaScript extends Resource {
 		// Index the collection by string value?
 
 		//this.meta.set('served_directories', new Collection({'index_by': 'name'}));
-		this.served_directories = new Collection({ 'index_by': 'name' });
+		this.served_directories = new Collection({
+			'index_by': 'name'
+		});
 
 	}
 
-	'start'(callback) {
+	'start' (callback) {
 		//console.log('Site_JavaScript start');
 		var build_on_start = this.build_on_start;
 		if (build_on_start) {
@@ -222,7 +241,7 @@ class Site_JavaScript extends Resource {
 	// want to give it the file to build.
 	// There will be a variety of jsgui packages.
 
-	'build_client'(callback) {
+	'build_client' (callback) {
 		// Need the reference relative to the application directory.
 
 		//var path = __dirname + '/js/app.js';
@@ -261,7 +280,7 @@ class Site_JavaScript extends Resource {
 	//  May be better not to allow server-side code to be read on the client.
 	//  Could have specific directories within jsgui that get served to the client.
 
-	'serve_directory'(path) {
+	'serve_directory' (path) {
 		// Serves that directory, as any files given in that directory can be served from /js
 		var served_directories = this.served_directories;
 		//console.log('served_directories ' + stringify(served_directories));
@@ -287,14 +306,83 @@ class Site_JavaScript extends Resource {
 	// However, may set it using a buffer, not a file path.
 	// The app-bundle may be created on application start.
 
-	'serve_package'(url, js_file_path, callback) {
+	// options...
+
+
+
+	'serve_package' (url, js_file_path, options = {}, callback) {
+
+		let a = arguments;
+		if (typeof a[2] === 'function') {
+			callback = a[2];
+			options = {
+				'babel': 'mini'
+			};
+		}
+
 
 		return prom_or_cb((resolve, reject) => {
 			(async () => {
+				// options
+
+				// may want a replacement within the client-side code.
+
+				// Can we call browserify on the code string?
+				//  Creating a modified copy of the file would do.
+				//  Load the file, modify it, save it under a different name
+
+
+				let s = new require('stream').Readable(),
+					path = require('path').parse(js_file_path);
+
+				let fileContents = await fnlfs.load(js_file_path);
+				//console.log('1) fileContents.length', fileContents.length);
+				
+
+				// are there any replacements to do?
+
+				// options.replacements
+
+				if (options.replace) {
+					let s_file_contents = fileContents.toString();
+					//console.log('s_file_contents', s_file_contents);
+					each(options.replace, (text, key) => {
+						//console.log('key', key);
+						//console.log('text', text);
+
+						let running_fn = '(' + text + ')();'
+						//console.log('running_fn', running_fn);
+
+						s_file_contents = s_file_contents.split(key).join(running_fn);
+
+					})
+					fileContents = Buffer.from(s_file_contents);
+					//console.log('2) fileContents.length', fileContents.length);
+				}
+
+				// Then we can replace some of the file contents with specific content given when we tall it to serve that file.
+				//  We have a space for client-side activation.
+
+				s.push(fileContents);
+				s.push(null);
+
+				let b = browserify(s, {
+					basedir: path.dir
+				});
+
+				// Prefer the idea of sending a stream to browserify.
+
+
+				let parts = await stream_to_array(b.bundle());
+
+
+
+				/*
 				var b = browserify([js_file_path], {
 					'debug': true
 				});
-				let parts = await stream_to_array(b.bundle());
+				*/
+				//let parts = await stream_to_array(b.bundle());
 				const buffers = parts
 					.map(part => util.isBuffer(part) ? part : Buffer.from(part));
 				let buf_js = Buffer.concat(buffers);
@@ -302,30 +390,96 @@ class Site_JavaScript extends Resource {
 
 				//console.log('buf_js.length', buf_js.length);
 				//console.log('str_js.length', str_js.length);
+				// options.babel === true
 
-				let res_transform = babel.transform(str_js, {
-					//'plugins': ['transform-class']
-					'plugins': ['transform-es2015-object-super', 'transform-es2015-classes', 'remove-comments'],
-					'sourceMaps': 'inline'
-					//'plugins': ['transform-es2015-classes']
-					// transform-es2015-object-super
-				});
-				//console.log('res_transform', res_transform);
-				//console.log('Object.keys(res_transform)', Object.keys(res_transform));
-				let jst_es5 = res_transform.code;
-				//let {jst_es5, map, ast} = babel.transform(str_js);
-				console.log('jst_es5.length', jst_es5.length);
+				let babel_option = options.babel;
+				if (babel_option === 'es5') {
+					// es5 option
+					//  not sure if it babels async await though.
+
+					/*
+					{
+						"presets": [
+							"es2015",
+							"es2017"
+						],
+						"plugins": [
+							"transform-runtime"
+						]
+						}
+					*/
+
+					/*
+					let res_transform = babel.transform(str_js, {
+						//'plugins': ['transform-class']
+						'plugins': ['transform-es2015-object-super', 'transform-es2015-classes', 'remove-comments'],
+						'sourceMaps': 'inline'
+						//'plugins': ['transform-es2015-classes']
+						// transform-es2015-object-super
+					});
+					*/
+
+					let res_transform = babel.transform(str_js, {
+						"presets": [
+							"es2015",
+							"es2017"
+						],
+						"plugins": [
+							"transform-runtime"
+						]
+					});
+					
+
+					//console.log('res_transform', res_transform);
+					//console.log('Object.keys(res_transform)', Object.keys(res_transform));
+					let jst_es5 = res_transform.code;
+					//let {jst_es5, map, ast} = babel.transform(str_js);
+					//console.log('jst_es5.length', jst_es5.length);
+					buf_js = Buffer.from(jst_es5);
+				} else  if (babel_option === 'mini') {
+
+					let res_transform = babel.transform(str_js, {
+						presets: ["minify"]
+					});
+					let jst_es5 = res_transform.code;
+					//let {jst_es5, map, ast} = babel.transform(str_js);
+					//console.log('jst_es5.length', jst_es5.length);
+					buf_js = Buffer.from(jst_es5);
+
+					/*
+					{
+					"presets": [["minify", {
+						"mangle": {
+						"exclude": ["MyCustomError"]
+						},
+						"unsafe": {
+						"typeConstructors": false
+						},
+						"keepFnName": true
+					}]]
+					}
+
+					*/
+					//
+
+				} else {
+					buf_js = Buffer.from(str_js);
+				}
+				// uglify and remove comments?
+
+				// Coming up with different built / compressed versions makes sense.
+
+				// Need to be able to return uncompressed if client cannot accept compressed data.
+
 				//throw 'stop';
 				// Then run it through babel to change the ES6 classes into older style.
-				buf_js = Buffer.from(jst_es5);
+
 				// then need to serve it under url
 
 				var escaped_url = url.replace(/\./g, '☺');
 				this.custom_paths.set(escaped_url, buf_js);
 
 				resolve(true);
-
-
 
 				// 
 
@@ -339,7 +493,7 @@ class Site_JavaScript extends Resource {
 	}
 
 
-	'set_custom_path'(url, file_path) {
+	'set_custom_path' (url, file_path) {
 		// But change the URL to have a smiley face instead of fullstops
 		//console.log('url', url);
 		var escaped_url = url.replace(/\./g, '☺');
@@ -354,7 +508,7 @@ class Site_JavaScript extends Resource {
 
 	// 
 
-	'process'(req, res) {
+	'process' (req, res) {
 		//console.log('Site_JavaScript processing req.url', req.url);
 		var remoteAddress = req.connection.remoteAddress;
 		//console.log('remoteAddress ' + remoteAddress);
@@ -429,7 +583,9 @@ class Site_JavaScript extends Resource {
 			let t = tof(custom_response_entry._);
 			//console.log('t', t);
 			if (t === 'buffer') {
-				res.writeHead(200, { 'Content-Type': 'text/javascript' });
+				res.writeHead(200, {
+					'Content-Type': 'text/javascript'
+				});
 				//response.end(servableJs);
 				res.end(custom_response_entry._);
 			} else {
@@ -444,7 +600,9 @@ class Site_JavaScript extends Resource {
 					if (err) {
 						throw err;
 					} else {
-						res.writeHead(200, { 'Content-Type': 'text/javascript' });
+						res.writeHead(200, {
+							'Content-Type': 'text/javascript'
+						});
 						//response.end(servableJs);
 						res.end(data);
 					}

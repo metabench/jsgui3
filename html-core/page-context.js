@@ -119,7 +119,10 @@ class Page_Context extends jsgui.Evented_Class {
 
         var id = control._id();
 
+        // Seems a control (not basic control) did not get its ID.
         //console.log('registering control id', id);
+
+
         this.map_controls[id] = control;
     }
     

@@ -12,6 +12,9 @@ jsgui.Client_Resource = require('./resource');
 const fnl = require('fnl');
 const prom_or_cb = fnl.prom_or_cb;
 
+/* -- REQUIREMENTS -- */
+
+
 
 
 if (typeof window !== 'undefined') {
@@ -31,39 +34,6 @@ if (typeof window !== 'undefined') {
     jsgui.http = (url, callback) => {
         return prom_or_cb((resolve, reject) => {
             var oReq = new XMLHttpRequest();
-            //console.log('jsgui.http url', url);
-
-            /*
-            oReq.onload = function (res) {
-                //console.log('oReq.responseText ' + oReq.responseText);
-
-                // But is it text?
-
-                //let buf = textToArrayBuffer(oReq.responseText);
-
-                console.log('Object.keys(oReq)', Object.keys(oReq));
-
-
-                // Will need to work on client-side buffer processing.
-                //  Will need to turn this buffer / ArrayBuffer into a Model.
-                //  But not here.
-
-                //console.log('buf', buf);
-
-                //console.log('pre cb client http');
-                //callback(null, buf);
-
-                console.log('res', res);
-                console.log('Object.keys(res)', Object.keys(res));
-
-                //var objResponse = JSON.parse(oReq.responseText);
-
-                // Then for each of them we create an object.
-
-
-
-            };
-            */
 
             oReq.onreadystatechange = function() {
                 if (this.readyState == 4) {
@@ -83,46 +53,6 @@ if (typeof window !== 'undefined') {
             oReq.send();
         }, callback);
     }
-
-    /*
-
-    // make some client-side jsgui functionality.
-    jsgui.http = (url, callback) => {
-
-
-
-        var oReq = new XMLHttpRequest();
-        //console.log('jsgui.http url', url);
-        oReq.onload = function (res) {
-            //console.log('oReq.responseText ' + oReq.responseText);
-
-            // But is it text?
-
-            let buf = textToArrayBuffer(oReq.responseText);
-
-            // Will need to work on client-side buffer processing.
-            //  Will need to turn this buffer / ArrayBuffer into a Model.
-            //  But not here.
-
-            //console.log('buf', buf);
-
-            console.log('pre cb client http');
-            callback(null, buf);
-
-
-            //var objResponse = JSON.parse(oReq.responseText);
-
-            // Then for each of them we create an object.
-
-
-
-        };
-        oReq.open("get", url, true);
-        oReq.send();
-    }
-    */
-
-
 
     let activate = () => {
 
@@ -192,6 +122,42 @@ if (typeof window !== 'undefined') {
 
                 jsgui.activate(page_context);
                 console.log('post jsgui activate');
+
+                // There could be a second activation stage.
+                //  post-activate
+                //  on activated
+
+                // activate page, after activating controls.
+                //  sometimes the control will be the page.
+                //  however, we need to activate the page in some situations.
+
+                // .on(active)
+                
+                // client activate hooks.
+
+                // Injection of further code here...
+
+                // Could load code that has its own dependencies.
+                //  That would make sense if loading other bits and pieces.
+
+                // Could also import / load further requirements above.
+
+                //  Editing this client.js file seems like the best way to go.
+                //  Could replace one commented area with a list of statements.
+
+                // So it would be able to require various files, then make use of them during activation.
+
+                let context = page_context;
+
+                /* -- ACTIVATE-APP -- */
+
+
+
+
+
+
+
+
             }
             early_load_and_activate();
 

@@ -20,13 +20,60 @@ const Arrow_Button = require('../controls/arrow-button');
 
 // We should be able to give that single control params too.
 
+// Body_Server
+
+// Provides page bodies that go along with routes.
+//  Need to be able to activate clients too.
+
+// A pluggable activation function?
+
+requirements = () => {
+	// const x = require x
+}
+
+
+let activate_app = (() => {
+	// Context variable will be available within the scope on the client.
+	let context;
+
+	return () => {
+		console.log('activate app function');
+	
+		// Should be able to access the app's main control.
+	
+		// nice to have a few local variables.
+		
+		console.log('Object.keys(context)', Object.keys(context));
+		console.log('Object.keys(context.map_controls)', Object.keys(context.map_controls));
+
+		// Seems like too many items were added to the map.
+		//  Must be created accidently on start.
+
+		// Seems like the control gets constructed twice, or registered with s different id.#
+		//  At least the mainscs control.
+
+
+	}
+})()
+
+
+
+
 var server = new Server({
 	'port': 80,
-	'ctrl': [Month_View.Tiled, {
-		//'rotation': 180
+	//'ctrl': [Month_View.Tiled, {
+	'ctrl': [Month_View, {
+			//'rotation': 180
 		'direction': 'left'
-	}]
+	}],
+	'activate_app': activate_app
 });
+
+// sending app client JS.
+//  activation JS here that gets sent to the file would be useful.
+//  allows the main parts of an entire app to be contained within one file.
+
+
 
 server.start(function(err, cb_start) {
 	if (err) {

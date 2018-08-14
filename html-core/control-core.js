@@ -104,7 +104,7 @@ var new_obj_style = () => {
 
 	var res = new Proxy(style, {
 		set: function (target, property, value, receiver) {
-			console.log('set style trap');
+			//console.log('set style trap');
 
 
 			target['__empty'] = false;
@@ -272,16 +272,16 @@ class Control_DOM extends Evented_Class {
 
 				// proxy for setting the style with a string.
 
-				console.log('property', property)
+				//console.log('property', property)
 
 				if (property === 'style') {
 					//console.log('');
-					console.log('Control_DOM attrs set style')
-					console.log('value', value);
+					//console.log('Control_DOM attrs set style')
+					//console.log('value', value);
 					//console.log('tof(value)', tof(value));
 
 					var t_value = tof(value);
-					console.log('t_value', t_value);
+					//console.log('t_value', t_value);
 					if (t_value === 'string') {
 
 						var s_values = value.trim().split(';');
@@ -504,6 +504,9 @@ class Control_Core extends Data_Object {
 		// Have a Control_Size class?
 		//  have size getters and setters (with a proxy?)
 
+		if (spec.id) {
+			this.__id = spec.id;
+		}
 
 		if (!this._abstract) {
 			var tagName = spec.tagName || spec.tag_name || 'div';
@@ -536,6 +539,9 @@ class Control_Core extends Data_Object {
 			var that = this;
 			var context = this.context || spec.context;
 			//console.log('context', context);
+
+			// 
+
 			if (context) {
 				if (context.register_control) context.register_control(this);
 			} else {
@@ -860,7 +866,7 @@ class Control_Core extends Data_Object {
 
 
 				let sf = stringify(this._fields).replace(/"/g, "'");
-				console.log('sf', sf);
+				//console.log('sf', sf);
 
 				if (sf.length > 2) {
 					dom_attrs['data-jsgui-fields'] = sf;

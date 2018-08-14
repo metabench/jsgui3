@@ -82,6 +82,8 @@ var mapDomEventNames = {
 	'touchmove': true,
 	'touchend': true,
 
+	'transitionend': true,
+
 	'abort': true,
 	'canplay': true,
 	'canplaythrough': true,
@@ -986,7 +988,7 @@ class Control extends Control_Core {
 		//dom_attributes.style.on('change', (e_change) {
 
 		dom_attributes.on('change', (e_change) => {
-			console.log('dom_attributes e_change', e_change);
+			//console.log('dom_attributes e_change', e_change);
 			var property_name = e_change.name || e_change.key,
 				dval = e_change.value || e_change.new;
 			var t_dval = tof(dval);
@@ -1318,11 +1320,11 @@ class Control extends Control_Core {
 			if (el.getAttribute) {
 				var str_ctrl_fields = el.getAttribute('data-jsgui-ctrl-fields');
 				if (str_ctrl_fields) {
-					console.log('str_ctrl_fields ' + str_ctrl_fields);
+					//console.log('str_ctrl_fields ' + str_ctrl_fields);
 					ctrl_fields = JSON.parse(str_ctrl_fields.replace(/'/g, '"'));
 				}
 				var ctrl_fields_keys = Object.keys(ctrl_fields);
-				console.log('ctrl_fields_keys', ctrl_fields_keys);
+				//console.log('ctrl_fields_keys', ctrl_fields_keys);
 
 				var l_ctrl_fields_keys = ctrl_fields_keys.length;
 				var key, value;
@@ -1338,7 +1340,7 @@ class Control extends Control_Core {
 					// The underscore thing may work better as it could be a proxy object.
 
 					this[key] = referred_to_control;
-					console.log('referred_to_control', referred_to_control);
+					//console.log('referred_to_control', referred_to_control);
 
 				}
 				var cns = el.childNodes;
