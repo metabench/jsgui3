@@ -395,7 +395,7 @@ jsgui.span = class span extends Control {
 
         //console.log('\nspec.text', spec.text);
 
-        if (typeof spec.text != 'undefined') {
+        if (typeof spec.text !== 'undefined') {
             this._text = spec.text;
         } else {
             this._text = '';
@@ -442,6 +442,11 @@ jsgui.span = class span extends Control {
         // get the text node reference?
         let dtn = this.dom.el.childNodes[0];
 
+        if (!dtn) {
+            dtn = document.createTextNode('');   
+            this.dom.el.appendChild(dtn);
+        }
+
         // Add to array without raising event.
 
         
@@ -454,7 +459,11 @@ jsgui.span = class span extends Control {
         
         this.on('change', e => {
             if (e.name === 'text') {
+
                 dtn.nodeValue = e.value;
+
+
+                
             }
         });
 

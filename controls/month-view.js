@@ -114,7 +114,7 @@ class Month_View extends Grid {
         // Consider composition of spans separate to filling their data in.
 
 
-        
+
 
         each(days_row.content._arr, (ctrl_header_cell, i) => {
             //console.log('ctrl_header_cell', ctrl_header_cell);
@@ -178,7 +178,19 @@ class Month_View extends Grid {
 
         while (cell_pos[0] < got_day) {
             //console.log('cell_pos[0]', cell_pos[0]);
-            ctrl_row.content._arr[cell_pos[0]].background.color = bgc_disabled;
+
+            let cell = ctrl_row.content._arr[cell_pos[0]];
+
+
+
+            let day_span = new jsgui.span({
+                context: this.context,
+                text: ''
+            });
+            cell.add(day_span);
+
+
+            cell.background.color = bgc_disabled;
             cell_pos[0]++;
         }
 
@@ -203,7 +215,15 @@ class Month_View extends Grid {
 
         while (cell_pos[0] <= 6) {
             //console.log('cell_pos[0]', cell_pos[0]);
-            ctrl_row.content._arr[cell_pos[0]].background.color = bgc_disabled;
+            let cell = ctrl_row.content._arr[cell_pos[0]];
+
+            let day_span = new jsgui.span({
+                context: this.context,
+                text: ''
+            });
+            cell.add(day_span);
+
+            cell.background.color = bgc_disabled;
             cell_pos[0]++;
         }
 
@@ -212,6 +232,15 @@ class Month_View extends Grid {
             cell_pos[1] = 6;
             ctrl_row = this._arr_rows[cell_pos[1]];
             while (cell_pos[0] <= 6) {
+
+                let cell = ctrl_row.content._arr[cell_pos[0]];
+
+                let day_span = new jsgui.span({
+                    context: this.context,
+                    text: ''
+                });
+                cell.add(day_span);
+
                 //console.log('cell_pos[0]', cell_pos[0]);
                 ctrl_row.content._arr[cell_pos[0]].background.color = bgc_disabled;
                 cell_pos[0]++;
@@ -222,7 +251,7 @@ class Month_View extends Grid {
     // refresh_month_view
     // or update
     // iterate through the grid cells
-    
+
     refresh_month_view() {
 
         // Day of week of 1st date in month...
@@ -233,18 +262,22 @@ class Month_View extends Grid {
         //  sunday is 0 from JS. I prefer monday to be 0
         //console.log('d.getDay()', d.getDay());
 
+
+        let m = d.getMonth();
+
+
         let got_day = d.getDay() - 1;
         if (got_day < 0) got_day = 6;
         //console.log('got_day', got_day);
 
-        console.log('got_day', got_day);
+        //console.log('got_day', got_day);
 
         let day_name = days[got_day];
 
 
 
         this.each_cell((cell, cell_pos) => {
-            console.log('cell_pos', cell_pos);
+            //console.log('cell_pos', cell_pos);
             let [x, y] = cell_pos;
             if (y > 0) {
 
@@ -261,7 +294,6 @@ class Month_View extends Grid {
                         cell.iterate_this_and_subcontrols(ctrl => {
                             //console.log('ctrl', ctrl);
                             //console.log('ctrl.dom.tagName', ctrl.dom.tagName);
-
                             if (ctrl.dom.tagName === 'span') {
                                 ctrl.text = '';
                             }
@@ -269,10 +301,35 @@ class Month_View extends Grid {
 
                     } else {
                         cell.background.color = bgc_enabled;
+
+                        cell.iterate_this_and_subcontrols(ctrl => {
+                            //console.log('ctrl', ctrl);
+                            //console.log('ctrl.dom.tagName', ctrl.dom.tagName);
+                            if (ctrl.dom.tagName === 'span') {
+                                ctrl.text = d.getDate() + '';
+                                d.setDate(d.getDate() + 1);
+                            }
+                        });
                     }
+                } else {
+                    let dm = d.getMonth();
+                    if (dm === m) {
+                        cell.background.color = bgc_enabled;
+                        cell.iterate_this_and_subcontrols(ctrl => {
+                            //console.log('ctrl', ctrl);
+                            //console.log('ctrl.dom.tagName', ctrl.dom.tagName);
+                            if (ctrl.dom.tagName === 'span') {
+                                ctrl.text = d.getDate() + '';
+                                d.setDate(d.getDate() + 1);
+                            }
+                        });
+                    }
+
+
+
                 }
 
-                
+
 
 
             }
