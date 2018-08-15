@@ -367,7 +367,8 @@ class Site_JavaScript extends Resource {
 				s.push(null);
 
 				let b = browserify(s, {
-					basedir: path.dir
+					basedir: path.dir,
+					'debug': true
 				});
 
 				// Prefer the idea of sending a stream to browserify.
@@ -426,7 +427,8 @@ class Site_JavaScript extends Resource {
 						],
 						"plugins": [
 							"transform-runtime"
-						]
+						],
+						'sourceMaps': 'inline'
 					});
 					
 
@@ -439,7 +441,8 @@ class Site_JavaScript extends Resource {
 				} else  if (babel_option === 'mini') {
 
 					let res_transform = babel.transform(str_js, {
-						presets: ["minify"]
+						presets: ["minify"],
+						'sourceMaps': 'inline'
 					});
 					let jst_es5 = res_transform.code;
 					//let {jst_es5, map, ast} = babel.transform(str_js);

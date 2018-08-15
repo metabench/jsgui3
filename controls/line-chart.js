@@ -105,7 +105,6 @@ class Line_Chart extends Control {
                 'x_origin': this.get('x_origin').value(),
                 'y_origin': this.get('y_origin').value()
             });
-
         }
     }
 

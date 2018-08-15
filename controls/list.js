@@ -55,7 +55,8 @@ class List extends Control {
         //console.log('spec.items', spec.items);
         //throw 'stop';
         if (spec.items) {
-            this.items.set(spec.items);
+            //this.items.set(spec.items);
+            this.items = spec.items;
         }
 
         // The list spec could also take info about how to display the items.
@@ -75,29 +76,35 @@ class List extends Control {
         // Want the Item and the List to be convenient UI components. They need to make it simple to represent some data.
         //  Items and Lists could potentially use templates to quickly render data.
 
-        this.items.each(function(item) {
+        each(this.items, item => {
             //console.log('item', item);
 
             var ctrl_item = new Item({
-                'context': that.context,
+                'context': this.context,
                 'value': item
             });
 
-            that.add(ctrl_item);
+            this.add(ctrl_item);
         });
 
         // listen for changes to the list. represent those changes in the UI controls. Then these get automatically changed in the DOM by other code.
+
+
+        // This is where a Collection could help a lot.
+        /*
+
         this.items.on('change', (evt_change) => {
             //console.log('evt_change', evt_change);
             if (evt_change.type === 'insert') {
                 var ctrl_item = new Item({
-                    'context': that.context,
+                    'context': this.context,
                     'value': evt_change.item
                 });
 
-                that.add(ctrl_item);
+                this.add(ctrl_item);
             }
         });
+        */
 
 
 
@@ -112,6 +119,11 @@ class List extends Control {
         super.activate();
         // put the context menu in place.
         //throw 'stop';
+
+        // Not all lists need context menus.
+
+        /*
+
         this.context_menu({
             'Delete': function() {
                 console.log('context_menu Delete');
@@ -124,6 +136,7 @@ class List extends Control {
                 // need to actually delete it if possible?
             }
         });
+        */
 
         // Need to listen for new items being added.
         //  (Changes being made)

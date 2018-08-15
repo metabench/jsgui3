@@ -76,7 +76,7 @@ class Arrow_Button extends Button {
                 this.line.dom.attributes.transform = 'rotate(' + e.value + ', 50, 50)';
             }
             if (e.name === 'direction') {
-                console.log('e', e);
+                //console.log('e', e);
                 //line.dom.attributes.transform = 'rotate(' + e.value + ', 50, 50)';
                 if (e.value === 'left') this.rotation = 270;
                 if (e.value === 'up') this.rotation = 0;

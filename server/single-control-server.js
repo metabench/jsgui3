@@ -109,7 +109,7 @@ class Single_Control_Server extends Server {
         // with replacement option within serve_package
 
         let o_serve_package = {
-            'babel': 'mini'
+            //'babel': 'mini'
         }
 
         if (this.activate_app) {

@@ -10,6 +10,28 @@ var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 var Control = jsgui.Control;
 var Calendar = require('./calendar');
 
+
+/*
+Being able to select dates (including times) in a nice user-friendly way is going to be worthwhile functionality for a variety of things.
+
+
+*/
+
+/*
+    Micro Controls
+
+    // Simple, encapsulated, extensible.
+
+    Year Picker
+
+    Month Picker
+
+    Then we use Month View too
+
+
+
+*/
+
 class Date_Picker extends Calendar {
     constructor(spec) {
         super();

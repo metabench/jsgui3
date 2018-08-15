@@ -6,7 +6,6 @@
     Just shows the month's days inside.
 */
 
-
 var jsgui = require('../html-core/html-core-enh');
 const clone = jsgui.clone;
 // A general purpose grid...
@@ -46,14 +45,11 @@ const Tile_Slider = require('./tile-slide');
 
 let days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-
 let bgc_disabled = '#DDDDDD';
 let bgc_enabled = 'inherit';
 
-
 class Month_View extends Grid {
     constructor(spec) {
-
         // M T W T F S S
         spec.grid_size = [7, 7];
         spec.size = spec.size || [360, 200];
@@ -74,7 +70,6 @@ class Month_View extends Grid {
             this.month = now.getMonth(); // 0 indexed
             this.year = now.getFullYear();
         }
-
         // 7 * 5 grid
 
         // problem is compose will override the previous compose 
@@ -88,10 +83,7 @@ class Month_View extends Grid {
         //this.selection_scope = this.context.new_selection_scope();
         this.context.new_selection_scope(this);
         // putting selection_scope true in the data-jsgui-fields would be nice.
-
-
         //this.selectable();
-
     }
     compose_month_view() {
         // go through the month in question.
@@ -113,9 +105,6 @@ class Month_View extends Grid {
 
         // Consider composition of spans separate to filling their data in.
 
-
-
-
         each(days_row.content._arr, (ctrl_header_cell, i) => {
             //console.log('ctrl_header_cell', ctrl_header_cell);
             let day_span = new jsgui.span({
@@ -123,15 +112,6 @@ class Month_View extends Grid {
                 'text': days[i]
             });
             day_span.add_class('day');
-            //console.log('days[i]', days[i]);
-
-            /*
-
-            day_span.add(new jsgui.textNode({
-                'text': days[i],
-                'context': this.context
-            }));
-            */
             ctrl_header_cell.add(day_span);
         });
 
@@ -180,15 +160,11 @@ class Month_View extends Grid {
             //console.log('cell_pos[0]', cell_pos[0]);
 
             let cell = ctrl_row.content._arr[cell_pos[0]];
-
-
-
             let day_span = new jsgui.span({
                 context: this.context,
                 text: ''
             });
             cell.add(day_span);
-
 
             cell.background.color = bgc_disabled;
             cell_pos[0]++;
@@ -253,28 +229,15 @@ class Month_View extends Grid {
     // iterate through the grid cells
 
     refresh_month_view() {
-
         // Day of week of 1st date in month...
-
         let d = new Date(this.year, this.month, 1);
-        //console.log('d', d);
-        // day of week
-        //  sunday is 0 from JS. I prefer monday to be 0
-        //console.log('d.getDay()', d.getDay());
-
-
         let m = d.getMonth();
-
-
         let got_day = d.getDay() - 1;
         if (got_day < 0) got_day = 6;
         //console.log('got_day', got_day);
-
         //console.log('got_day', got_day);
 
         let day_name = days[got_day];
-
-
 
         this.each_cell((cell, cell_pos) => {
             //console.log('cell_pos', cell_pos);
@@ -324,17 +287,8 @@ class Month_View extends Grid {
                             }
                         });
                     }
-
-
-
                 }
-
-
-
-
             }
-
-
         });
     }
 
@@ -375,19 +329,10 @@ class Month_View extends Grid {
 
     // recompose_month_view
 
-
-
-
-
-
-
 }
 
 Month_View.Tiled = Tile_Slider.wrap(Month_View, spec => {
-
     spec = clone(spec);
-
-
     if (!is_defined(spec.month)) {
         let now = new Date();
         //console.log('now', now);
@@ -395,7 +340,6 @@ Month_View.Tiled = Tile_Slider.wrap(Month_View, spec => {
         spec.year = now.getFullYear();
     }
     //console.log('spec.month', spec.month);
-
     spec.month = spec.month - 1;
     //console.log('spec.month', spec.month);
     if (spec.month < 0) {
@@ -412,7 +356,6 @@ Month_View.Tiled = Tile_Slider.wrap(Month_View, spec => {
         spec.month = now.getMonth(); // 0 indexed
         spec.year = now.getFullYear();
     }
-
     spec.month = spec.month + 1;
     if (spec.month > 11) {
         spec.month = 0;

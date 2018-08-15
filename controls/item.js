@@ -1,5 +1,7 @@
 var jsgui = require('../html-core/html-core');
-var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
+var stringify = jsgui.stringify,
+    each = jsgui.each,
+    tof = jsgui.tof;
 var Control = jsgui.Control;
 var Data_Value = jsgui.Data_Value;
 
@@ -41,10 +43,11 @@ class Item extends Control {
 
 
     constructor(spec, add, make) {
-        spec['class'] = 'item';
+        spec.__type_name = spec.__type_name || 'item';
+        //spec['class'] = 'item';
         super(spec);
-        this.__type_name = 'item';
-        
+        //this.__type_name = 'item';
+
         //this.add_class('item');
 
         this.add_class('item');
@@ -91,7 +94,7 @@ class Item extends Control {
         //  May have a picture, icon or caption.
         //  So it's a vague word but all the things in the item are grouped together relevant to it.
 
-        var value = this.value = spec.value || spec.item;
+        let value = this.value = spec.value || spec.item;
 
         this.states = ['closed', 'open'];
         this.state = new Data_Value('closed');
@@ -125,95 +128,11 @@ class Item extends Control {
 
         // Break this down into composition stage?
         if (!spec.abstract && !spec.el) {
-            
-            var ctrl_primary = new Control({
-                'context': this.context
-            });
-            this.add(ctrl_primary);
-
-            var set_value = function(value) {
-                var t_value = tof(value);
-
-                if (t_value === 'collection') {
-                    //console.log('collection value', value);
-                    set_value(value._arr[0]);
-
-                    //console.log('tof(value._arr[1])', tof(value._arr[1]));
-
-                    if (tof(value._arr[1]) === 'function') {
-
-                        //console.log('adding on click');
-
-                        // The problem is, we don't have an element right now.
-                        //  Need to assign this click event to the DOM once it gets an element.
-                        //  It has not been rendered yet, so once it gets rendered and put in the DOM, it still needs to have its DOM events attached.
-                        
-
-                        that.on('click', value._arr[1]);
-                        
-                    }
-
-                } else if (t_value === 'data_value') {
-                    ctrl_primary.add(value.value());
-                } else if (t_value === 'string' || t_value === 'number') {
-                    ctrl_primary.add(value);
-                } else if (value.keys) {
-                    var value_keys = value.keys();
-                    //console.log('value_keys', value_keys);
-                    var map_keys = mapify(value_keys);
-                    //console.log('map_keys', map_keys);
-
-                    var has_id = map_keys['id'];
-                    var has_name = map_keys['name'];
-                    var has_key = map_keys['key'];
-                    var id, name, key;
-
-                    if (has_id && has_key && !has_name) {
-                        id = value.id;
-                        key = value.key;
-                        //console.log('id', id);
-                        //console.log('key', key);
-                        var ctrl_id = new Control({
-                            'context': this.context
-                        });
-                        //ctrl_id.set('dom.attributes.class', 'id');
-                        ctrl_id.add_class('id');
-                        var ctrl_key = new Control({
-                            'context': this.context
-                        });
-                        //ctrl_key.set('dom.attributes.class', 'key');
-                        ctrl_id.add_class('key');
-                        // Will possibly have more code to do with rendering Data_Values as HTML, as Control content.
-                        ctrl_id.add(id.value);
-                        ctrl_key.add(key.value);
-
-                        ctrl_primary.add(ctrl_id);
-                        ctrl_primary.add(ctrl_key);
-                    }
-                }
-
-            }
-            set_value(value);
-
-            //var ctrl_secondary = new Control({
-            //    'context': this.context
-            //})
-
-            this.inner = new Control({
-                'context': this.context,
-                'class': 'inner hidden'
-            })
-            this.add(this.inner);
-
+            this.compose_item();
             // Treating all of the inner items as fields in some way?
-
-
-
 
             // Updating the control fields to include all of the inner items?
             //  Maybe do that immediately prior to rendering, as an optimization.
-
-
 
             var ctrl_fields = {
                 'inner': this.inner._id()
@@ -221,19 +140,100 @@ class Item extends Control {
 
             // And then an array of items?
             //  Need to activate the inner items in a heirachy of items too.
-
-
             this.dom.attrs['data-jsgui-fields'] = stringify(active_fields).replace(/"/g, "'");
-
             //this.set('dom.attributes.data-jsgui-ctrl-fields', stringify(ctrl_fields).replace(/"/g, "'"));
             this.dom.attrs['data-jsgui-ctrl-fields'] = stringify(ctrl_fields).replace(/"/g, "'");
         }
-
-        
-
     }
 
-    'iterate_sub_items'(cb_item, depth) {
+    'compose_item' () {
+        var value = this.value
+        var ctrl_primary = new Control({
+            'context': this.context
+        });
+        this.add(ctrl_primary);
+
+        var set_value = (value) => {
+            var t_value = tof(value);
+
+            if (t_value === 'collection') {
+                //console.log('collection value', value);
+                set_value(value._arr[0]);
+                //console.log('tof(value._arr[1])', tof(value._arr[1]));
+
+                /*
+                if (tof(value._arr[1]) === 'function') {
+
+                    //console.log('adding on click');
+                    // The problem is, we don't have an element right now.
+                    //  Need to assign this click event to the DOM once it gets an element.
+                    //  It has not been rendered yet, so once it gets rendered and put in the DOM, it still needs to have its DOM events attached.
+                    that.on('click', value._arr[1]);
+                }
+                */
+
+            } else if (t_value === 'data_value') {
+                ctrl_primary.add(value.value());
+            } else if (t_value === 'string' || t_value === 'number') {
+
+                // A textNode could do.
+
+                let tn = new jsgui.textNode({
+                    context: this.context,
+                    text: value
+                })
+
+                ctrl_primary.add(tn);
+            } else if (typeof value.keys === 'function') {
+                var value_keys = value.keys();
+                //console.log('value_keys', value_keys);
+                var map_keys = mapify(value_keys);
+                //console.log('map_keys', map_keys);
+
+                var has_id = map_keys['id'];
+                var has_name = map_keys['name'];
+                var has_key = map_keys['key'];
+                var id, name, key;
+
+                if (has_id && has_key && !has_name) {
+                    id = value.id;
+                    key = value.key;
+                    //console.log('id', id);
+                    //console.log('key', key);
+                    var ctrl_id = new Control({
+                        'context': this.context
+                    });
+                    //ctrl_id.set('dom.attributes.class', 'id');
+                    ctrl_id.add_class('id');
+                    var ctrl_key = new Control({
+                        'context': this.context
+                    });
+                    //ctrl_key.set('dom.attributes.class', 'key');
+                    ctrl_id.add_class('key');
+                    // Will possibly have more code to do with rendering Data_Values as HTML, as Control content.
+                    ctrl_id.add(id.value);
+                    ctrl_key.add(key.value);
+
+                    ctrl_primary.add(ctrl_id);
+                    ctrl_primary.add(ctrl_key);
+                }
+            }
+
+        }
+        set_value(value);
+
+        //var ctrl_secondary = new Control({
+        //    'context': this.context
+        //})
+
+        this.inner = new Control({
+            'context': this.context,
+            'class': 'inner hidden'
+        })
+        this.add(this.inner);
+    }
+
+    'iterate_sub_items' (cb_item, depth) {
         // this.inner.contents
         depth = depth || 0;
         var path;
@@ -250,8 +250,8 @@ class Item extends Control {
 
     }
 
-    'activate'() {
-         if (!this.__active) {
+    'activate' () {
+        if (!this.__active) {
             super.activate();
 
             //console.log('this._bound_events', this._bound_events);
@@ -269,7 +269,7 @@ class Item extends Control {
 
 
 
-            
+
 
 
             // Get the references to the sub-item controls.
@@ -317,15 +317,17 @@ class Item extends Control {
             //  Probably not by default.
 
 
-         }
+        }
     }
 
-    'open'() {
-        this.state.set('open');
+    'open' () {
+        //this.state.set('open');
+        this.state = 'open';
     }
-    'close'() {
-        this.state.set('closed');
+    'close' () {
+        //this.state.set('closed');
+        this.state = 'closed';
     }
 }
-    //return Item;
+//return Item;
 module.exports = Item;

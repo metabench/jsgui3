@@ -109,16 +109,17 @@ if (typeof window !== 'undefined') {
                 page_context.update_Controls('plus_minus_toggle_button', jsgui.Plus_Minus_Toggle_Button);
                 page_context.update_Controls('list', jsgui.List);
                 page_context.update_Controls('item', jsgui.Item);
+                page_context.update_Controls('item_view', jsgui.Item_View);
+                page_context.update_Controls('item_selector', jsgui.Item_Selector);
                 page_context.update_Controls('combo_box', jsgui.Combo_Box);
                 page_context.update_Controls('popup_menu_button', jsgui.Popup_Menu_Button);
                 page_context.update_Controls('color_palette', jsgui.Color_Palette);
                 page_context.update_Controls('grid', jsgui.Grid);
                 page_context.update_Controls('month_view', jsgui.Month_View);
-
                 page_context.update_Controls('button', jsgui.Button);
                 page_context.update_Controls('arrow_button', jsgui.Arrow_Button);
-
                 page_context.update_Controls('tile_slider', jsgui.Tile_Slider);
+                page_context.update_Controls('left_right_arrows_selector', jsgui.Left_Right_Arrows_Selector);
 
                 page_context.update_Controls('span', jsgui.span);
 
