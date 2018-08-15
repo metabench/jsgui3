@@ -178,12 +178,15 @@ class Item extends Control {
 
                 // A textNode could do.
 
-                let tn = new jsgui.textNode({
+                // Add a span with that text.
+
+
+                let span = new jsgui.span({
                     context: this.context,
                     text: value
                 })
 
-                ctrl_primary.add(tn);
+                ctrl_primary.add(span);
             } else if (typeof value.keys === 'function') {
                 var value_keys = value.keys();
                 //console.log('value_keys', value_keys);

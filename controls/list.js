@@ -29,13 +29,12 @@ class List extends Control {
      ['toggle_button', Control],
      ['inner_control', Control],
      ['expander', Control]
-
      ],
      */
 
     constructor(spec, add, make) {
         // Wont fields have been set?
-        console.log('init list');
+        //console.log('init list');
 
         super(spec);
         var that = this;
@@ -50,13 +49,17 @@ class List extends Control {
         // Collection not needing a Context?
         //  Having all Data_Objects and Collections require a context seems too much.
         //  Context seems important in the case of Controls.
-        this.items = new Collection();
+
+        //this.items = new Collection();
+
         //this.set('items', coll_items);
         //console.log('spec.items', spec.items);
         //throw 'stop';
         if (spec.items) {
             //this.items.set(spec.items);
             this.items = spec.items;
+        } else {
+            this.items = new Collection();
         }
 
         // The list spec could also take info about how to display the items.
@@ -76,16 +79,10 @@ class List extends Control {
         // Want the Item and the List to be convenient UI components. They need to make it simple to represent some data.
         //  Items and Lists could potentially use templates to quickly render data.
 
-        each(this.items, item => {
-            //console.log('item', item);
 
-            var ctrl_item = new Item({
-                'context': this.context,
-                'value': item
-            });
+        // Any need to send the list as a jsgui field?
 
-            this.add(ctrl_item);
-        });
+        
 
         // listen for changes to the list. represent those changes in the UI controls. Then these get automatically changed in the DOM by other code.
 
@@ -106,13 +103,30 @@ class List extends Control {
         });
         */
 
+        // A system to share objects sent to the client by reference.
+        //  Could tag an object to send to the client, assign it an id, and then only need to send it once.
+
+        // A system of objects-to-client
 
 
 
-        if (!this._abstract && !spec.el) {
 
+
+        if (!spec.el) {
+            this.compose_list();
 
         }
+    }
+
+    'compose_list'() {
+        each(this.items, item => {
+            //console.log('item', item);
+            var ctrl_item = new Item({
+                'context': this.context,
+                'value': item
+            });
+            this.add(ctrl_item);
+        });
     }
 
     'activate'() {

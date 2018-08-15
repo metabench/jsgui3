@@ -22,11 +22,15 @@ class Item_Selector extends Control {
     constructor(spec) {
         spec.__type_name = spec.__type_name || 'item_selector';
         super(spec);
+        this.add_class('item-selector');
         // selected_index
         // Could have Object assignproperies done here
         //  use local variables as true private variables.
 
         this.items = spec.items;
+        this.item_index = 0;
+
+        // A loop option.
 
         if (!spec.el) {
             this.compose_item_selector();
@@ -38,7 +42,8 @@ class Item_Selector extends Control {
         // item_list
 
         let current_item_view = this.current_item_view = new Item_View({
-            context: this.context
+            context: this.context,
+            item: this.items[this.item_index]
         });
         this.add(current_item_view);
 
@@ -72,10 +77,25 @@ class Item_Selector extends Control {
         //  Want Item_View with no expand/contract.
 
 
+        // Depending on the type of items...?
+        this._fields = this._fields || {};
 
-        
+        this._fields.item_index = this.item_index;
+        this._fields.items = this.items;
 
+        this._ctrl_fields = this._ctrl_fields || {};
+        this._ctrl_fields.current_item_view = current_item_view;
+        this._ctrl_fields.item_list = item_list;
 
+    }
+    previous() {
+        this.item_index--;
+        this.current_item_view.item = this.items[this.item_index];
+    }
+    next() {
+        this.item_index++;
+        this.current_item_view.item = this.items[this.item_index];
+        // Then the item view needs to respond to the item change.
     }
 }
 

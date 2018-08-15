@@ -5,8 +5,6 @@ const Arrow_Button = require('./arrow-button');
 const Item_Selector = require('./item-selector');
 /*
 
-
-
     Encapsulates an array with a range of possible values.
     // Maybe a number of years.
 
@@ -28,7 +26,6 @@ const Item_Selector = require('./item-selector');
     //  Month_View is a place where its worth implementing Tile_Slide or Tile_Slide_Panel.
 
     // This will be good for choosing months and years.
-
 
     // Will be able to operate with tile sliding too.
     //  Tile sliding on mobile especially.
@@ -90,14 +87,10 @@ class Left_Right_Arrows_Selector extends Control {
 
         if (spec.items) {
             this.items = spec.items;
-
         }
-
         if (!spec.el) {
             this.compose_lras();
         }
-
-        
     }
     compose_lras() {
 
@@ -124,13 +117,22 @@ class Left_Right_Arrows_Selector extends Control {
         this.add(item_selector);
         this.add(right_arrow);
 
+        this._fields = this._fields || {};
+        if (this.items) this._fields.items = this.items;
+
         this._ctrl_fields = {
             left_arrow: left_arrow,
             item_selector: item_selector,
             right_arrow: right_arrow
         }
+    }
 
+    previous() {
+        this.item_selector.previous();
 
+    }
+    next() {
+        this.item_selector.next();
     }
     activate() {
         if (!this._active) {
@@ -139,13 +141,13 @@ class Left_Right_Arrows_Selector extends Control {
             let {left_arrow, item_selector, right_arrow} = this;
 
             left_arrow.on('click', e_click => {
-
+                console.log('left_arrow e_click',e_click);
             });
             item_selector.on('change', e_change => {
 
             });
             right_arrow.on('click', e_click => {
-
+                console.log('right_arrow e_click',e_click);
             });
         }
     }

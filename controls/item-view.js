@@ -16,6 +16,24 @@ var Control = jsgui.Control;
 
 // 'fields': [['name', 'string']],
 
+
+// Item_View_Basic_Type
+//  String or number
+
+// Render the view according to a function?
+//  Be able to display relatively simple items automatically.
+//  A picture and a name.
+
+// Want it so we can give Item_View a string and it allows that to be viewed.
+
+
+// Item-View implies editing is less of an option than just with 'Item'
+
+// Item_View_String
+// Item_View_Number
+
+
+
 class Item_View extends Control {
 
 	//'class_name': 'item-view',
@@ -35,12 +53,36 @@ class Item_View extends Control {
 
 
 
+		// Need item property / getter setter.
+		//  When the item changes, we update the item in the view.
+		//  More work on view modes perhaps.
+
+		// Could possibly use some other controls and have a map of which to use for different item types.
+
+		// item-view-string
+		// item-view-named-obj
+		// item-view-obj
+
+		// For the moment, different rendering modes will be most appropriate.
+
+		// So it updates the view differently depending on the rendering mode.
+
+
+
+
+		if (spec.item) {
+			this.item = spec.item;
+		}
+
+
 		//this.__type_name = 'item_view';
 
 
 		if (!spec.el) {
 			this.compose_item_view();
 		}
+
+
 
 
 		//var dom = this.get('dom');
@@ -53,8 +95,21 @@ class Item_View extends Control {
 		//that.set('dom.attributes.data-jsgui-fields', stringify({
 		//		'name': name
 		//}).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]"));
+
+
+
+
 		this._fields = this._fields || {};
 		if (this.name) this._fields['name'] = name;
+
+
+		//  If the item is a more complex object?
+		//   If the item is a string it's fine to set the item in the UI.
+
+		// Other item types could have differnt types of item views.
+
+		//if (this.item)
+
 
 		if (this.path) this._fields['path'] = this.path;
 		if (this.is_expander) this._fields['is_expander'] = this.is_expander;
@@ -65,6 +120,8 @@ class Item_View extends Control {
 
 
 		this.add_class('item item-view');
+
+		//console.log('this.item', this.item);
 
 		// The item's likely to have a name.
 		//var content = this.content;
@@ -106,41 +163,61 @@ class Item_View extends Control {
 
 		this.add(ctrl_icon);
 
-		var ctrl_item_info = new Control({
-			'context': this.context
-		});
-		//ctrl_item_info.get('dom').set('tagName', 'div');
-		//ctrl_item_info.get('dom').get('attributes').set('class', 'info');
-		ctrl_item_info.add_class('info');
-		this.add(ctrl_item_info);
 
-		// then add a name control. this will have a text node inside.
+		// Does not necessarily need item info.
+		//  Could just render the item as a string.
 
-		var ctrl_name = new Control({
-			'context': this.context
-		});
-		//ctrl_name.get('dom').set('tagName', 'div');
-		//ctrl_name.get('dom').get('attributes').set('class', 'name');
-		ctrl_name.add_class('name');
 
-		//var name = this.get('name').get();
-		//var name = this.get('name');
-		//console.log('name ' + stringify(name));
+		// For an object with a few properties such as 'name' and 'info'.
 
-		//throw('stop');
+		// When it's just a string, we just render it as a string.
 
-		// Should be able to set the name, with the name as a Data_Value.
+		let t_item = tof(this.item);
+		if (t_item === 'object') {
+			var ctrl_item_info = new Control({
+				'context': this.context
+			});
+			//ctrl_item_info.get('dom').set('tagName', 'div');
+			//ctrl_item_info.get('dom').get('attributes').set('class', 'info');
+			ctrl_item_info.add_class('info');
+			this.add(ctrl_item_info);
 
-		var ctrl_tn_name = new jsgui.textNode({
-			'text': this.name,
-			'context': this.context
-		});
-		//ctrl_name.content.add(ctrl_tn_name);
-		ctrl_name.add(ctrl_tn_name);
+			// then add a name control. this will have a text node inside.
 
+			var ctrl_name = new Control({
+				'context': this.context
+			});
+			//ctrl_name.get('dom').set('tagName', 'div');
+			//ctrl_name.get('dom').get('attributes').set('class', 'name');
+			ctrl_name.add_class('name');
+
+			//var name = this.get('name').get();
+			//var name = this.get('name');
+			//console.log('name ' + stringify(name));
+
+			//throw('stop');
+
+			// Should be able to set the name, with the name as a Data_Value.
+
+			var ctrl_tn_name = new jsgui.textNode({
+				'text': this.name,
+				'context': this.context
+			});
+			//ctrl_name.content.add(ctrl_tn_name);
+			ctrl_name.add(ctrl_tn_name);
+			ctrl_item_info.add(ctrl_name);
+		}
+		if (t_item === 'string' || t_item === 'number') {
+
+			let span = new jsgui.span({
+				context: this.context,
+				text: this.item
+			});
+			this.add(span);
+
+		}
 
 		/*
-
 		var ctrl_clearall_0 = new Control({
 			'context': this.context
 		});
@@ -150,6 +227,10 @@ class Item_View extends Control {
 		this.add(ctrl_clearall_0);
 
 		*/
+
+		// Need to render the item itself.
+		// 
+
 
 		if (this.is_expander) {
 			var ctrl_subitems = new Control({
@@ -166,10 +247,6 @@ class Item_View extends Control {
 			this.ctrl_subitems = ctrl_subitems;
 		}
 
-
-
-
-
 		/*
 
 		var ctrl_clearall = new Control({
@@ -183,7 +260,7 @@ class Item_View extends Control {
 		*/
 
 
-		ctrl_item_info.add(ctrl_name);
+		
 
 		//if (typeof document === 'undefined') {
 

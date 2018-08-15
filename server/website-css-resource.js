@@ -379,18 +379,18 @@ class Site_CSS extends Resource {
 
 		//var pool_resources = pool.resources();
 		//console.log('pool_resources ' + stringify(pool_resources));
-		console.log('1) rurl', rurl);
+		//console.log('1) rurl', rurl);
 
 
 
 
 
-		console.log('custom_paths', custom_paths);
+		//console.log('custom_paths', custom_paths);
 
 		var url_parts = url.parse(req.url, true);
-		console.log('url_parts ' + stringify(url_parts));
+		//console.log('url_parts ' + stringify(url_parts));
 		var splitPath = url_parts.path.substr(1).split('/');
-		console.log('resource site css splitPath ' + stringify(splitPath));
+		//console.log('resource site css splitPath ' + stringify(splitPath));
 
 		var custom_response_entry;
 		if (splitPath.length === 2) {
@@ -408,7 +408,7 @@ class Site_CSS extends Resource {
 
 
 
-		console.log('custom_response_entry ' + (custom_response_entry));
+		//console.log('custom_response_entry ' + (custom_response_entry));
 
 		if (custom_response_entry) {
 			var tcr = tof(custom_response_entry);
@@ -417,7 +417,7 @@ class Site_CSS extends Resource {
 
 			if (tcr == 'data_value') {
 				var val = custom_response_entry.value();
-				console.log('val ' + val);
+				//console.log('val ' + val);
 				throw 'stop';
 				var tval = tof(val);
 				if (tval == 'string') {
