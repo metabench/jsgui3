@@ -816,14 +816,12 @@ div.grid .row .cell span {
     
 }
 
-
-
-
 .item-selector .item-view {
     width: 120px;
     text-align: center;
     height: 32px;
     line-height: 32px;
+    user-select: none;
 }
 
 .item-selector .item-view span {

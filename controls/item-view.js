@@ -32,7 +32,11 @@ var Control = jsgui.Control;
 // Item_View_String
 // Item_View_Number
 
+// View modes would help.
+//  String view mode.
 
+// Expander inside being optional.
+//  More full rendering mode inside the expander.
 
 class Item_View extends Control {
 
@@ -45,6 +49,9 @@ class Item_View extends Control {
 		// Want it so that the name field can be written during the initialization.
 		//  Will depend on the chained fields.
 		var that = this;
+
+
+		// render_mode.
 
 		this.is_expander = spec.is_expander || false;
 
@@ -68,10 +75,33 @@ class Item_View extends Control {
 		// So it updates the view differently depending on the rendering mode.
 
 
+		// Need to respond to item changes.
+
+		let _item;
+
+		Object.defineProperty(this, 'item', {
+			// Using shorthand method names (ES2015 feature).
+			// This is equivalent to:
+			// get: function() { return bValue; },
+			// set: function(newValue) { bValue = newValue; },
+			get() {
+				return _item;
+			},
+			set(value) {
+				_item = value;
+				this.raise('change', {
+					'name': 'item',
+					'value': value
+				})
+			},
+			enumerable: true,
+			configurable: true
+		});
+
 
 
 		if (spec.item) {
-			this.item = spec.item;
+			_item = spec.item;
 		}
 
 
@@ -81,9 +111,6 @@ class Item_View extends Control {
 		if (!spec.el) {
 			this.compose_item_view();
 		}
-
-
-
 
 		//var dom = this.get('dom');
 
@@ -97,6 +124,8 @@ class Item_View extends Control {
 		//}).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]"));
 
 
+		// render_mode = 'simple', 'string', 'expander', others
+		//  template rendering? react?
 
 
 		this._fields = this._fields || {};
@@ -110,6 +139,10 @@ class Item_View extends Control {
 
 		//if (this.item)
 
+		// render_mode
+
+		if (this.render_mode) this._fields['render_mode'] = this.render_mode;
+
 
 		if (this.path) this._fields['path'] = this.path;
 		if (this.is_expander) this._fields['is_expander'] = this.is_expander;
@@ -117,10 +150,7 @@ class Item_View extends Control {
 
 	}
 	'compose_item_view' () {
-
-
 		this.add_class('item item-view');
-
 		//console.log('this.item', this.item);
 
 		// The item's likely to have a name.
@@ -166,8 +196,6 @@ class Item_View extends Control {
 
 		// Does not necessarily need item info.
 		//  Could just render the item as a string.
-
-
 		// For an object with a few properties such as 'name' and 'info'.
 
 		// When it's just a string, we just render it as a string.
@@ -208,15 +236,13 @@ class Item_View extends Control {
 			ctrl_item_info.add(ctrl_name);
 		}
 		if (t_item === 'string' || t_item === 'number') {
-
+			this.render_mode = 'string';
 			let span = new jsgui.span({
 				context: this.context,
 				text: this.item
 			});
 			this.add(span);
-
 		}
-
 		/*
 		var ctrl_clearall_0 = new Control({
 			'context': this.context
@@ -225,12 +251,10 @@ class Item_View extends Control {
 		//ctrl_clearall_0.get('dom').get('attributes').set('class', 'clearall');
 		ctrl_clearall_0.add_class('clearall');
 		this.add(ctrl_clearall_0);
-
 		*/
 
 		// Need to render the item itself.
 		// 
-
 
 		if (this.is_expander) {
 			var ctrl_subitems = new Control({
@@ -248,7 +272,6 @@ class Item_View extends Control {
 		}
 
 		/*
-
 		var ctrl_clearall = new Control({
 			'context': this.context
 		});
@@ -256,31 +279,51 @@ class Item_View extends Control {
 		//ctrl_clearall.get('dom').get('attributes').set('class', 'clearall');
 		ctrl_clearall.add_class('clearall');
 		this.add(ctrl_clearall);
-
 		*/
-
-
-		
-
 		//if (typeof document === 'undefined') {
 
+	}
+
+	'refresh_item_view' () {
+		//console.log('refresh_item_view');
+
+		let render_mode = this.render_mode;
+		//console.log('render_mode', render_mode);
+
+		if (render_mode === 'string') {
+			// find the span.
+			// this.$('span')[0].text = this.item;
+			// Definitely need a better way to query for content.
+			//  $ to start with could just get by __type_name
+
+			// Definitely need better finding / querying.
+
+			let ctrl_span = this.$('span')[0];
+			//console.log('ctrl_span', ctrl_span);
+
+			ctrl_span.text = this.item;
+		}
+		
 
 	}
+
 	'activate' () {
 		if (!this.__active) {
 			super.activate();
 			var that = this;
 
+			this.on('change', evt => {
+				if (evt.name === 'item') {
+					let new_item = evt.value;
+					this.refresh_item_view();
+				}
+			})
+
 			if (this.is_expander) {
 				var expand_contract = this.expand_contract;
-
-
 				//console.log('expand_contract', expand_contract);
-
 				// When a control is added to the DOM, it as well as its subcontrols should be automatically activated, with the various controls
 				//  registered with the jsgui.map_controls.
-
-
 				//expand_contract.activate();
 
 				expand_contract.on('change', function (e_change) {
@@ -297,15 +340,9 @@ class Item_View extends Control {
 						if (e_change.value === '+') {
 							that.trigger('contract');
 						}
-
-
-
 						//}
-
-
 						//span_state.clear();
 						//span_state.add(e_change.value);
-
 					}
 				});
 			}

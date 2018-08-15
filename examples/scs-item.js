@@ -48,6 +48,17 @@ let activate_app = (() => {
 		console.log('Object.keys(context.map_controls)', Object.keys(context.map_controls));
 
 
+		// replica ones that are used for effects...
+		//  discount them by default?
+		//  eg a Month_View that the system makes automatically as part of tiles?
+		let as = context.ctrl_document.$('left_right_arrows_selector')[0];
+		console.log('as', as);
+
+		as.on('loop', dir => {
+			console.log('as loop dir', dir);
+		})
+
+
 		/*
 		let month_view = context.map_controls['month_view_0'];
 		
@@ -86,7 +97,9 @@ var server = new Server({
 	// Left_Right_Arrows_Selector
 	'ctrl': [Left_Right_Arrows_Selector, {
 		//'rotation': 180
-		'items': months
+		'items': months,
+		'item_index': 7,
+		'loop': true
 	}],
 
 	/*

@@ -1,6 +1,6 @@
 const jsgui = require('../html-core/html-core');
 const Control = jsgui.Control;
-
+const def = jsgui.is_defined;
 const Arrow_Button = require('./arrow-button');
 const Item_Selector = require('./item-selector');
 /*
@@ -77,8 +77,8 @@ const Item_Selector = require('./item-selector');
 class Left_Right_Arrows_Selector extends Control {
     constructor (spec) {
 
-        console.log('');
-        console.log('Left_Right_Arrows_Selector spec', spec);
+        //console.log('');
+        //console.log('Left_Right_Arrows_Selector spec', spec);
 
         spec.__type_name = spec.__type_name || 'left_right_arrows_selector';
         super(spec);
@@ -87,6 +87,12 @@ class Left_Right_Arrows_Selector extends Control {
 
         if (spec.items) {
             this.items = spec.items;
+        }
+        if (def(spec.item_index)) {
+            this.item_index = spec.item_index;
+        }
+        if (def(spec.loop)) {
+            this.loop = spec.loop;
         }
         if (!spec.el) {
             this.compose_lras();
@@ -105,6 +111,8 @@ class Left_Right_Arrows_Selector extends Control {
             context: context
         }
         if (this.items) is_spec.items = this.items; 
+        if (this.item_index) is_spec.item_index = this.item_index;
+        if (this.loop) is_spec.loop = this.loop; 
 
         let item_selector = new Item_Selector(is_spec);
 
@@ -119,6 +127,8 @@ class Left_Right_Arrows_Selector extends Control {
 
         this._fields = this._fields || {};
         if (this.items) this._fields.items = this.items;
+        if (def(this.item_index)) this._fields.item_index = this.item_index;
+        if (def(this.loop)) this._fields.loop = this.loop;
 
         this._ctrl_fields = {
             left_arrow: left_arrow,
@@ -137,18 +147,27 @@ class Left_Right_Arrows_Selector extends Control {
     activate() {
         if (!this._active) {
             super.activate();
-            console.log('Activate Left_Right_Arrows_Selector');
+            //console.log('Activate Left_Right_Arrows_Selector');
             let {left_arrow, item_selector, right_arrow} = this;
 
             left_arrow.on('click', e_click => {
-                console.log('left_arrow e_click',e_click);
+                //console.log('left_arrow e_click',e_click);
+                this.previous();
             });
             item_selector.on('change', e_change => {
 
             });
             right_arrow.on('click', e_click => {
-                console.log('right_arrow e_click',e_click);
+                //console.log('right_arrow e_click',e_click);
+                this.next();
             });
+
+            if (this.loop) {
+                item_selector.on('loop', loop_direction => {
+                    //console.log('loop_direction', loop_direction);
+                    this.raise('loop', loop_direction);
+                })
+            }
         }
     }
 }

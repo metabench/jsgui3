@@ -14,6 +14,7 @@ var jsgui = require('../html-core/html-core');
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 var Control = jsgui.Control;
+const def = jsgui.is_defined;
 
 const Item_View = require('./item-view');
 const List = require('./list');
@@ -26,12 +27,22 @@ class Item_Selector extends Control {
         // selected_index
         // Could have Object assignproperies done here
         //  use local variables as true private variables.
+        if (spec.items) this.items = spec.items;
+        if (spec.loop) this.loop = spec.loop;
+        console.log('spec.item_index', spec.item_index);
+        if (def(spec.item_index)) {
+            this.item_index = spec.item_index;
+        } else {
+            // Don't want to overwrite the item_index if we have set it up already.
+            //  May need this pattern more.
+            //  Maybe write more setting code.
 
-        this.items = spec.items;
-        this.item_index = 0;
-
+            // this.copy_from(spec);
+            if (!def(this.item_index)) {
+                this.item_index = 0;
+            }   
+        }
         // A loop option.
-
         if (!spec.el) {
             this.compose_item_selector();
         }
@@ -47,7 +58,7 @@ class Item_Selector extends Control {
         });
         this.add(current_item_view);
 
-        console.log('compose_item_selector this.items', this.items);
+        //console.log('compose_item_selector this.items', this.items);
 
         let item_list = this.item_list = new List({
             context: this.context,
@@ -82,6 +93,8 @@ class Item_Selector extends Control {
 
         this._fields.item_index = this.item_index;
         this._fields.items = this.items;
+        if (this.loop) this._fields.loop = this.loop;
+
 
         this._ctrl_fields = this._ctrl_fields || {};
         this._ctrl_fields.current_item_view = current_item_view;
@@ -89,12 +102,37 @@ class Item_Selector extends Control {
 
     }
     previous() {
-        this.item_index--;
-        this.current_item_view.item = this.items[this.item_index];
+        //console.log('this.item_index', this.item_index);
+
+        if (this.item_index > 0) {
+            this.item_index--;
+            this.current_item_view.item = this.items[this.item_index];
+        } else {
+            if (this.loop) {
+                this.item_index = this.items.length -1;
+                this.current_item_view.item = this.items[this.item_index];
+                this.raise('loop', -1);
+            }
+        }
+        
     }
     next() {
-        this.item_index++;
-        this.current_item_view.item = this.items[this.item_index];
+        //console.log('this.item_index', this.item_index);
+
+        if (this.item_index < this.items.length -1) {
+            this.item_index++;
+            this.current_item_view.item = this.items[this.item_index];
+        } else {
+            if (this.loop) {
+                this.item_index = 0;
+                this.current_item_view.item = this.items[this.item_index];
+                this.raise('loop', 1);
+            }
+        }
+
+
+        //console.log('this.items', this.items);
+        
         // Then the item view needs to respond to the item change.
     }
 }

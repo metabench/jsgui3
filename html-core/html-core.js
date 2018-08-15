@@ -14,18 +14,15 @@ const def = jsgui.is_defined;
 var core_extension = str_arr_mapify(function (tagName) {
     jsgui[tagName] = class extends Control {
         constructor(spec) {
+            spec.__type_name = tagName;
             //spec.tagName = tagName;
             //console.log('core extension tagName ' + tagName);
             super(spec);
-
             //this.get('dom').set('tagName', tagName);
-
             this.dom.tagName = tagName;
             // dom.tagName?
-
         }
     };
-
     jsgui[tagName].prototype._tag_name = tagName;
     map_Controls[tagName] = jsgui[tagName];
 });
@@ -34,23 +31,17 @@ var core_extension_no_closing_tag = str_arr_mapify(function (tagName) {
     jsgui[tagName] = class extends Control {
         constructor(spec) {
             //spec.tagName = tagName;
-
             //console.log('core extension tagName ' + tagName);
-
             super(spec);
-
             //this.get('dom').set('tagName', tagName);
-
             this.dom.tagName = tagName;
             this.dom.noClosingTag = true;
             // dom.tagName?
-
         }
     };
     jsgui[tagName].prototype._tag_name = tagName;
     map_Controls[tagName] = jsgui[tagName];
 });
-
 
 var recursive_dom_iterate = function (el, callback) {
     //console.log('recursive_dom_iterate');

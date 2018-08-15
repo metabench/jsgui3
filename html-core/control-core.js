@@ -2119,20 +2119,28 @@ class Control_Core extends Data_Object {
 		return res;
 	}
 
+
+	// Want it to return an array of them.
+
 	'$' (selector, handler) {
 		let match = this.$match(selector);
+		let res = [];
 
 		if (match) {
-			handler(this);
+			if (handler) handler(this);
+			res.push(this)
 		}
 
 		this.content.each(item => {
 
 			if (item.$) {
-				item.$(selector, handler);
+				let nested_res = item.$(selector, handler);
+				Array.prototype.push.apply(res, nested_res);
 			}
 
 		});
+
+		return res;
 
 	}
 

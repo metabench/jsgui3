@@ -105,8 +105,6 @@ class Item extends Control {
         active_fields.state = this.state;
         active_fields.i_state = this.i_state;
 
-        var that = this;
-
         //this.set('value', value);
 
         // Set Data_Object using another Data_Object?
@@ -123,21 +121,16 @@ class Item extends Control {
         //}
 
         // And we need to render the value.
-
         //console.log('value', value);
-
         // Break this down into composition stage?
         if (!spec.abstract && !spec.el) {
             this.compose_item();
             // Treating all of the inner items as fields in some way?
-
             // Updating the control fields to include all of the inner items?
             //  Maybe do that immediately prior to rendering, as an optimization.
-
             var ctrl_fields = {
                 'inner': this.inner._id()
             }
-
             // And then an array of items?
             //  Need to activate the inner items in a heirachy of items too.
             this.dom.attrs['data-jsgui-fields'] = stringify(active_fields).replace(/"/g, "'");
@@ -155,15 +148,12 @@ class Item extends Control {
 
         var set_value = (value) => {
             var t_value = tof(value);
-
             if (t_value === 'collection') {
                 //console.log('collection value', value);
                 set_value(value._arr[0]);
                 //console.log('tof(value._arr[1])', tof(value._arr[1]));
-
                 /*
                 if (tof(value._arr[1]) === 'function') {
-
                     //console.log('adding on click');
                     // The problem is, we don't have an element right now.
                     //  Need to assign this click event to the DOM once it gets an element.
@@ -171,33 +161,25 @@ class Item extends Control {
                     that.on('click', value._arr[1]);
                 }
                 */
-
             } else if (t_value === 'data_value') {
                 ctrl_primary.add(value.value());
             } else if (t_value === 'string' || t_value === 'number') {
-
                 // A textNode could do.
-
                 // Add a span with that text.
-
-
                 let span = new jsgui.span({
                     context: this.context,
                     text: value
-                })
-
+                });
                 ctrl_primary.add(span);
             } else if (typeof value.keys === 'function') {
                 var value_keys = value.keys();
                 //console.log('value_keys', value_keys);
                 var map_keys = mapify(value_keys);
                 //console.log('map_keys', map_keys);
-
                 var has_id = map_keys['id'];
                 var has_name = map_keys['name'];
                 var has_key = map_keys['key'];
                 var id, name, key;
-
                 if (has_id && has_key && !has_name) {
                     id = value.id;
                     key = value.key;
@@ -216,19 +198,16 @@ class Item extends Control {
                     // Will possibly have more code to do with rendering Data_Values as HTML, as Control content.
                     ctrl_id.add(id.value);
                     ctrl_key.add(key.value);
-
                     ctrl_primary.add(ctrl_id);
                     ctrl_primary.add(ctrl_key);
                 }
             }
-
         }
         set_value(value);
 
         //var ctrl_secondary = new Control({
         //    'context': this.context
         //})
-
         this.inner = new Control({
             'context': this.context,
             'class': 'inner hidden'
@@ -243,7 +222,6 @@ class Item extends Control {
         // 
 
         each(this.inner.content, (sub_item) => {
-
 
             cb_item(sub_item, depth);
             sub_item.iterate_sub_items(cb_item, depth + 1);
@@ -311,10 +289,7 @@ class Item extends Control {
 
             this.iterate_sub_items((sub_item, depth) => {
                 //console.log('sub_item', sub_item);
-            })
-
-
-
+            });
 
             // Listen for changes in inner items?
             //  Probably not by default.
