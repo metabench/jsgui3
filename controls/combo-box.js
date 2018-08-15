@@ -30,7 +30,10 @@
 
 // Item_Selector could be a good alternative.
 //  More varied than Combo_Box. Not a problem having non-combo-box functionality.
+var jsgui = require('../html-core/html-core');
 
+var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
+var Control = jsgui.Control;
 
 class Combo_Box extends Control {
     constructor(spec) {

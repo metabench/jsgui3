@@ -22,7 +22,7 @@ var controls = {
     Button: require('./button'),
     Context_Menu: require('./context-menu'),
     Color_Palette: require('./color-palette'),
-    Combo_Box: require('combo-box'),
+    Combo_Box: require('./combo-box'),
     File_Upload: require('./file-upload'),
     Grid: require('./grid'),
     Horizontal_Menu: require('./horizontal-menu'),
