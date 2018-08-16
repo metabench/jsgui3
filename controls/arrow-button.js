@@ -45,7 +45,7 @@ class Arrow_Button extends Button {
         // half radians being a useful angle measurement.
         //  hr
 
-        console.log('spec.direction', spec.direction);
+        //console.log('spec.direction', spec.direction);
 
         let rotation = 0;
         

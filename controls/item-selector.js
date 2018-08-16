@@ -29,7 +29,7 @@ class Item_Selector extends Control {
         //  use local variables as true private variables.
         if (spec.items) this.items = spec.items;
         if (spec.loop) this.loop = spec.loop;
-        console.log('spec.item_index', spec.item_index);
+        //console.log('spec.item_index', spec.item_index);
         if (def(spec.item_index)) {
             this.item_index = spec.item_index;
         } else {

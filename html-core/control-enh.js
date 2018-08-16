@@ -13,8 +13,6 @@ var tof = jsgui.tof;
 
 var desc = (ctrl, callback) => {
 	if (ctrl.get) {
-
-
 		var content = ctrl.get('content');
 		if (content) {
 			var t_content = typeof content;
@@ -81,6 +79,8 @@ var mapDomEventNames = {
 	'touchstart': true,
 	'touchmove': true,
 	'touchend': true,
+	'touchcancel': true,
+	'touchforcechange': true,
 
 	'transitionend': true,
 
@@ -436,12 +436,6 @@ class Control extends Control_Core {
 		}
 		body.on('mousedown', fn_mousedown);
 	}
-
-
-
-
-
-
 	// one_click_anywhere
 
 
@@ -538,61 +532,7 @@ class Control extends Control_Core {
 		//console.trace();
 
 		if (el) {
-			//console.log('listener', listener);
-
-			// The listener has been set up already.
-			//  It looks like its an array.
-			//  Event has been added twice for some reason.
-
-
-
-
-
-			/*
-			if (!listener) {
-			    // a single listener called when a bound dom event fires.
-			    //  this will then split up the event calls to everything that is listening to this.
-			    // for the DOM event on the object, we raise the event on the control.
-
-			    listener = this.mapListeners[event_name] =  (e) {
-			        //console.log('event_name heard ' + event_name);
-
-			        // Raising an event, there could be multiple listeners.
-			        //  would be good to get an array of what the listeners returned.
-			        //  Return false here if any of them return false?
-
-
-			        var res_raise = that.raise(event_name, e);
-			        //console.log('res_raise', res_raise);
-
-			        // then if any results are false, we return false.
-
-			        var any_are_false = false;
-			        var c = 0, l = res_raise.length;
-
-			        while (!any_are_false && c < l) {
-			            if (res_raise[c] === false) {
-			                any_are_false = true;
-			            }
-
-			            c++;
-			        }
-
-			        //console.log('any_are_false', any_are_false);
-
-			        if (any_are_false) {
-			            e.preventDefault();
-			            return false;
-			        }
-			        // Would like to respond to the event.
-			        //  Eg if the dom event handler returns false, it would be good to return false in the listener.
-
-
-
-			    };
-			}
-
-			    */
+			
 			var t_listener = tof(listener);
 			//console.log('t_listener', t_listener);
 			//console.log('listener', listener);
@@ -624,71 +564,10 @@ class Control extends Control_Core {
 
 	'remove_dom_event_listener' (event_name, fn_handler) {
 		var listener = this._bound_events[event_name];
-		var that = this;
 
 		var el = this.dom.el;
 
-
-
-		//console.log('el', el);
-		//console.trace();
-
 		if (el) {
-			//console.log('listener', listener);
-
-			// The listener has been set up already.
-			//  It looks like its an array.
-			//  Event has been added twice for some reason.
-
-
-
-
-
-			/*
-			if (!listener) {
-			    // a single listener called when a bound dom event fires.
-			    //  this will then split up the event calls to everything that is listening to this.
-			    // for the DOM event on the object, we raise the event on the control.
-
-			    listener = this.mapListeners[event_name] =  (e) {
-			        //console.log('event_name heard ' + event_name);
-
-			        // Raising an event, there could be multiple listeners.
-			        //  would be good to get an array of what the listeners returned.
-			        //  Return false here if any of them return false?
-
-
-			        var res_raise = that.raise(event_name, e);
-			        //console.log('res_raise', res_raise);
-
-			        // then if any results are false, we return false.
-
-			        var any_are_false = false;
-			        var c = 0, l = res_raise.length;
-
-			        while (!any_are_false && c < l) {
-			            if (res_raise[c] === false) {
-			                any_are_false = true;
-			            }
-
-			            c++;
-			        }
-
-			        //console.log('any_are_false', any_are_false);
-
-			        if (any_are_false) {
-			            e.preventDefault();
-			            return false;
-			        }
-			        // Would like to respond to the event.
-			        //  Eg if the dom event handler returns false, it would be good to return false in the listener.
-
-
-
-			    };
-			}
-
-			    */
 			var t_listener = tof(listener);
 			//console.log('t_listener', t_listener);
 			//console.log('pre el addEventListener');
@@ -936,38 +815,6 @@ class Control extends Control_Core {
 				this.activate_content_listen();
 				this.activate_other_changes_listen();
 			}
-
-			//
-			// Could ensure all element references to start with.
-			//
-
-			///each(this.content, control => {
-			//	if (control.activate) {
-			//		control.activate();
-			//	}
-			//})
-
-			// No point doing this any longer. These references are OK.
-			//this.rec_desc_ensure_ctrl_el_refs();
-
-			// Attach DOM event listeners
-			//  Attach the unattached ones.
-			//  Go through the events for the control, and see which of them are to be attached to the DOM, but have not been attached already.
-			//   This needs to be used when the content is created client-side, and put into the DOM.
-
-			// Check to see that we are attaching unattached event listeners?
-
-			/*
-			this.content.on('change', e => {
-				console.log('from activate: html core content change e', e);
-				//if (e.type === 'clear') {
-				//	console.log('this.dom.el', this.dom.el);
-					//if (this.dom.el) this.dom.el.innerHTML = '';
-				//}
-			});
-			*/
-
-			//console.log('5) ' + this._.content._arr.length);
 		}
 	}
 
