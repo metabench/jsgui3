@@ -123,7 +123,6 @@ class Date_Picker extends Control {
 
             let is_first_month, is_first_year, is_last_month, is_last_year;
 
-
             let disable_enable_month_arrows = () => {
                 if (is_first_year && is_first_month) {
                     this.month_picker.left_arrow.disabled = true;
@@ -134,6 +133,16 @@ class Date_Picker extends Control {
                     this.month_picker.right_arrow.disabled = true;
                 } else {
                     this.month_picker.right_arrow.disabled = false;
+                }
+                if (is_last_year) {
+                    this.year_picker.right_arrow.disabled = true;
+                } else {
+                    this.year_picker.right_arrow.disabled = false;
+                }
+                if (is_first_year) {
+                    this.year_picker.left_arrow.disabled = true;
+                } else {
+                    this.year_picker.left_arrow.disabled = false;
                 }
             }
 
@@ -149,18 +158,8 @@ class Date_Picker extends Control {
                 is_last_year = !!e_year_change.last;
 
                 disable_enable_month_arrows();
-
-                
-
-
-
                 // Need to disable move right / next if at last month
-
-
-
                 //is_first_year = !! e_year_change.first;
-                
-
             })
             this.month_picker.on('change', e_month_change => {
                 //console.log('e_month_change', e_month_change);
