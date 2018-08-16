@@ -123,7 +123,20 @@ class Control extends Control_Core {
 		//console.log('* fields', fields);
 		//throw 'stop';
 		spec = spec || {};
+
+		
+		
+
 		super(spec, fields);
+		if (spec.id) {
+			this.__id = spec.id;
+		}
+		if (spec.__id) {
+			this.__id = spec.__id;
+		}
+		if (spec.__type_name) {
+			this.__type_name = spec.__type_name;
+		}
 		if (spec.el) {
 			var jgf = spec.el.getAttribute('data-jsgui-fields');
 
@@ -136,6 +149,13 @@ class Control extends Control_Core {
 				//Object.assign(spec, props);
 				Object.assign(this, props);
 			}
+
+			var tn = spec.el.getAttribute('data-jsgui-type');
+			if (tn) this.__type_name = tn;
+
+			var id = spec.el.getAttribute('data-jsgui-id');
+			if (id) this.__id = id;
+
 		}
 
 		//super(spec);
@@ -158,24 +178,16 @@ class Control extends Control_Core {
 
 			if (scrollbars === 'both' || scrollbars === 'horizontal' || scrollbars === 'vertical') {
 				active_scroll = true;
-
 				// Put a Scroll_View in place in this control.
-
-
 				var scroll_view = new Scroll_View({
 					'context': this.context
 				})
-
 				this.add(scroll_view);
 			}
-
 		}
-
 		if (spec.is_selectable) {
 			this.selectable();
 		}
-
-
 	}
 
 	'bcr' () {
@@ -497,7 +509,7 @@ class Control extends Control_Core {
 			if (nt == 1) {
 				var jsgui_id = el2.getAttribute('data-jsgui-id');
 
-				console.log('jsgui_id ' + jsgui_id);
+				//console.log('jsgui_id ' + jsgui_id);
 				if (jsgui_id) {
 					// Not so sure the control will exist within a map of controls.
 					//  If we have activated the whole page, then they will exist.
@@ -1020,6 +1032,8 @@ class Control extends Control_Core {
 
 					// register this and subelements
 
+
+					// Malfunctioning now.
 					e_change.item.register_this_and_subels();
 
 					e_change.item.register_this_and_subcontrols();
@@ -1123,7 +1137,7 @@ class Control extends Control_Core {
 							// Could rebind the events here?
 						}
 					}
-					//ctrl.activate();
+					ctrl.activate();
 				}
 			});
 		}
@@ -1315,7 +1329,8 @@ class Control extends Control_Core {
 
 					} else if (name == 'class') {
 						//console.log('need to DOM activate CSS class', value);
-
+						// Keeping it as a string.
+						dom_attributes[name] = value;
 
 
 						//    }

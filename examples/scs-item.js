@@ -48,6 +48,8 @@ let activate_app = (() => {
 		console.log('Object.keys(context)', Object.keys(context));
 		console.log('Object.keys(context.map_controls)', Object.keys(context.map_controls));
 
+		console.log('(context.map_controls)', (context.map_controls));
+
 
 		// replica ones that are used for effects...
 		//  discount them by default?

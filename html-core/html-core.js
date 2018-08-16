@@ -12,9 +12,12 @@ var map_Controls = jsgui.map_Controls = {};
 const def = jsgui.is_defined;
 
 var core_extension = str_arr_mapify(function (tagName) {
+
+    
     jsgui[tagName] = class extends Control {
         constructor(spec) {
             spec.__type_name = tagName;
+            //console.log('spec.__type_name', spec.__type_name);
             //spec.tagName = tagName;
             //console.log('core extension tagName ' + tagName);
             super(spec);
@@ -30,6 +33,7 @@ var core_extension = str_arr_mapify(function (tagName) {
 var core_extension_no_closing_tag = str_arr_mapify(function (tagName) {
     jsgui[tagName] = class extends Control {
         constructor(spec) {
+            spec.__type_name = tagName;
             //spec.tagName = tagName;
             //console.log('core extension tagName ' + tagName);
             super(spec);
@@ -156,11 +160,12 @@ var activate = function (context) {
                     //console.log('ib', ib);
                     var num = num_after(jsgui_id);
                     //console.log('num', num);
-                    if (! def(max_typed_ids[ib])) {
+                    if (!def(max_typed_ids[ib])) {
                         max_typed_ids[ib] = num;
                     } else {
                         if (num > max_typed_ids[ib]) max_typed_ids[ib] = num;
                     }
+                    //console.log('max_typed_ids', max_typed_ids);
     
                     map_jsgui_els[jsgui_id] = el;
                     var jsgui_type = el.getAttribute('data-jsgui-type');
@@ -235,6 +240,7 @@ var activate = function (context) {
 
                     var ctrl = new Cstr({
                         'context': context,
+                        '__type_name': type,
                         'id': jsgui_id,
                         'el': el
                     });
@@ -249,12 +255,12 @@ var activate = function (context) {
 
                     if (l_tag_name === 'html') {
                         //console.log('el is document root el');
-
                         // The html element represents the root of a document.
                         //throw '2) stop';
 
                         context.ctrl_document = ctrl;
                     }
+                    //console.log('1) jsgui_id', jsgui_id);
 
                     map_controls[jsgui_id] = ctrl;
 
@@ -267,15 +273,22 @@ var activate = function (context) {
                     //console.log('\n');
                 } else {
                     console.log('Missing context.map_Controls for type ' + type + ', using generic Control');
+
+
+
                     var ctrl = new Control({
                         'context': context,
+                        '__type_name': type,
                         'id': jsgui_id,
                         'el': el
                     })
                     //map_controls[jsgui_id] = ctrl;
 
-                    ctrl.__type_name = type;
+                    //ctrl.__type_name = type;
                     arr_controls.push(ctrl);
+
+
+                    //console.log('2) jsgui_id', jsgui_id);
 
                     map_controls[jsgui_id] = ctrl;
 
@@ -305,6 +318,7 @@ var activate = function (context) {
         // get the constructor from the id?
     });
 
+    
     recursive_dom_iterate_depth(document, (el) => {
         //console.log('el ', el);
         var nt = el.nodeType;
@@ -333,6 +347,7 @@ var activate = function (context) {
                 // to be sure
                 //ctrl.dom.el = el;
                 //console.log('2) ctrl.dom.el', ctrl.dom.el);
+                // Don't want this to reassign ids?
                 ctrl.activate(ctrl.dom.el);
 
                 // Type name being set in initialization?
@@ -343,6 +358,7 @@ var activate = function (context) {
             }
         }
     });
+    
 
 };
 
@@ -503,8 +519,9 @@ core_extension_no_closing_tag('link input');
 // Activated so it can listen for a change in the text?
 class textNode extends Control {
     constructor(spec) {
+        spec.__type_name = spec.__type_name || 'text_node'
+
         super(spec);
-        spec = spec || {};
         if (typeof spec == 'string') {
             //this._.text = spec;
             //this.innerHtml = spec;
@@ -514,6 +531,8 @@ class textNode extends Control {
         }
 
         spec.nodeType = 3;
+        spec = spec || {};
+        
 
         //ctrl_init_call(this, spec);
 

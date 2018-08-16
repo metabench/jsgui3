@@ -110,19 +110,15 @@ class Page_Context extends jsgui.Evented_Class {
         //console.log('register_control');
         // Not sure how useful registration of all controls will be.
         //  Probably would not be a problem, just it will take memory and CPU cycles.
-
-
-
         control.context = this;
-
-        //console.log('control.__id', control.__id);
+        //console.log('register_control control.__id', control.__id);
+        //console.log('register_control control.__type_name', control.__type_name);
+        //console.trace();
 
         var id = control._id();
 
         // Seems a control (not basic control) did not get its ID.
         //console.log('registering control id', id);
-
-
         this.map_controls[id] = control;
     }
     

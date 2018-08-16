@@ -123,6 +123,7 @@ if (typeof window !== 'undefined') {
                 page_context.update_Controls('left_right_arrows_selector', jsgui.Left_Right_Arrows_Selector);
 
                 page_context.update_Controls('span', jsgui.span);
+                
 
                 jsgui.activate(page_context);
                 console.log('post jsgui activate');

@@ -434,6 +434,9 @@ class Control_Core extends Data_Object {
 	constructor(spec, fields) {
 		// but process / normalize the spec here?
 		spec = spec || {};
+
+		//console.log('Control_Core spec.__type_name', spec.__type_name);
+
 		spec.__type_name = spec.__type_name || 'control';
 		//super(spec, fields.concat(my_fields));
 		//spec.nodeType = spec.nodeType || 1;
@@ -445,6 +448,13 @@ class Control_Core extends Data_Object {
 		//console.log('spec.id', spec.id);
 		//console.trace();
 		super(spec, fields);
+		if (spec.id) {
+			this.__id = spec.id;
+		}
+		if (spec.__id) {
+			this.__id = spec.__id;
+		}
+		
 
 		//console.log('done Control_Core super');
 
@@ -458,9 +468,10 @@ class Control_Core extends Data_Object {
 		//this.__type_name = 'control';
 		this.__type = 'control';
 
-
 		//console.log('post super init');
 		var spec_content;
+
+		// TextNodes don't have attributes
 
 		this.dom = new Control_DOM();
 
@@ -546,9 +557,7 @@ class Control_Core extends Data_Object {
 		// Have a Control_Size class?
 		//  have size getters and setters (with a proxy?)
 
-		if (spec.id) {
-			this.__id = spec.id;
-		}
+		
 
 		if (!this._abstract) {
 			var tagName = spec.tagName || spec.tag_name || 'div';
@@ -643,8 +652,6 @@ class Control_Core extends Data_Object {
 			// This is where it sets the size to begin with.
 			//  Need the same for color.
 			//  Possibly need the same for a whole load of properties.
-
-
 		}
 	}
 	
@@ -1936,7 +1943,7 @@ class Control_Core extends Data_Object {
 		//console.log('cls', cls);
 
 		var el = this.dom.el;
-		//console.log('el', el);
+		//console.log('el.className', el.className);
 		if (cls) {
 			var tCls = tof(cls);
 			//console.log('tCls', tCls);

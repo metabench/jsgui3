@@ -22,11 +22,10 @@ class Button extends Control {
             this.text = spec.text || spec.label;
         }
 
-        if (!spec.no_compose) {
+        //  || spec.no_compose === true
+        if (!spec.el) {
             //if (!this._abstract) {}
-
             this.compose_button();
-
         }
     }
     'compose_button'() {

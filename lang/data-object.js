@@ -117,15 +117,22 @@ var is_js_native = function (obj) {
 };
 
 class Data_Object extends Evented_Class {
-    constructor(spec, fields) {
-        //console.log('1* spec', spec);
+    constructor(spec = {}, fields) {
+        //console.log('1* spec.__type_name', spec.__type_name);
         super(spec);
+        if (spec.id) {
+			this.__id = spec.id;
+		}
+		if (spec.__id) {
+			this.__id = spec.__id;
+		}
+        this.__type_name = spec.__type_name || 'data_object';
 
 
         this.set_fields_from_spec(fields, spec);
 
         this.__data_object = true;
-        if (!spec) spec = {};
+        //if (!spec) spec = {};
         // if it's abstract call the abstract_init.
 
         //console.log('1** spec', spec);
@@ -154,7 +161,7 @@ class Data_Object extends Evented_Class {
 
         } else {
             var that = this;
-            this._initializing = true;
+            //this._initializing = true;
 
             var t_spec = tof(spec);
             //console.log('t_spec', t_spec);
@@ -163,7 +170,7 @@ class Data_Object extends Evented_Class {
                 this.__type = 'data_object';
             }
 
-            this.__type_name = spec.__type_name || 'data_object';
+            
 
             // 18/12/2016 getting rid of ._
 
@@ -197,19 +204,28 @@ class Data_Object extends Evented_Class {
                 // Initialization by Data_Object value (for the moment)
                 // Not so sure about copying the id of another object.
                 if (spec.context) this.context = spec.context;
-                // then copy the values over from spec.
+                // then copy the values over from spec
+                
+                /*.
                 //var spec_keys = spec.keys();
                 //console.log('spec_keys', spec_keys);
                 each(spec_keys, function (i, key) {
                     //that.set(key, spec.get(key));
                     that.set(key, spec.get(key));
                 });
+                */
             }
             if (!is_defined(this.__id) && jsgui.__data_id_method == 'init') {
                 if (this.context) {
                     //console.log('this.context ' + this.context);
                     //console.log('sfy this.context ' + stringify(this.context));
-                    this.__id = this.context.new_id(this.__type_name || this.__type);
+
+                    // Don't need an ID here.
+                    //  I think.
+
+                    //console.log('getting new id');
+                    //this.__id = this.context.new_id(this.__type_name || this.__type);
+                    //console.trace();
                     //console.log('DataObject new ID from context: ' + this.__id);
                     //this.context.map_objects[this.__id] = this;
                     // Not keeping a map of objects by id in the context.
@@ -257,7 +273,8 @@ class Data_Object extends Evented_Class {
             // If the spec is an object.
 
             if (is_defined(spec.parent)) {
-                this.set('parent', spec.parent);
+                //this.set('parent', spec.parent);
+                this.parent = spec.parent;
             }
 
             /*
@@ -285,7 +302,7 @@ class Data_Object extends Evented_Class {
                 this.init_default_events();
             }
 
-            this._initializing = false;
+            //this._initializing = false;
         }
         //console.log('end Data_Object init');
     }
@@ -493,7 +510,6 @@ class Data_Object extends Evented_Class {
         // Should get the context at an early stage if possible.
         //  Need to have it as the item is added, I think.
         if (this.__id) return this.__id;
-
         //if (!this.context) {
         //    if (this.parent.context) 
         //}

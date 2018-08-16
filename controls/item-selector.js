@@ -3,9 +3,6 @@
     Maybe will have a massive amount of options and modes.
 
     For the moment, want this to handle a relatively small array of items.
-
-    
-
 */
 
 var jsgui = require('../html-core/html-core');
@@ -88,30 +85,21 @@ class Item_Selector extends Control {
 
         // Want a very simple Item_View that renders the string item as a span, in an item view control marked with classes in the DOM.
         //  Want Item_View with no expand/contract.
-
-
         // Depending on the type of items...?
         this._fields = this._fields || {};
-
         this._fields.item_index = this.item_index;
         this._fields.items = this.items;
         if (this.loop) this._fields.loop = this.loop;
-
-
         this._ctrl_fields = this._ctrl_fields || {};
         this._ctrl_fields.current_item_view = current_item_view;
         this._ctrl_fields.item_list = item_list;
-
     }
     previous(raise_event = true) {
         //console.log('this.item_index', this.item_index);
-
         let o_change;
-
         if (this.item_index > 0) {
             this.item_index--;
             this.current_item_view.item = this.items[this.item_index];
-
             if (raise_event) {
                 o_change = {
                     value: this.items[this.item_index],
@@ -119,8 +107,6 @@ class Item_Selector extends Control {
                     size: -1
                 }
             }
-
-
         } else {
             if (this.loop) {
                 this.item_index = this.items.length - 1;
@@ -137,7 +123,6 @@ class Item_Selector extends Control {
 
             }
         }
-
         if (o_change) {
             if (this.item_index === 0) {
                 o_change.first = true;
@@ -152,23 +137,17 @@ class Item_Selector extends Control {
         //console.log('this.item_index', this.item_index);
         let old_index = this.item_index;
         let old = this.items[this.item_index];
-
         let o_change;
-
         if (this.item_index < this.items.length - 1) {
-
             this.item_index++;
             this.current_item_view.item = this.items[this.item_index];
             if (raise_event) {
-
                 o_change = {
                     value: this.items[this.item_index],
                     index: this.item_index,
                     size: 1
                 };
-
             }
-
         } else {
             if (this.loop) {
                 this.item_index = 0;
@@ -185,12 +164,8 @@ class Item_Selector extends Control {
                     //    o_change.first = true;
                     //}
                 }
-
             }
         }
-
-
-
         if (o_change) {
             if (this.item_index === 0) {
                 o_change.first = true;
@@ -200,11 +175,7 @@ class Item_Selector extends Control {
             }
             this.raise('change', o_change);
         }
-
-
-
         //console.log('this.items', this.items);
-
         // Then the item view needs to respond to the item change.
     }
     activate() {

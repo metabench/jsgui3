@@ -108,10 +108,9 @@ class Arrow_Button extends Button {
         if (def(spec.rotation)) {
             rotation = spec.rotation;
         }
-        
 
-
-        if (!spec.no_compose) {
+        //  || spec.no_compose === true
+        if (!spec.el) {
             this.compose_arrow_button();
 
         }
