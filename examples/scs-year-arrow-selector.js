@@ -7,7 +7,6 @@ const File_Tree = require('../controls/file-tree');
 const Month_View = require('../controls/month-view');
 const Arrow_Button = require('../controls/arrow-button');
 const Left_Right_Arrows_Selector = require('../controls/left-right-arrows-selector');
-const Date_Picker = require('../controls/date-picker');
 
 //var Server = jsgui.Server;
 
@@ -52,15 +51,12 @@ let activate_app = (() => {
 		// replica ones that are used for effects...
 		//  discount them by default?
 		//  eg a Month_View that the system makes automatically as part of tiles?
-
-		/*
 		let as = context.ctrl_document.$('left_right_arrows_selector')[0];
 		console.log('as', as);
 
 		as.on('loop', dir => {
 			console.log('as loop dir', dir);
 		})
-		*/
 
 
 		/*
@@ -100,7 +96,11 @@ var server = new Server({
 
 
 	// Left_Right_Arrows_Selector
-	'ctrl': [Date_Picker, {
+	'ctrl': [Left_Right_Arrows_Selector, {
+		//'rotation': 180
+		'items': years,
+		'item_index': 4,
+		'loop': false
 	}],
 
 	/*

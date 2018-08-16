@@ -310,7 +310,6 @@ class Item_View extends Control {
 	'activate' () {
 		if (!this.__active) {
 			super.activate();
-			var that = this;
 
 			this.on('change', evt => {
 				if (evt.name === 'item') {
@@ -326,7 +325,7 @@ class Item_View extends Control {
 				//  registered with the jsgui.map_controls.
 				//expand_contract.activate();
 
-				expand_contract.on('change', function (e_change) {
+				expand_contract.on('change', e_change => {
 					//console.log('e_change', e_change);
 
 					if (e_change.name === 'state') {
@@ -335,10 +334,10 @@ class Item_View extends Control {
 						//console.log('e_change.value', e_change.value);
 
 						if (e_change.value === '-') {
-							that.trigger('expand');
+							this.trigger('expand');
 						}
 						if (e_change.value === '+') {
-							that.trigger('contract');
+							this.trigger('contract');
 						}
 						//}
 						//span_state.clear();

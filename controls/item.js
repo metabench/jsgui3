@@ -1,6 +1,7 @@
 var jsgui = require('../html-core/html-core');
 var stringify = jsgui.stringify,
     each = jsgui.each,
+    def = jsgui.is_defined,
     tof = jsgui.tof;
 var Control = jsgui.Control;
 var Data_Value = jsgui.Data_Value;
@@ -96,14 +97,67 @@ class Item extends Control {
 
         let value = this.value = spec.value || spec.item;
 
-        this.states = ['closed', 'open'];
-        this.state = new Data_Value('closed');
-        this.i_state = 0;
+
+        // is_expander
+
+        // Items should not be expandable by default.
+        //  Not sure how this is similar / different to Item_View.
+        //  Logically they may be the same anyway. Seems like a very important Control and makes sense to have 2 versions for the moment.
+        //   Both need to be very versitile.
+
+        // Expandable interface seems to make a lot of sense.
+        let _expandable = spec.is_expandable || spec.expandable || false;
+
+
+        Object.defineProperty(this, 'expandable', {
+            // Using shorthand method names (ES2015 feature).
+            // This is equivalent to:
+            // get: function() { return bValue; },
+            // set: function(newValue) { bValue = newValue; },
+            get() {
+                return _expandable;
+            },
+            set(value) {
+
+                // However, should be stored as RGB or better a Color object.
+                //  Just [r, g, b] for the moment.
+                //  Color object with a Typed Array could be nice.
+                //  pixel.color = ...
+                //   could be OK for low level programming.
+
+
+                let old = _expandable;
+                _expandable = value;
+                this.raise('change', {
+                    'name': 'expandable',
+                    'old': old,
+                    //'new': _expandable,
+                    'value': _expandable
+                });
+            },
+            enumerable: true,
+            configurable: true
+        });
+
 
         var active_fields = this.active_fields = {};
-        active_fields.states = this.states;
-        active_fields.state = this.state;
-        active_fields.i_state = this.i_state;
+
+
+        if (this._expandable) {
+            this.states = ['closed', 'open'];
+
+            // Could use defineproperty here instead.
+
+            this.state = new Data_Value('closed');
+            this.i_state = 0;
+
+
+            active_fields.states = this.states;
+            active_fields.state = this.state;
+            active_fields.i_state = this.i_state;
+
+            active_fields.expandable = _expandable;
+        }
 
         //this.set('value', value);
 
@@ -272,18 +326,22 @@ class Item extends Control {
                 this.inner.hide();
             }
 
-            // Listen for state change
-            this.state.on('change', (e_change) => {
-                //console.log('item state e_change ', e_change);
+            if (this.state) {
+                // Listen for state change
+                this.state.on('change', (e_change) => {
+                    //console.log('item state e_change ', e_change);
 
-                var val = e_change.value;
-                if (val === 'open') {
-                    ui_open();
-                }
-                if (val === 'closed') {
-                    ui_close();
-                }
-            });
+                    var val = e_change.value;
+                    if (val === 'open') {
+                        ui_open();
+                    }
+                    if (val === 'closed') {
+                        ui_close();
+                    }
+                });
+            }
+
+
 
             // Iterate through the inner menu items, setting up listeners for each of them.
 

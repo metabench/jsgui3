@@ -137,16 +137,20 @@ class Left_Right_Arrows_Selector extends Control {
         }
     }
 
-    previous() {
-        this.item_selector.previous();
+    previous(raise_event = true) {
+        this.item_selector.previous(raise_event);
 
     }
-    next() {
-        this.item_selector.next();
+    next(raise_event = true) {
+        this.item_selector.next(raise_event);
     }
     activate() {
         if (!this._active) {
             super.activate();
+            // Automatically disable arrow if we reach the first while not in loop mode.
+
+
+
             //console.log('Activate Left_Right_Arrows_Selector');
             let {left_arrow, item_selector, right_arrow} = this;
 
@@ -155,7 +159,21 @@ class Left_Right_Arrows_Selector extends Control {
                 this.previous();
             });
             item_selector.on('change', e_change => {
+                //console.log('item_selector e_change', e_change);
 
+                if (!this.loop) {
+                    if (e_change.first) {
+                        left_arrow.disabled = true;
+                    } else {
+                        left_arrow.disabled = false;
+                    }
+                    if (e_change.last) {
+                        right_arrow.disabled = true;
+                    } else {
+                        right_arrow.disabled = false;
+                    }
+                }
+                this.raise('change', e_change);
             });
             right_arrow.on('click', e_click => {
                 //console.log('right_arrow e_click',e_click);

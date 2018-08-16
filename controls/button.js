@@ -38,6 +38,16 @@ class Button extends Control {
     'activate'() {
         super.activate();
 
+
+
+        // Disabling should disable events.
+        //  Maybe not all of them.
+
+
+        
+
+
+
         // Respond to touch events.
 
         // generally want a 'press' event too.

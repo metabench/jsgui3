@@ -784,11 +784,16 @@ table.grid td {
 
 div.grid {
     user-select: none;
+    clear: both;
 }
 
 div.grid .header.row .cell {
     text-align: center
     
+}
+
+div.grid .row {
+    clear: both;
 }
 
 div.grid .header.row .cell span {
@@ -824,8 +829,18 @@ div.grid .row .cell span {
     user-select: none;
 }
 
+.item-selector .list .item {
+    text-align: center;
+    user-select: none;
+}
+
+
 .item-selector .item-view span {
     text-align: center;
+}
+
+.left-right.arrows-selector {
+    height: 36px;
 }
 
 .arrows-selector .button {
@@ -834,4 +849,30 @@ div.grid .row .cell span {
 
 .arrows-selector .item-selector {
     float: left;
+}
+
+.date-picker .month-picker {
+    clear: both;
+}
+.date-picker .year-picker {
+    clear: both;
+}
+
+.date-picker .arrows-selector {
+    width: 360px;
+}
+
+.date-picker .arrows-selector .button:first-child{
+    margin-left: 90px;
+}
+
+.arrow svg line {
+    stroke: #000000;
+}
+
+.arrow.disabled svg line {
+    stroke: #CCCCCC;
+}
+.arrow.disabled svg polygon {
+    fill: #CCCCCC;
 }

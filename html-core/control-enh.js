@@ -547,16 +547,32 @@ class Control extends Control_Core {
 				//console.trace();
 
 				el.addEventListener(event_name, (e) => {
-					each(listener, l => {
-						l(e);
-					})
+					//console.log('this.disabled', this.disabled);
+					//console.log('this', this);
+					if (!this.disabled) {
+						each(listener, l => {
+
+							l(e);
+						})
+					}
+					
 				}, false);
 
 				//each(listener, (listener) => {
 				//el.addEventListener(event_name, listener, false);
 				//});
 			} else {
-				el.addEventListener(event_name, listener, false);
+
+				// Don't fire it if the control is disabled...
+
+
+
+				//el.addEventListener(event_name, listener, false);
+
+				el.addEventListener(event_name, () => {
+					console.log('this.disabled', this.disabled);
+					if (!this.disabled) listener();
+				}, false);
 			}
 			//console.log('post el add listener');
 		}

@@ -116,6 +116,7 @@ if (typeof window !== 'undefined') {
                 page_context.update_Controls('color_palette', jsgui.Color_Palette);
                 page_context.update_Controls('grid', jsgui.Grid);
                 page_context.update_Controls('month_view', jsgui.Month_View);
+                page_context.update_Controls('date_picker', jsgui.Date_Picker);
                 page_context.update_Controls('button', jsgui.Button);
                 page_context.update_Controls('arrow_button', jsgui.Arrow_Button);
                 page_context.update_Controls('tile_slider', jsgui.Tile_Slider);

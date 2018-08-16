@@ -29,6 +29,7 @@ var controls = {
     Horizontal_Slider: require('./horizontal-slider'),
     Data_Item: require('./data-item'),
     Data_Row: require('./data-row'),
+    Date_Picker: require('./date-picker'),
     Dropdown_List: require('./dropdown-list'),
     File_Tree: require('./file-tree'),
     File_Tree_Node: require('./file-tree-node'),

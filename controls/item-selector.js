@@ -12,7 +12,9 @@ var jsgui = require('../html-core/html-core');
 
 //function(jsgui, Plus_Minus_Toggle_Button, Vertical_Expander) {
 
-var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
+var stringify = jsgui.stringify,
+    each = jsgui.each,
+    tof = jsgui.tof;
 var Control = jsgui.Control;
 const def = jsgui.is_defined;
 
@@ -40,7 +42,7 @@ class Item_Selector extends Control {
             // this.copy_from(spec);
             if (!def(this.item_index)) {
                 this.item_index = 0;
-            }   
+            }
         }
         // A loop option.
         if (!spec.el) {
@@ -101,39 +103,151 @@ class Item_Selector extends Control {
         this._ctrl_fields.item_list = item_list;
 
     }
-    previous() {
+    previous(raise_event = true) {
         //console.log('this.item_index', this.item_index);
+
+        let o_change;
 
         if (this.item_index > 0) {
             this.item_index--;
             this.current_item_view.item = this.items[this.item_index];
+
+            if (raise_event) {
+                o_change = {
+                    value: this.items[this.item_index],
+                    index: this.item_index,
+                    size: -1
+                }
+            }
+
+
         } else {
             if (this.loop) {
-                this.item_index = this.items.length -1;
+                this.item_index = this.items.length - 1;
                 this.current_item_view.item = this.items[this.item_index];
-                this.raise('loop', -1);
+                if (raise_event) {
+                    this.raise('loop', -1);
+                    o_change = {
+                        value: this.items[this.item_index],
+                        loop: -1,
+                        index: this.item_index,
+                        size: -1
+                    }
+                }
+
             }
         }
-        
-    }
-    next() {
-        //console.log('this.item_index', this.item_index);
 
-        if (this.item_index < this.items.length -1) {
+        if (o_change) {
+            if (this.item_index === 0) {
+                o_change.first = true;
+            }
+            if (this.item_index === this.items.length - 1) {
+                o_change.last = true;
+            }
+            this.raise('change', o_change);
+        }
+    }
+    next(raise_event = true) {
+        //console.log('this.item_index', this.item_index);
+        let old_index = this.item_index;
+        let old = this.items[this.item_index];
+
+        let o_change;
+
+        if (this.item_index < this.items.length - 1) {
+
             this.item_index++;
             this.current_item_view.item = this.items[this.item_index];
+            if (raise_event) {
+
+                o_change = {
+                    value: this.items[this.item_index],
+                    index: this.item_index,
+                    size: 1
+                };
+
+            }
+
         } else {
             if (this.loop) {
                 this.item_index = 0;
                 this.current_item_view.item = this.items[this.item_index];
-                this.raise('loop', 1);
+                if (raise_event) {
+                    this.raise('loop', 1);
+                    o_change = {
+                        value: this.items[this.item_index],
+                        loop: 1,
+                        index: this.item_index,
+                        size: 1
+                    };
+                    //if (this.item_index === this.items.length - 1) {
+                    //    o_change.first = true;
+                    //}
+                }
+
             }
         }
 
 
+
+        if (o_change) {
+            if (this.item_index === 0) {
+                o_change.first = true;
+            }
+            if (this.item_index === this.items.length - 1) {
+                o_change.last = true;
+            }
+            this.raise('change', o_change);
+        }
+
+
+
         //console.log('this.items', this.items);
-        
+
         // Then the item view needs to respond to the item change.
+    }
+    activate() {
+        if (!this._active) {
+            super.activate();
+
+
+
+            let item_list = this.item_list;
+            // touchstart - bring up the list
+
+            let has_moved_away = false;
+
+            this.on('touchstart', ets => {
+                //console.log('ets', ets);
+                // Then cancel the event.
+
+                item_list.show();
+
+                //console.log('Object.keys(ets)', Object.keys(ets));
+                // Returning false from such a DOM event should cancel the event propagation.
+
+                ets.preventDefault();
+                //return false;
+            })
+            this.on('touchend', ete => {
+                //console.log('ete', ete);
+
+                if (!has_moved_away) {
+                    //this.raise('click', ete);
+                }
+                has_moved_away = false;
+                item_list.hide();
+            })
+            this.on('touchmove', etm => {
+                has_moved_away = true;
+                //console.log('etm', etm);
+            });
+            this.on('click', ec => {
+                item_list.show();
+            });
+
+        }
     }
 }
 

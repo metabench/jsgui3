@@ -480,7 +480,53 @@ class Control_Core extends Data_Object {
 
 				this.dom.attributes.style['background-color'] = evt.value;
 			}
+		});
+
+		let _disabled = false;
+
+		Object.defineProperty(this, 'disabled', {
+			// Using shorthand method names (ES2015 feature).
+			// This is equivalent to:
+			// get: function() { return bValue; },
+			// set: function(newValue) { bValue = newValue; },
+
+			// Need to disable events.
+
+			get() {
+				return _disabled;
+			},
+			set(value) {
+
+				// However, should be stored as RGB or better a Color object.
+				//  Just [r, g, b] for the moment.
+				//  Color object with a Typed Array could be nice.
+				//  pixel.color = ...
+				//   could be OK for low level programming.
+
+				let old = _disabled;
+				_disabled = value;
+				this.raise('change', {
+					'name': 'disabled',
+					'old': old,
+					//'new': _disabled,
+					'value': _disabled
+				});
+			},
+			enumerable: true,
+			configurable: false
+		});
+
+		this.on('change', e => {
+			if (e.name === 'disabled') {
+				if (e.value === true) {
+					this.add_class('disabled');
+				} else {
+					this.remove_class('disabled');
+				}
+			}
 		})
+
+
 
 		// then listen for background change.
 		//  we then change the dom attributes style background-color

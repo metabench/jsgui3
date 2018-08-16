@@ -286,6 +286,13 @@ class Month_View extends Grid {
                                 d.setDate(d.getDate() + 1);
                             }
                         });
+                    } else {
+                        cell.background.color = bgc_disabled;
+                        cell.iterate_this_and_subcontrols(ctrl => {
+                            if (ctrl.dom.tagName === 'span') {
+                                ctrl.text = '';
+                            }
+                        });
                     }
                 }
             }
@@ -311,6 +318,18 @@ class Month_View extends Grid {
         }
         this.refresh_month_view();
     }
+
+    next_year() {
+        this.year = this.year + 1;
+        this.refresh_month_view();
+    }
+
+    previous_year() {
+        this.year = this.year - 1;
+        this.refresh_month_view();
+    }
+
+
     // a mechanism for refreshing the UI based on changes in data.
     // can iterate the month cells
     //  a different algorythm could know which cell corresponds to which.

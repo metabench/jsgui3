@@ -74,6 +74,7 @@ class Arrow_Button extends Button {
         this.on('change', e => {
             if (e.name === 'rotation') {
                 this.line.dom.attributes.transform = 'rotate(' + e.value + ', 50, 50)';
+                this.polygon.dom.attributes.transform = 'rotate(' + e.value + ', 50, 50)';
             }
             if (e.name === 'direction') {
                 //console.log('e', e);
@@ -147,6 +148,12 @@ class Arrow_Button extends Button {
         });
         svg.dom.attributes.viewBox = "0 0 100 100";
 
+        // include all in a group
+
+
+
+        /*
+
         let svgdefs = new jsgui.defs({
             'context': this.context
         });
@@ -163,11 +170,18 @@ class Arrow_Button extends Button {
         marker.dom.attributes.orient = 'auto';
         svgdefs.add(marker);
 
-        let polygon = new jsgui.polygon({
+        */
+
+
+        let polygon = this.polygon = new jsgui.polygon({
             context: this.context
         })
-        polygon.dom.attributes.points = '0 0, 3 3.5, 0 7';
-        marker.add(polygon);
+        //polygon.dom.attributes.points = '0 0, 3 3.5, 0 7';
+        polygon.dom.attributes.points = '50 0, 70 20, 30 20';
+
+        // Polygon fill won't change with css
+        //polygon.dom.attributes.fill = '#FF0000';
+        //marker.add(polygon);
 
         let line = this.line = new jsgui.line({
             'context': this.context,
@@ -194,14 +208,17 @@ class Arrow_Button extends Button {
         //  could be given as a fraction of 2pi (full rotation radians).
 
         line.dom.attributes.transform = 'rotate(' + this.rotation + ', 50, 50)';
+        polygon.dom.attributes.transform = 'rotate(' + this.rotation + ', 50, 50)';
+        
 
 
 
-        line.dom.attributes.stroke = '#000000';
-        line.dom.attributes['marker-end'] = 'url(#arrowhead)';
+        //line.dom.attributes.stroke = '#000000';
+        //line.dom.attributes['marker-end'] = 'url(#arrowhead)';
         line.dom.attributes['stroke-width'] = 8;
 
         svg.add(line);
+        svg.add(polygon);
 
 
         this.add(svg);
