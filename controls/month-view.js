@@ -378,7 +378,7 @@ class Month_View extends Grid {
             }
         });
 
-        console.log('this.day', this.day);
+        //console.log('this.day', this.day);
     }
 
     // a mechanism for refreshing the UI based on changes in data.

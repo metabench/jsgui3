@@ -5,6 +5,20 @@ let selectable = (ctrl) => {
 
     // select_unique
 
+    let click_handler = (e) => {
+
+        //console.log('selectable click e', e);
+
+        var ctrl_key = e.ctrlKey;
+        var meta_key = e.metaKey;
+        if (!_select_unique && (ctrl_key || meta_key)) {
+            ctrl.action_select_toggle();
+        } else {
+            ctrl.action_select_only();
+        }
+        e.stopPropagation();
+    }
+
 
     Object.defineProperty(ctrl, 'selectable', {
         get() {
@@ -24,22 +38,7 @@ let selectable = (ctrl) => {
             _selectable = value;
 
             // Handling the change may be best here though.
-
-
-            let click_handler = (e) => {
-
-                //console.log('selectable click e', e);
-
-                var ctrl_key = e.ctrlKey;
-                var meta_key = e.metaKey;
-                if (!_select_unique && (ctrl_key || meta_key)) {
-                    ctrl.action_select_toggle();
-                } else {
-                    ctrl.action_select_only();
-                }
-
-                e.stopPropagation();
-            }
+            
 
 
             ctrl.deselect = ctrl.deselect || (() => {
@@ -82,11 +81,9 @@ let selectable = (ctrl) => {
 
 
             } else {
-                
-
                 if (typeof document === 'undefined') {
                     ctrl._fields = ctrl._fields || {};
-                    ctrl._fields['selectable'] = true;
+                    ctrl._fields['selectable'] = false;
                     //ctrl.is_selectable = true;
 
                     // send this over to the client as a property.
@@ -94,9 +91,9 @@ let selectable = (ctrl) => {
 
 
                 } else {
-
                     
                     //this.click(click_handler);
+                    //console.log('make unselectable');
                     this.off('click', click_handler);
                 }
             }

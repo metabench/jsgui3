@@ -103,7 +103,7 @@ var new_obj_style = () => {
 	}
 
 	var res = new Proxy(style, {
-		set: function (target, property, value, receiver) {
+		set: (target, property, value, receiver) => {
 			//console.log('set style trap');
 
 
@@ -130,7 +130,7 @@ var new_obj_style = () => {
 			//style.__empty = false;
 			return true;
 		},
-		get: function (target, property, receiver) {
+		get: (target, property, receiver) => {
 
 			// I'd like to have access to any arguments when
 			// the property being accessed here is a function
@@ -333,7 +333,7 @@ class Control_DOM extends Evented_Class {
 
 				return true;
 			},
-			get: function (target, property, receiver) {
+			get: (target, property, receiver) => {
 
 				// I'd like to have access to any arguments when
 				// the property being accessed here is a function
@@ -1071,7 +1071,7 @@ class Control_Core extends Data_Object {
 		var content = this.content;
 		var that = this,
 			tv;
-		content.each(function (v) {
+		content.each(v => {
 			//console.log('v', v);
 			tv = tof(v);
 			if (tv == 'string') {
@@ -1141,7 +1141,7 @@ class Control_Core extends Data_Object {
 				}
 
 				each(arr_waiting_controls, (control, i) => {
-					control.on('ready', function (e_ready) {
+					control.on('ready', (e_ready) => {
 						//console.log('control ready');
 						c--;
 						//console.log('c');
@@ -1278,7 +1278,7 @@ class Control_Core extends Data_Object {
 
 	'wait' (callback) {
 		//console.log('wait');
-		setTimeout(function () {
+		setTimeout(() => {
 			callback();
 		}, 0);
 	}
@@ -1314,7 +1314,7 @@ class Control_Core extends Data_Object {
 
 		//setTimeout()
 		var that = this;
-		var process_chain = function () {
+		var process_chain = () => {
 			//console.log('process_chain arr_chain.length ' + arr_chain.length + ', pos_in_chain ' + pos_in_chain);
 			//console.log('arr_chain.length ' + arr_chain.length);
 			if (pos_in_chain < arr_chain.length) {
@@ -1331,7 +1331,7 @@ class Control_Core extends Data_Object {
 
 					// will wait for them all to be complete too.
 					var count = item.length;
-					var cb = function () {
+					var cb = () => {
 						count--;
 						if (count == 0) {
 							//if (callback) {
@@ -1341,8 +1341,8 @@ class Control_Core extends Data_Object {
 							process_chain();
 						}
 					};
-					each(item, function (i, v) {
-						that.fn_call(v, function () {
+					each(item, (v) => {
+						that.fn_call(v, () => {
 							cb();
 						});
 					});
@@ -1350,7 +1350,7 @@ class Control_Core extends Data_Object {
 				} else {
 					// for a string I think.
 					// could be a map, and need to call the item(s) in the map.
-					that.fn_call(item, function () {
+					that.fn_call(item, () => {
 						//console.log('cb1');
 						pos_in_chain++;
 						process_chain();
@@ -1766,16 +1766,6 @@ class Control_Core extends Data_Object {
 		var dom = this.dom;
 		//var dom = this._.dom;
 		var dom_attributes = dom.attributes;
-		if (!dom_attributes) {
-			dom_attributes = dom.get('attributes');
-			//dom_attributes.set('data-jsgui-id', id);
-			//dom_attributes.set('data-jsgui-type', this.__type_name);
-			//console.log('dom_attributes', dom_attributes);
-			//dom_attributes._['data-jsgui-id'] = new Data_Value({'value': id});
-			//dom_attributes._['data-jsgui-type'] = new Data_Value({'value': this.__type_name});
-		} else {
-
-		}
 		//console.log('dom_attributes', dom_attributes);
 		//throw 'stop';
 		dom_attributes['data-jsgui-id'] = new Data_Value({

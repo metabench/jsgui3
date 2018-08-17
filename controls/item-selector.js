@@ -18,6 +18,8 @@ const def = jsgui.is_defined;
 const Item_View = require('./item-view');
 const List = require('./list');
 
+const mx_popup = require('../control_mixins/popup');
+
 class Item_Selector extends Control {
     constructor(spec) {
         spec.__type_name = spec.__type_name || 'item_selector';

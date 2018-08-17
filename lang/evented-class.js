@@ -304,6 +304,8 @@ class Evented_Class {
             //var tbei = tof(bei);
             //console.log('tbei', tbei);
 
+            //console.log('Array.isArray(bei)', Array.isArray(bei));
+
             if (Array.isArray(bei)) {
                 // bei.push(fn_listener);
 
@@ -314,6 +316,7 @@ class Evented_Class {
                 //console.log('l', l);
 
                 while (!found && c < l) {
+                    //console.log('bei[c]', bei[c]);
                     if (bei[c] === fn_listener) {
                         found = true;
                     } else {
