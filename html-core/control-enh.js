@@ -691,7 +691,6 @@ class Control extends Control_Core {
 		a.l = arguments.length;
 		var sig = get_a_sig(a, 1),
 			that = this;
-
 		//console.log('control-enh add_event_listener sig', sig);
 
 		/*
@@ -700,8 +699,6 @@ class Control extends Control_Core {
 
 		 // Check if the element has that event listener...
 		 //  Maybe maintain a map within the control of which DOM s have been bound to the element.
-
-
 
 		 el.addEventListener(event_name, handler, false);
 		 }
@@ -791,29 +788,21 @@ class Control extends Control_Core {
 				//console.log('we have a DOM event: ' + event_name);
 				//console.log('pre call add_dom_event_listener from add_event_listener');
 				//console.log('this.dom.el', !!this.dom.el);
-
 				// Want a way of recording that the event has been added to the DOM?
 				this.add_dom_event_listener(event_name, fn_handler);
 				//super.add_event_listener.apply(that, arguments);
-
-
 			}
-
-
 		}
 	}
 
 	'pop_into_body' () {
-
 		this.show();
 		var bcr = this.bcr();
-
 		// Maybe need to make it visible first.
 
 		var pos = bcr[0];
 		var left = pos[0];
 		var top = pos[1];
-
 		//console.log('bcr', JSON.stringify(bcr));
 
 		this.style({
@@ -823,7 +812,6 @@ class Control extends Control_Core {
 			'z-index': 10000
 		});
 		document.body.appendChild(this.dom.el);
-
 	}
 
 	// not recursive
@@ -940,6 +928,9 @@ class Control extends Control_Core {
 		//let that = this;
 		// these events seem to get rid of the el reference.
 
+		// change, type = 'remove'?
+
+
 		this.content.on('change', (e_change) => {
 			//console.log('content change', e_change);
 			//var itemDomEl;
@@ -948,13 +939,18 @@ class Control extends Control_Core {
 			//var dv_el = this.dom.el;
 			//console.log('that.__id', that.__id);
 			//if (dv_el) el = dv_el;
-			var type = e_change.type;
+			var type = e_change.name;
+
+			// remove content change...
+			//  could also swap it with other content.
+			//  could be removed & inserted together.
+
 			if (type === 'insert') {
 
 				//console.log('INSERT');
 
 				//console.log('e_change', e_change);
-				var item = e_change.item;
+				var item = e_change.value;
 				//console.log('item', item);
 				var retrieved_item_dom_el = item.dom.el;
 				var t_ret = tof(retrieved_item_dom_el);
@@ -974,7 +970,7 @@ class Control extends Control_Core {
 					//console.log('tof retrieved_item_dom_el', tof(retrieved_item_dom_el));
 					//throw 'stop';
 					if (retrieved_item_dom_el) {
-						itemDomEl = dv_item_dom_el.value();
+						itemDomEl = retrieved_item_dom_el;
 					}
 					//if (itemDomEl) console.log('1) itemDomEl', itemDomEl);
 
@@ -1087,6 +1083,19 @@ class Control extends Control_Core {
 				//console.log('el ' + el);
 				if (el) {
 					el.innerHTML = '';
+				}
+				//if (el) el.innerHTML = '';
+			}
+			if (type === 'remove') {
+
+				// removed from inside this.
+
+				
+
+				//console.log('el ' + el);
+				if (e_change.value.dom.el) {
+					//el.innerHTML = '';
+					e_change.value.dom.el.parentNode.removeChild(e_change.value.dom.el);
 				}
 				//if (el) el.innerHTML = '';
 			}

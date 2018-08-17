@@ -16,8 +16,15 @@ body {
     display: none !important;
 }
 
+.invisible {
+    visibility: hidden !important;
+}
 
-
+.popup-layer {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
 
 .multi-layout-mode.fluid-fixed .top.panel {
     height: 6px;
@@ -851,9 +858,20 @@ div.grid .row .cell span {
     user-select: none;
 }
 
-.item-selector .list .item {
+.item-selector.list .item {
     text-align: center;
     user-select: none;
+    height: 28px;
+    line-height: 28px;
+    border-bottom: 1px solid #AAAAAA;
+    width: 120px;
+
+}
+
+.list.item-selector {
+    background-color: #FFFFFF;
+    box-shadow: 5px 5px 3px #888888;
+    border: 1px solid #AAAAAA;
 }
 
 

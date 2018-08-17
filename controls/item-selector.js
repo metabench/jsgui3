@@ -66,6 +66,9 @@ class Item_Selector extends Control {
             items: this.items
         });
         item_list.hide();
+        item_list.add_class('item-selector'); // So styling works right in the popup layer.
+        mx_popup(item_list);
+
         this.add(item_list);
 
         // Render all of the items in a list.
@@ -187,6 +190,7 @@ class Item_Selector extends Control {
 
 
             let item_list = this.item_list;
+            mx_popup(item_list);
             // touchstart - bring up the list
 
             let has_moved_away = false;
@@ -217,7 +221,8 @@ class Item_Selector extends Control {
                 //console.log('etm', etm);
             });
             this.on('click', ec => {
-                item_list.show();
+                //item_list.show();
+                item_list.popup();
             });
 
         }

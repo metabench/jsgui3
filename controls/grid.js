@@ -48,6 +48,21 @@ var group = jsgui.group;
  },
  */
 
+// For the moment, scrollable and holding the whole dataset would be best.
+//  Fine for thousands of records, maybe not millions.
+
+
+// Also need to make this scrollable.
+//  Describe size of view window, but allow scrolling to show the full data
+
+// Lazy loading of scrolled data...
+
+// Non-scroll-mode
+//  
+//  Keep constant display controls, update with data
+
+
+
 class Grid extends Control {
     // maybe add before make would be better. add will probably be used more.
     constructor(spec, add, make) {
@@ -312,7 +327,7 @@ class Grid extends Control {
         if (!this.__active) {
             super.activate();
             //console.log('activate Grid');
-            var _arr_rows;
+            //var _arr_rows;
 
             var load_rows = () => {
                 //console.log('load_rows');

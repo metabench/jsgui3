@@ -1,4 +1,3 @@
-
 /*
  if (typeof define !== 'function') {
  var define = require('amdefine')(module);
@@ -394,7 +393,7 @@ class Collection extends Data_Object {
         }
     }
     // maybe use fp, and otherwise apply with the same params and context.
-    'set'(value) {
+    'set' (value) {
         // get the tof(value)
         var tval = tof(value);
         //console.log('tval ' + tval);
@@ -428,7 +427,7 @@ class Collection extends Data_Object {
         }
     }
 
-    'clear'() {
+    'clear' () {
         this._arr_idx = 0;
         this._arr = [];
 
@@ -438,11 +437,11 @@ class Collection extends Data_Object {
         // listner class hears the event but then loses access to its own this.
 
         this.raise('change', {
-            'type': 'clear'
+            'name': 'clear'
         });
     }
 
-    'stringify'() {
+    'stringify' () {
         var res = [];
         if (this._abstract) {
             // then we can hopefully get the datatype name
@@ -473,11 +472,11 @@ class Collection extends Data_Object {
         return res.join('');
     }
 
-    'toString'() {
+    'toString' () {
         return stringify(this._arr);
     }
 
-    'toObject'() {
+    'toObject' () {
         var res = [];
         this.each(function (v, i) {
             res.push(v.toObject());
@@ -485,8 +484,10 @@ class Collection extends Data_Object {
         return res;
     }
 
-    'each'() {
-        var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+    'each' () {
+        var a = arguments;
+        a.l = arguments.length;
+        var sig = get_a_sig(a, 1);
         // was callback, context
         // ever given the context?
 
@@ -512,7 +513,7 @@ class Collection extends Data_Object {
         }
     }
 
-    '_id'() {
+    '_id' () {
         // gets the id.
 
         if (this.context) {
@@ -532,11 +533,11 @@ class Collection extends Data_Object {
         return this.__id;
     }
 
-    'length'() {
+    'length' () {
         return this._arr.length;
     }
 
-    'find'() {
+    'find' () {
         // Better define the API, make it monomorphic.
 
         // 19/12/2016 - No longer using the index system class.
@@ -553,7 +554,9 @@ class Collection extends Data_Object {
 
 
 
-        var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+        var a = arguments;
+        a.l = arguments.length;
+        var sig = get_a_sig(a, 1);
 
         // var found = coll_presidents.find([['name', 'Franklin Pierce'], ['party', 'Republican']]);
 
@@ -717,8 +720,10 @@ class Collection extends Data_Object {
     }
     // get seems like the way to get unique values.
 
-    'get'() {
-        var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+    'get' () {
+        var a = arguments;
+        a.l = arguments.length;
+        var sig = get_a_sig(a, 1);
 
         // integer... return the item from the collection.
         //console.log('collection get sig ' + sig);
@@ -761,7 +766,7 @@ class Collection extends Data_Object {
 
     // Will a control always know what position it's in?
 
-    'insert'(item, pos) {
+    'insert' (item, pos) {
         // use array splice...
         //  then modify the index somehow.
         //  perhaps add 1 to each item's position past that point.
@@ -789,18 +794,74 @@ class Collection extends Data_Object {
         this.trigger('change', {
             'name': 'insert',
             'item': item,
+            'value': item,
             'pos': pos
         });
 
     }
 
+
+    // swap
+    //  remove an item, but swap it with another.
+
+    // controls should have been indexed by name.
+    //  operations would need to keep that index well maintained.
+
+    swap(item, replacement) {
+        let item_index;
+        // or swap the item itself
+
+        let arr = this._arr, l = arr.length;
+        if (typeof item === 'number') {
+            item_index = item;
+        } else {
+            // find the item
+            
+
+            let found = false, c = 0;
+            while (!found && c < l) {
+                found = arr[c] === item;
+                item_index = c;
+                c++;
+            }
+            //if (found) {
+            //}
+
+        }
+
+        if (is_defined(item_index)) {
+
+            arr[item_index] = replacement;
+
+            let e = {
+                'target': this,
+                'value': item,
+                'position': item_index,
+                'name': 'remove'
+            }
+            this.raise('change', e);
+
+            e = {
+                'target': this,
+                'item': replacement,
+                'value': replacement,
+                'position': item_index,
+                'name': 'insert'
+            }
+            this.raise('change', e);
+        }
+    }
+
+
     // may have efficiencies for adding and removing multiple items at once.
     //  can be sorted for insertion into index with more rapid algorithmic time.
 
-    'remove'() {
+    'remove' () {
         // Make more monomorphic.
 
-        var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+        var a = arguments;
+        a.l = arguments.length;
+        var sig = get_a_sig(a, 1);
         var that = this;
 
         //console.log('sig ' + sig);
@@ -843,11 +904,21 @@ class Collection extends Data_Object {
 
             var e = {
                 'target': this,
+                'value': item,
+                'position': spliced_pos,
+                'name': 'remove'
+            }
+            this.raise('change', e);
+
+            /*
+            var e = {
+                'target': this,
                 'item': item,
                 'position': spliced_pos
             }
+            */
 
-            this.raise_event(that, 'remove', e);
+            //this.raise_event(that, 'remove', e);
         }
 
         // and if we are removing by a string key...
@@ -857,7 +928,9 @@ class Collection extends Data_Object {
 
             // get the object...
 
-            var obj = this.index_system.find([['value', key]]);
+            var obj = this.index_system.find([
+                ['value', key]
+            ]);
 
             //console.log('obj ' + stringify(obj));
             //console.log('tof(obj) ' + tof(obj));
@@ -886,6 +959,7 @@ class Collection extends Data_Object {
                 item._relationships[my_id]--;
             }
 
+            /*
             var e = {
                 'target': this,
                 'item': obj[0],
@@ -893,10 +967,19 @@ class Collection extends Data_Object {
             }
 
             this.raise(that, 'remove', e);
+            */
+
+            var e = {
+                'target': this,
+                'value': obj[0],
+                'position': item_pos_within_this,
+                'name': 'remove'
+            }
+            this.raise('change', e);
         }
     }
 
-    'has'(obj_key) {
+    'has' (obj_key) {
         // will operate differently depending on how the collection is being used.
         //console.log('this._data_type_constraint ' + stringify(this._data_type_constraint));
 
@@ -924,11 +1007,13 @@ class Collection extends Data_Object {
     // Unique index being replaced with a constraint, and it also makes the index when the constraint is put in place if the index is not already there.
 
 
-    'get_index'() {
+    'get_index' () {
 
         // Make (more) monomorphic, have it consult the sorted KVS.
 
-        var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+        var a = arguments;
+        a.l = arguments.length;
+        var sig = get_a_sig(a, 1);
         if (sig === '[s]') {
             return this.index_system.search(a[0]);
         }
@@ -1308,9 +1393,11 @@ class Collection extends Data_Object {
 
 
     // More fp way of indexing.
-    'index_by'() {
+    'index_by' () {
         var that = this;
-        var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+        var a = arguments;
+        a.l = arguments.length;
+        var sig = get_a_sig(a, 1);
         //console.log('index_by a ' + stringify(a));
         //console.log('a.l ' + a.l);
         //console.log('index_by sig ' + sig);
@@ -1500,11 +1587,12 @@ class Collection extends Data_Object {
     // Sometimes wrap a normal JS obj as a Data_Value, Data_Object or Collection?
 
 
-    'push'(value) {
+    'push' (value) {
 
         var tv = tof(value);
         var fn_index = this.fn_index;
-        var idx_key, has_idx_key = false, pos;
+        var idx_key, has_idx_key = false,
+            pos;
         if (fn_index) {
             idx_key = fn_index(value);
             has_idx_key = true;
@@ -1534,8 +1622,9 @@ class Collection extends Data_Object {
             var e = {
                 'target': this,
                 'item': value,
+                'value': value,
                 'position': pos,
-                'type': 'insert'
+                'name': 'insert'
             }
             this.raise('change', e);
 
@@ -1565,8 +1654,9 @@ class Collection extends Data_Object {
             var e = {
                 'target': this,
                 'item': value,
+                'value': value,
                 'position': pos,
-                'type': 'insert'
+                'name': 'insert'
             }
             this.raise('change', e);
 
@@ -1616,8 +1706,9 @@ class Collection extends Data_Object {
             var e = {
                 'target': this,
                 'item': value,
+                'value': value,
                 'position': pos,
-                'type': 'insert'
+                'name': 'insert'
             }
             this.raise('change', e);
 
@@ -1647,8 +1738,9 @@ class Collection extends Data_Object {
             var e = {
                 'target': this,
                 'item': new_coll,
+                'value': new_coll,
                 'position': pos,
-                'type': 'insert'
+                'name': 'insert'
             }
             this.raise('change', e);
 
@@ -1683,7 +1775,9 @@ class Collection extends Data_Object {
 
             */
 
-            var dv = new Data_Value({ 'value': value });
+            var dv = new Data_Value({
+                'value': value
+            });
             //console.log('dv ' + stringify(dv));
             pos = this._arr.length;
             // Should not need a context or ID just to be put in place.
@@ -1691,8 +1785,9 @@ class Collection extends Data_Object {
             var e = {
                 'target': this,
                 'item': dv,
+                'value': dv,
                 'position': pos,
-                'type': 'insert'
+                'name': 'insert'
             }
             this.raise('change', e);
         }
@@ -1713,7 +1808,7 @@ class Collection extends Data_Object {
     //},
 
 
-    'load_array'(arr) {
+    'load_array' (arr) {
         var that = this;
         //console.log('load_array arr ', (arr));
         // there could be a data type that this is expecting... a constraint?
@@ -1736,8 +1831,10 @@ class Collection extends Data_Object {
         this.raise('load');
     }
 
-    'values'() {
-        var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
+    'values' () {
+        var a = arguments;
+        a.l = arguments.length;
+        var sig = get_a_sig(a, 1);
         if (a.l == 0) {
             return this._arr;
         } else {
@@ -1750,7 +1847,7 @@ class Collection extends Data_Object {
         }
     }
 
-    'value'() {
+    'value' () {
         var res = [];
         this.each(function (v, i) {
             if (typeof v.value == 'function') {
