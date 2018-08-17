@@ -11,6 +11,10 @@ var Control_Core = require('./control-core');
 var tof = jsgui.tof;
 // get_a_sig
 
+
+const mx_selectable = require('../control_mixins/selectable');
+const mx_fast_touch_click = require('../control_mixins/fast-touch-click');
+
 var desc = (ctrl, callback) => {
 	if (ctrl.get) {
 		var content = ctrl.get('content');
@@ -128,6 +132,9 @@ class Control extends Control_Core {
 		
 
 		super(spec, fields);
+
+
+
 		if (spec.id) {
 			this.__id = spec.id;
 		}
@@ -137,6 +144,9 @@ class Control extends Control_Core {
 		if (spec.__type_name) {
 			this.__type_name = spec.__type_name;
 		}
+
+		mx_selectable(this);
+
 		if (spec.el) {
 			var jgf = spec.el.getAttribute('data-jsgui-fields');
 
@@ -145,9 +155,20 @@ class Control extends Control_Core {
 				s_pre_parse = s_pre_parse.replace(/\'/g, '"');
 				var props = JSON.parse(s_pre_parse);
 
+				// selectable property...
+				//  a selectable property would help here.
+				//  would assign such a property.
+
+				//console.log('1) this.selectable', this.selectable);
+
 				//extend(spec, props);
 				//Object.assign(spec, props);
 				Object.assign(this, props);
+				//console.log('2) this.selectable', this.selectable);
+			}
+
+			if (this.selection_scope === true) {
+				this.selection_scope = this.context.new_selection_scope();
 			}
 
 			var tn = spec.el.getAttribute('data-jsgui-type');
@@ -161,6 +182,7 @@ class Control extends Control_Core {
 		//super(spec);
 
 
+		/*
 
 		if (typeof spec.selection_scope !== 'undefined') {
 			//console.log('spec.selection_scope', spec.selection_scope);
@@ -185,9 +207,14 @@ class Control extends Control_Core {
 				this.add(scroll_view);
 			}
 		}
-		if (spec.is_selectable) {
-			this.selectable();
-		}
+		*/
+
+		
+
+
+		//if (spec.is_selectable) {
+		//	this.selectable();
+		//}
 	}
 
 	'bcr' () {
@@ -842,6 +869,11 @@ class Control extends Control_Core {
 				this.activate_content_controls();
 				this.activate_content_listen();
 				this.activate_other_changes_listen();
+
+
+				if ('ontouchstart' in document.documentElement) {
+					mx_fast_touch_click(this);
+				}
 			}
 		}
 	}
@@ -1190,7 +1222,7 @@ class Control extends Control_Core {
 			var ctrl_fields = {};
 			//var that = this;
 			var c, l;
-			var my_content = this.content;
+			//var my_content = this.content;
 
 
 
@@ -1249,7 +1281,7 @@ class Control extends Control_Core {
 								}
 
 								if (!found) {
-									my_content.add(cctrl);
+									content.add(cctrl);
 								}
 								//cctrl.activate();
 

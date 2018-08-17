@@ -11,8 +11,37 @@ var Resize_Handle = require('../controls/resize-handle')
 var tof = jsgui.tof;
 // get_a_sig
 
-var v_subtract = jsgui.util.v_subtract;
-var v_add = jsgui.util.v_add;
+
+//var v_subtract = jsgui.util.v_subtract;
+//var v_add = jsgui.util.v_add;
+
+
+/*
+	16/08/2018 - Have not been using this code for a while. Have got other code working on the lower platform.
+		Seems worth splitting this code up more into behaviours. Want to apply selectable code to wherever it is necessary.
+
+
+	Clone
+	Resize
+	Select
+	Drag
+	Anchor
+	Fade
+
+	These seem a lot like methods and methodologies
+	Drag would work with an observable.
+
+	// apply selectable mixins
+
+	control-enh - apply mixins on start
+
+	// /control-mixins
+
+
+
+	//.selectable = true
+
+*/
 
 
 // Could add, make functions in the params?
@@ -741,6 +770,17 @@ class Control_Enh_2 extends Control_Enh {
 		}
 	}
 
+
+	// changing this to a selectable property would make sense.
+	// .selection_mode
+
+	// 0 - not selectable
+	// 1 - selectable (including as group)
+	// 2 - only selectable as unique
+
+	// Want to make cells unselectable too.
+	//  A property would greatly help here.
+
 	'selectable' (ctrl) {
 
 		// Do this before activation?
@@ -754,8 +794,6 @@ class Control_Enh_2 extends Control_Enh {
 			ctrl._fields['selectable'] = true;
 			ctrl.is_selectable = true;
 
-			
-
 			// send this over to the client as a property.
 			//  a field to send to the client.
 
@@ -765,9 +803,6 @@ class Control_Enh_2 extends Control_Enh {
 			this.click(function (e) {
 
 				console.log('selectable click e', e);
-
-
-
 
 				var ctrl_key = e.ctrlKey;
 				var meta_key = e.metaKey;
@@ -783,9 +818,9 @@ class Control_Enh_2 extends Control_Enh {
 	}
 
 	'action_select_only' () {
-		console.log('action_select_only');
+		//console.log('action_select_only');
 		var ss = this.find_selection_scope();
-		console.log('!!ss', !!ss);
+		//console.log('!!ss', !!ss);
 		ss.select_only(this);
 		//this.find_selection_scope().select_only(this);
 	}

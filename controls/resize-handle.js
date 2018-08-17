@@ -3,8 +3,10 @@ var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 //var Control = jsgui.Control;
 var Control =  require('../html-core/control-enh');
 
-var v_subtract = jsgui.util.v_subtract;
-var v_add = jsgui.util.v_add;
+let util = require('../lang/util');
+
+var v_subtract = util.v_subtract;
+var v_add = util.v_add;
 
 class Resize_Handle extends Control {
 

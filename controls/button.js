@@ -1,5 +1,6 @@
 var jsgui = require('../html-core/html-core');
 var Control = jsgui.Control;
+const fast_touch_click = require('../control_mixins/fast-touch-click');
 
 class Button extends Control {
     constructor(spec, add, make) {
@@ -37,6 +38,15 @@ class Button extends Control {
     'activate'() {
         super.activate();
 
+        // seems like a mixin.
+        //  activation mixin...
+
+        // Do this by default on touch.
+
+
+        //fast_touch_click(this);
+
+        /*
 
 
         // Disabling should disable events.
@@ -83,6 +93,7 @@ class Button extends Control {
             has_moved_away = true;
             //console.log('etm', etm);
         })
+        */
 
 
     }

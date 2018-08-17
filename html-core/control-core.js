@@ -1813,7 +1813,7 @@ class Control_Core extends Data_Object {
 	}
 	// So I think the resource-pool will have a selection scope.
 	'find_selection_scope' () {
-		console.log('find_selection_scope');
+		//console.log('find_selection_scope');
 		var res = this.selection_scope;
 		if (res) return res;
 		// look at the ancestor...
@@ -1821,7 +1821,7 @@ class Control_Core extends Data_Object {
 		//var parent = this.get('parent');
 		//console.log('parent ' + tof(parent));
 
-		console.log('this.parent', this.parent);
+		//console.log('this.parent', this.parent);
 
 		if (this.parent && this.parent.find_selection_scope) return this.parent.find_selection_scope();
 

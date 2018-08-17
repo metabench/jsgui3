@@ -7,6 +7,8 @@ var str_arr_mapify = jsgui.str_arr_mapify;
 var get_a_sig = jsgui.get_a_sig;
 var each = jsgui.each;
 var Control = jsgui.Control = require('./control-enh');
+//jsgui.util = require('../lang/util');
+//var Control = jsgui.Control = require('./control-enh');
 var tof = jsgui.tof;
 var map_Controls = jsgui.map_Controls = {};
 const def = jsgui.is_defined;
@@ -318,7 +320,7 @@ var activate = function (context) {
         // get the constructor from the id?
     });
 
-    
+    let child;
     recursive_dom_iterate_depth(document, (el) => {
         //console.log('el ', el);
         var nt = el.nodeType;
@@ -332,7 +334,7 @@ var activate = function (context) {
 
                 var ctrl = map_controls[jsgui_id];
                 //console.log('!!ctrl', !!ctrl);
-                ctrl.__activating = true;
+                //ctrl.__activating = true;
 
 
                 //console.log('tof ctrl ' + tof(ctrl));
@@ -350,11 +352,16 @@ var activate = function (context) {
                 // Don't want this to reassign ids?
                 ctrl.activate(ctrl.dom.el);
 
+                if (child) {
+                    child.parent = ctrl;
+                }
+
                 // Type name being set in initialization?
 
 
-                ctrl.__activating = false;
+                //ctrl.__activating = false;
                 //console.log('jsgui_type ' + jsgui_type);
+                child = ctrl;
             }
         }
     });

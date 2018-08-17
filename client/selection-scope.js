@@ -23,7 +23,7 @@ class Selection_Scope extends jsgui.Data_Object {
 
 		// Selection scope should also keep track of its context and its id.
 		if (spec.context) this.context = spec.context;
-		if (typeof spec.id !== 'undefined') this.is = spec.id;
+		if (typeof spec.id !== 'undefined') this.id = spec.id;
 		if (spec.control) this.control = spec.control;
 		// Needs to be a list / map of all controls that are selected.
 		// map of selected controls by id?
@@ -55,7 +55,7 @@ class Selection_Scope extends jsgui.Data_Object {
 					//v.set('selected', false);
 					v.selected = false;
 					v.remove_class('selected');
-					v.trigger('deselect');
+					v.raise('deselect');
 					count_deselected++;
 				}
 				//console.log('should have deselcted ' + v._id())
@@ -71,11 +71,18 @@ class Selection_Scope extends jsgui.Data_Object {
 
 		if (!currently_selected) {
 			ctrl.selected = true;
-			ctrl.trigger('select');
+			ctrl.raise('select');
 			ctrl.add_class('selected');
 		}
 		if (count_deselected > 0 & !currently_selected) {
-			this.trigger('change');
+			this.raise('change');
+		}
+	}
+	'deselect'(ctrl) {
+		if (ctrl.selected === true) {
+			ctrl.selected = false;
+			ctrl.remove_class('selected');
+			ctrl.raise('deselect');
 		}
 	}
 

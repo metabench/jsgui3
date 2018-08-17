@@ -48,6 +48,10 @@ let days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 let bgc_disabled = '#DDDDDD';
 let bgc_enabled = 'inherit';
 
+const mx_date = require(`../control_mixins/date`);
+
+// Want this to keep the same day in the month if possible.
+
 class Month_View extends Grid {
     constructor(spec) {
         // M T W T F S S
@@ -59,7 +63,9 @@ class Month_View extends Grid {
         super(spec);
 
         // months are 0 indexed (for consistency with other things.)
+        mx_date(this, spec);
 
+        /*
         if (is_defined(spec.year) && is_defined(spec.month)) {
             //console.log('are defined');
             this.month = spec.month; // 0 indexed
@@ -70,6 +76,7 @@ class Month_View extends Grid {
             this.month = now.getMonth(); // 0 indexed
             this.year = now.getFullYear();
         }
+        */
         // 7 * 5 grid
 
         // problem is compose will override the previous compose 
@@ -84,6 +91,38 @@ class Month_View extends Grid {
         this.context.new_selection_scope(this);
         // putting selection_scope true in the data-jsgui-fields would be nice.
         //this.selectable();
+    }
+    activate() {
+        // respond to a date / cell being selected.
+        super.activate();
+
+        // want a selector for .something. Select by class
+
+        // selection_change event?
+
+        //each(this.$('control'), control
+
+        let cells = this.$('gridcell');
+        //console.log('cells.length', cells.length);
+        
+        each(cells, cell => {
+            //console.log('cell', cell);
+            cell.on('select', () => {
+
+                // day of month change.
+
+                if (is_defined(cell.value)) this.day = cell.value;
+                
+
+
+                this.raise('change', {
+                    name: 'select',
+                    value: cell
+                })
+            })
+        });
+        // want to go through all cells / controls.
+
     }
     compose_month_view() {
         // go through the month in question.
@@ -156,6 +195,8 @@ class Month_View extends Grid {
         let day_name = days[got_day];
         // need to progress until the position is aligned with the beginning of the week.
 
+        // A Cell control could be useful.
+
         while (cell_pos[0] < got_day) {
             //console.log('cell_pos[0]', cell_pos[0]);
 
@@ -183,7 +224,11 @@ class Month_View extends Grid {
                 text: d.getDate() + ''
             });
             cell.add(day_span);
-            cell.selectable();
+            cell.selectable = true;
+            cell.select_unique = true;
+            cell.value = d.getDate();
+            cell._fields = cell._fields || {};
+            cell._fields.value = cell.value;
 
             d.setDate(d.getDate() + 1);
             did_advance = advance_cell() && d.getDate() !== 1;
@@ -198,6 +243,7 @@ class Month_View extends Grid {
                 text: ''
             });
             cell.add(day_span);
+            //cell.selectable = true;
 
             cell.background.color = bgc_disabled;
             cell_pos[0]++;
@@ -216,12 +262,16 @@ class Month_View extends Grid {
                     text: ''
                 });
                 cell.add(day_span);
+                //cell.selectable = true;
+
+                //console.log('cell.selectable', cell.selectable);
 
                 //console.log('cell_pos[0]', cell_pos[0]);
                 ctrl_row.content._arr[cell_pos[0]].background.color = bgc_disabled;
                 cell_pos[0]++;
             }
         }
+        // A delegate for on cell select?
     }
 
     // refresh_month_view
@@ -230,6 +280,7 @@ class Month_View extends Grid {
 
     refresh_month_view() {
         // Day of week of 1st date in month...
+
         let d = new Date(this.year, this.month, 1);
         let m = d.getMonth();
         let got_day = d.getDay() - 1;
@@ -239,15 +290,22 @@ class Month_View extends Grid {
 
         let day_name = days[got_day];
 
+        let d_ctrl;
+
+        let day = this.day;
+
         this.each_cell((cell, cell_pos) => {
             //console.log('cell_pos', cell_pos);
+            
+
             let [x, y] = cell_pos;
             if (y > 0) {
-
-
                 if (y === 1) {
                     if (x < got_day) {
                         cell.background.color = bgc_disabled;
+                        cell.selectable = false;
+                        if (cell.deselect) cell.deselect();
+                        cell.value = null;
                         // remove text in the span.
 
                         //cell.find('span')[0].text = '';
@@ -264,13 +322,23 @@ class Month_View extends Grid {
 
                     } else {
                         cell.background.color = bgc_enabled;
+                        cell.selectable = true;
 
                         cell.iterate_this_and_subcontrols(ctrl => {
                             //console.log('ctrl', ctrl);
                             //console.log('ctrl.dom.tagName', ctrl.dom.tagName);
                             if (ctrl.dom.tagName === 'span') {
-                                ctrl.text = d.getDate() + '';
+                                d_ctrl = d.getDate();
+                                cell.value = d_ctrl;
+                                ctrl.text = d_ctrl + '';
                                 d.setDate(d.getDate() + 1);
+
+                                //console.log('d_ctrl', d_ctrl);
+                                //console.log('day', day);
+
+                                if (d_ctrl === day) {
+                                    cell.action_select_only();
+                                }
                             }
                         });
                     }
@@ -278,16 +346,28 @@ class Month_View extends Grid {
                     let dm = d.getMonth();
                     if (dm === m) {
                         cell.background.color = bgc_enabled;
+                        cell.selectable = true;
                         cell.iterate_this_and_subcontrols(ctrl => {
                             //console.log('ctrl', ctrl);
                             //console.log('ctrl.dom.tagName', ctrl.dom.tagName);
                             if (ctrl.dom.tagName === 'span') {
-                                ctrl.text = d.getDate() + '';
+                                d_ctrl = d.getDate();
+                                cell.value = d_ctrl;
+                                ctrl.text = d_ctrl + '';
                                 d.setDate(d.getDate() + 1);
+
+                                //console.log('d_ctrl', d_ctrl);
+                                //console.log('day', day);
+
+                                if (d_ctrl === day) {
+                                    cell.action_select_only();
+                                }
                             }
                         });
                     } else {
                         cell.background.color = bgc_disabled;
+                        cell.selectable = false;
+                        if (cell.deselect) cell.deselect();
                         cell.iterate_this_and_subcontrols(ctrl => {
                             if (ctrl.dom.tagName === 'span') {
                                 ctrl.text = '';
@@ -297,38 +377,9 @@ class Month_View extends Grid {
                 }
             }
         });
-    }
 
-    next_month() {
-        if (this.month === 11) {
-            this.month = 0;
-            this.year = this.year + 1;
-        } else {
-            this.month = this.month + 1;
-        }
-        this.refresh_month_view();
+        console.log('this.day', this.day);
     }
-
-    previous_month() {
-        if (this.month === 0) {
-            this.month = 11;
-            this.year = this.year - 1;
-        } else {
-            this.month = this.month - 1;
-        }
-        this.refresh_month_view();
-    }
-
-    next_year() {
-        this.year = this.year + 1;
-        this.refresh_month_view();
-    }
-
-    previous_year() {
-        this.year = this.year - 1;
-        this.refresh_month_view();
-    }
-
 
     // a mechanism for refreshing the UI based on changes in data.
     // can iterate the month cells

@@ -199,7 +199,8 @@ class Grid extends Control {
 
             for (x = 0; x < num_columns; x++) {
                 var cell = new Control({
-                    context: this.context//,
+                    context: this.context,
+                    __type_name: 'gridcell',//,
                     //'class': 'cell'
                 });
                 cell.add_class('cell');

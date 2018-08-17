@@ -26,6 +26,8 @@ Being able to select dates (including times) in a nice user-friendly way is goin
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const years = [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022];
 
+const mx_date = require(`../control_mixins/date`);
+
 class Year_Picker extends Left_Right_Arrows_Selector {
     constructor(spec) {
         Object.assign(spec, {
@@ -55,6 +57,10 @@ class Date_Picker extends Control {
         spec.__type_name = spec.__type_name || 'date_picker';
         super(spec);
         this.add_class('date-picker');
+
+        mx_date(this, spec);
+
+
         // Could start with a current date
         // Maybe this renders a calendar?
         //  mini calendar?
@@ -73,10 +79,31 @@ class Date_Picker extends Control {
         if (!spec.el) {
             this.compose_date_picker();
         }
+
+        // Should have a Date object of its own.
+        //  Maybe only at some times.
+
+        // various properties here, concerning date
+
+        // js date object
+        // year, month day_of_month
+        // or just day in this context
+
+        // will have various properties, get other controls to change their properties based on changes here.
+
+
+
+
     }
     compose_date_picker() {
         // Not sure this is best.
         //  Maybe just assign these when on the server. Just don't need them client-side once they have been loaded.
+
+        // Month view - want to be able to select a day.
+        //  each day should be selectable.
+        //  A .selectable property would be nice.
+        //  could use defineProperty for this, rather than a .selectable() function.
+
         this._ctrl_fields = this._ctrl_fields || {};
         Object.assign(this._ctrl_fields, {
             year_picker: this.year_picker = new Year_Picker({
@@ -123,7 +150,6 @@ class Date_Picker extends Control {
                     this.year_picker.left_arrow.disabled = false;
                 }
             }
-
             this.year_picker.on('change', e_year_change => {
                 //console.log('e_year_change', e_year_change);
                 if (e_year_change.size === -1) {
@@ -159,10 +185,29 @@ class Date_Picker extends Control {
                 // old value too..
                 // old index?
                 //this.month_view.
-            })
+            });
+
+            this.month_view.on('change', emv_change => {
+                console.log('emv_change', emv_change);
+                let cell = emv_change.value;
+                let day_of_month = cell.value;
+
+                console.log('day_of_month', day_of_month);
+                console.log('this.month_view.day', this.month_view.day);
+
+
+                if (emv_change.name === 'day') {
+                    this.day = day_of_month;
+                };
+
+
+            });
+
+            // month view change date...
+
+
         }
     }
 }
-
 
 module.exports = Date_Picker;
