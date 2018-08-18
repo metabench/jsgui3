@@ -49,6 +49,7 @@ let bgc_disabled = '#DDDDDD';
 let bgc_enabled = 'inherit';
 
 const mx_date = require(`../control_mixins/date`);
+const mx_selectable = require(`../control_mixins/selectable`);
 
 // Want this to keep the same day in the month if possible.
 
@@ -104,6 +105,8 @@ class Month_View extends Grid {
             //console.log('cell', cell);
             ///console.log('cell.selectable', cell.selectable);
             //cell.selectable = true;
+
+            mx_selectable(cell);
 
             cell.on('change', e_change => {
                 if (e_change.name === 'selected') {
@@ -351,6 +354,7 @@ class Month_View extends Grid {
                     }
                 } else {
                     let dm = d.getMonth();
+                    //console.log('dm', dm);
                     if (dm === m) {
                         cell.background.color = bgc_enabled;
                         cell.selectable = true;
@@ -375,7 +379,15 @@ class Month_View extends Grid {
                         cell.background.color = bgc_disabled;
                         cell.selectable = false;
                         if (cell.deselect) cell.deselect();
+                        cell.value = null;
+                        // remove text in the span.
+                        //cell.find('span')[0].text = '';
+
+                        //console.log(cell.content._arr)
+
                         cell.iterate_this_and_subcontrols(ctrl => {
+                            //console.log('ctrl', ctrl);
+                            //console.log('ctrl.dom.tagName', ctrl.dom.tagName);
                             if (ctrl.dom.tagName === 'span') {
                                 ctrl.text = '';
                             }

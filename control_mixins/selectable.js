@@ -16,13 +16,17 @@ let selectable = (ctrl) => {
 
             //console.log('selectable click e', e);
 
-            var ctrl_key = e.ctrlKey;
-            var meta_key = e.metaKey;
-            if (!_select_unique && (ctrl_key || meta_key)) {
-                ctrl.action_select_toggle();
-            } else {
-                ctrl.action_select_only();
+            if (_selectable) {
+                var ctrl_key = e.ctrlKey;
+                var meta_key = e.metaKey;
+                if (!_select_unique && (ctrl_key || meta_key)) {
+                    ctrl.action_select_toggle();
+                } else {
+                    ctrl.action_select_only();
+                }
             }
+
+
 
 
             //e.stopPropagation();
