@@ -197,7 +197,7 @@ class Tile_Slider extends Control {
     }
 
     activate() {
-        if (!this._active) {
+        if (!this.__active) {
             super.activate();
 
             setTimeout(async () => {

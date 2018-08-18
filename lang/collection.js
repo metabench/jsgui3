@@ -808,17 +808,41 @@ class Collection extends Data_Object {
     //  operations would need to keep that index well maintained.
 
     swap(item, replacement) {
+
+
+        // Remove the replacement from its container.
+
+        let r_parent = replacement.parent;
+
+        // need to change / improve collection item removal.
+        //  That is why indexes / b+ tree would work best.
+        //   can very quickly get / remove a subcontrol by id.
+        //   Collection needs quite a bit of work and testing.
+        //    Need to finalize the API, get it working with B+ tree under the hood.
+
+        // improve Remove so it can deal with other types of objects.
+        //  searching and removing from an array is slow though.
+
+        let repl_pos = replacement.parent.content.remove(replacement);
+        let i_parent = item.parent;
+        let item_pos = item.parent.content.remove(item);
+
+
         let item_index;
         // or swap the item itself
 
-        let arr = this._arr, l = arr.length;
+
+        /*
+
+        let arr = this._arr,
+            l = arr.length;
         if (typeof item === 'number') {
             item_index = item;
         } else {
             // find the item
-            
 
-            let found = false, c = 0;
+            let found = false,
+                c = 0;
             while (!found && c < l) {
                 found = arr[c] === item;
                 item_index = c;
@@ -828,11 +852,18 @@ class Collection extends Data_Object {
             //}
 
         }
+        */
+        i_parent.content.insert(replacement, item_pos);
+        r_parent.content.insert(item, repl_pos);
 
         if (is_defined(item_index)) {
 
-            arr[item_index] = replacement;
 
+
+
+            //arr[item_index] = replacement;
+
+            /*
             let e = {
                 'target': this,
                 'value': item,
@@ -849,6 +880,7 @@ class Collection extends Data_Object {
                 'name': 'insert'
             }
             this.raise('change', e);
+            */
         }
     }
 
@@ -869,7 +901,7 @@ class Collection extends Data_Object {
 
         if (sig == '[n]') {
 
-            var own_id = this._id();
+            //var own_id = this._id();
 
             // remove the item at that position.
 
@@ -898,7 +930,7 @@ class Collection extends Data_Object {
 
             // need to remove that item from the index system as well.
 
-            this.index_system.remove(o_item);
+            //this.index_system.remove(o_item);
             // but is it no longer actually there?
             //  seems to be gone now.
 
@@ -910,6 +942,8 @@ class Collection extends Data_Object {
             }
             this.raise('change', e);
 
+            return pos;
+
             /*
             var e = {
                 'target': this,
@@ -919,11 +953,7 @@ class Collection extends Data_Object {
             */
 
             //this.raise_event(that, 'remove', e);
-        }
-
-        // and if we are removing by a string key...
-
-        if (sig == '[s]') {
+        } else if (sig == '[s]') {
             var key = a[0];
 
             // get the object...
@@ -946,7 +976,7 @@ class Collection extends Data_Object {
             //console.log('item_pos_within_this ' + item_pos_within_this);
             //throw 'stop';
 
-            this.index_system.remove(key);
+            //this.index_system.remove(key);
             this._arr.splice(item_pos_within_this, 1);
 
             // then adjust the positions downwards for each item afterwards.
@@ -976,6 +1006,35 @@ class Collection extends Data_Object {
                 'name': 'remove'
             }
             this.raise('change', e);
+        } else {
+            let item_index;
+            // or swap the item itself
+
+            let arr = this._arr,
+                l = arr.length;
+            if (typeof item === 'number') {
+                item_index = item;
+            } else {
+                // find the item
+
+                let found = false,
+                    c = 0;
+                while (!found && c < l) {
+                    found = arr[c] === item;
+                    item_index = c;
+                    c++;
+                }
+                //if (found) {
+                //}
+
+                if (is_defined(item_index)) {
+                    return this.remove(item_index);
+                }
+
+            }
+
+
+
         }
     }
 

@@ -128,8 +128,8 @@ class Control extends Control_Core {
 		//throw 'stop';
 		spec = spec || {};
 
-		
-		
+
+
 
 		super(spec, fields);
 
@@ -145,7 +145,9 @@ class Control extends Control_Core {
 			this.__type_name = spec.__type_name;
 		}
 
-		mx_selectable(this);
+
+
+		//mx_selectable(this);
 
 		if (spec.el) {
 			var jgf = spec.el.getAttribute('data-jsgui-fields');
@@ -209,7 +211,7 @@ class Control extends Control_Core {
 		}
 		*/
 
-		
+
 
 
 		//if (spec.is_selectable) {
@@ -571,7 +573,7 @@ class Control extends Control_Core {
 		//console.trace();
 
 		if (el) {
-			
+
 			var t_listener = tof(listener);
 			//console.log('t_listener', t_listener);
 			//console.log('listener', listener);
@@ -588,13 +590,14 @@ class Control extends Control_Core {
 				el.addEventListener(event_name, (e) => {
 					//console.log('this.disabled', this.disabled);
 					//console.log('this', this);
+					e.ctrl = this;
 					if (!this.disabled) {
 						each(listener, l => {
 
 							l(e);
 						})
 					}
-					
+
 				}, false);
 
 				//each(listener, (listener) => {
@@ -608,9 +611,9 @@ class Control extends Control_Core {
 
 				//el.addEventListener(event_name, listener, false);
 
-				el.addEventListener(event_name, () => {
+				el.addEventListener(event_name, (e) => {
 					console.log('this.disabled', this.disabled);
-					if (!this.disabled) listener();
+					if (!this.disabled) listener(e);
 				}, false);
 			}
 			//console.log('post el add listener');
@@ -836,6 +839,8 @@ class Control extends Control_Core {
 
 			// activate subcontrols...
 
+
+
 			if (!this.dom.el) {
 				let found_el = this.context.get_ctrl_el(this);
 				//console.log('found_el', found_el);
@@ -857,12 +862,19 @@ class Control extends Control_Core {
 				this.activate_content_controls();
 				this.activate_content_listen();
 				this.activate_other_changes_listen();
-
-
 				if ('ontouchstart' in document.documentElement) {
 					mx_fast_touch_click(this);
 				}
+
+				//console.log('this.selectable', this.selectable);
+				if (this.selectable) {
+					mx_selectable(this);
+					this.selectable = true;
+				}
 			}
+
+
+
 		}
 	}
 
@@ -1090,7 +1102,7 @@ class Control extends Control_Core {
 
 				// removed from inside this.
 
-				
+
 
 				//console.log('el ' + el);
 				if (e_change.value.dom.el) {
@@ -1484,6 +1496,22 @@ class Control extends Control_Core {
 	'ancestor' (search) {
 		// could maybe work when not activated too...
 		// need to get the ancestor control matching the search (in type).
+
+		let parent = this.parent;
+		if (parent) {
+			if (parent === search) {
+				return true;
+			} else {
+				if (typeof parent.ancestor === 'function') {
+					return parent.ancestor(search);
+				}
+			}
+		} else {
+			return false;
+		}
+
+		/*
+
 		if (this._parent) {
 			var ctrl_parent = this._parent._parent;
 			// the _parent is a Collection within the parent Control
@@ -1505,6 +1533,7 @@ class Control extends Control_Core {
 		} else {
 			return false;
 		}
+		*/
 	}
 
 	/*

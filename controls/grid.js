@@ -14,7 +14,7 @@ var Control = jsgui.Control;
 
 var group = jsgui.group;
 
-
+const mx_selectable = require('../control_mixins/selectable');
 // Not as complex, or designed to be as responsive to data as the Data_Grid.
 
 // This will need to be versatile as well as operating simply with little configuration.
@@ -220,6 +220,7 @@ class Grid extends Control {
                 });
                 cell.add_class('cell');
                 cell.size = cell_size;
+                mx_selectable(cell);
                 row_container.add(cell);
 
             }
@@ -341,6 +342,8 @@ class Grid extends Control {
 
             }
             load_rows();
+
+            //this.each_cell
 
 
             // load the cells

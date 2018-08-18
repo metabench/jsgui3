@@ -121,7 +121,7 @@ class Date_Picker extends Control {
         this.add(this.month_view);
     }
     activate() {
-        if (!this._active) {
+        if (!this.__active) {
             super.activate();
             // Should keep track of year etc properties.
             //  Maybe handle silent updates too.

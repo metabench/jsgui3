@@ -16,8 +16,13 @@ let selectable = (ctrl) => {
         } else {
             ctrl.action_select_only();
         }
-        e.stopPropagation();
+
+
+        //e.stopPropagation();
     }
+
+    //console.log('ctrl.selectable', ctrl.selectable);
+    //console.trace();
 
 
     Object.defineProperty(ctrl, 'selectable', {
@@ -76,7 +81,7 @@ let selectable = (ctrl) => {
 
                     
                     //this.click(click_handler);
-                    this.on('click', click_handler);
+                    ctrl.on('click', click_handler);
                 }
 
 
@@ -94,12 +99,12 @@ let selectable = (ctrl) => {
                     
                     //this.click(click_handler);
                     //console.log('make unselectable');
-                    this.off('click', click_handler);
+                    ctrl.off('click', click_handler);
                 }
             }
 
 
-            this.raise('change', {
+            ctrl.raise('change', {
                 'name': 'selectable',
                 'old': old,
                 //'new': _disabled,
@@ -110,7 +115,7 @@ let selectable = (ctrl) => {
 
         },
         enumerable: true,
-        configurable: false
+        configurable: true
     });
 
     Object.defineProperty(ctrl, 'select_unique', {

@@ -112,8 +112,6 @@ class Month_View extends Grid {
                 // day of month change.
 
                 if (is_defined(cell.value)) this.day = cell.value;
-                
-
 
                 this.raise('change', {
                     name: 'select',

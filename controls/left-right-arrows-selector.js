@@ -145,7 +145,7 @@ class Left_Right_Arrows_Selector extends Control {
         this.item_selector.next(raise_event);
     }
     activate() {
-        if (!this._active) {
+        if (!this.__active) {
             super.activate();
             // Automatically disable arrow if we reach the first while not in loop mode.
 

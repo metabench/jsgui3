@@ -55,7 +55,11 @@ class Selection_Scope extends jsgui.Data_Object {
 					//v.set('selected', false);
 					v.selected = false;
 					v.remove_class('selected');
-					v.raise('deselect');
+					//v.raise('deselect');
+					v.raise('change', {
+						'name': 'selected',
+						'value': false
+					});
 					count_deselected++;
 				}
 				//console.log('should have deselcted ' + v._id())
@@ -71,18 +75,35 @@ class Selection_Scope extends jsgui.Data_Object {
 
 		if (!currently_selected) {
 			ctrl.selected = true;
-			ctrl.raise('select');
+			//ctrl.raise('select');
+			ctrl.raise('change', {
+				'name': 'selected',
+				'value': true
+			});
 			ctrl.add_class('selected');
+			// selection scope event too...?
+
+			//console.log('pre raise ss change');
+			this.raise('change', {
+				name: 'selected',
+				value: ctrl
+			});
+
+
 		}
 		if (count_deselected > 0 & !currently_selected) {
-			this.raise('change');
+			//this.raise('change');
 		}
 	}
 	'deselect'(ctrl) {
 		if (ctrl.selected === true) {
 			ctrl.selected = false;
 			ctrl.remove_class('selected');
-			ctrl.raise('deselect');
+			//ctrl.raise('deselect');
+			ctrl.raise('change', {
+				'name': 'selected',
+				'value': false
+			});
 		}
 	}
 
@@ -110,7 +131,7 @@ class Selection_Scope extends jsgui.Data_Object {
 			}
 		})
 		//console.log('msc ', msc);
-		this.trigger('change');
+		this.raise('change');
 		//throw 'stop';
 	}
 
@@ -192,7 +213,7 @@ class Selection_Scope extends jsgui.Data_Object {
 
 			}
 		}
-		this.trigger('change');
+		this.raise('change');
 		//throw 'stop';
 	}
 }

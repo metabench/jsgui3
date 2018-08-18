@@ -8,11 +8,16 @@
 var jsgui = require('../html-core/html-core');
 var Item = require('./item');
 
-var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
+var stringify = jsgui.stringify,
+    each = jsgui.each,
+    tof = jsgui.tof;
 var Control = jsgui.Control;
 var Collection = jsgui.Collection;
 
 // will have a context menu by default
+
+const mx_selectable = require('../control_mixins/selectable');
+
 
 class List extends Control {
 
@@ -82,8 +87,6 @@ class List extends Control {
 
         // Any need to send the list as a jsgui field?
 
-        
-
         // listen for changes to the list. represent those changes in the UI controls. Then these get automatically changed in the DOM by other code.
 
 
@@ -108,29 +111,63 @@ class List extends Control {
 
         // A system of objects-to-client
 
-
-
-
+        
 
         if (!spec.el) {
+            let ss = this.context.new_selection_scope(this);
             this.compose_list();
-
         }
+
+        // the selection scope could just be a number on the server.
+
+
+
+
     }
 
-    'compose_list'() {
+    'compose_list' () {
         each(this.items, item => {
             //console.log('item', item);
             var ctrl_item = new Item({
                 'context': this.context,
                 'value': item
             });
+            //console.log('ctrl_item.selectable', ctrl_item.selectable);
+            mx_selectable(ctrl_item);
+            ctrl_item.selectable = true;
+
             this.add(ctrl_item);
         });
     }
 
-    'activate'() {
-        super.activate();
+    'activate' () {
+
+        //console.log('');
+        //console.log('activate list');
+
+
+        if (!this.__active) {
+            super.activate();
+
+
+            let ss = this.find_selection_scope();
+            if (ss.on) {
+                //console.log('ss', ss);
+
+                ss.on('change', e_change => {
+                    //console.log('1) list ss e_change', e_change);
+                })
+            }
+        }
+
+
+
+        // Could use delegated click events.
+        //  Would save having to wire up each item.
+
+        // The items themselves could be selectable.
+
+
         // put the context menu in place.
         //throw 'stop';
 

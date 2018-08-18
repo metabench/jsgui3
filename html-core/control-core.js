@@ -2042,9 +2042,14 @@ class Control_Core extends Data_Object {
 	//  If this is an ancestor of element or control. is_ancestor_of
 	// will go through DOM parent nodes or control parents.
 
+
+	// Should work with controls.
+	//  Would be a fair assumption that it does.
+
+	// see 'ancestor' function.
 	'is_ancestor_of' (target) {
 		var t_target = tof(target);
-		//console.log('t_target', t_target);
+		console.log('t_target', t_target);
 
 		var el = this.dom.el;
 
@@ -2062,14 +2067,18 @@ class Control_Core extends Data_Object {
 
 		}
 
-		if (t_target == 'object') {
-			if (el != target) {
+		if (t_target === 'object') {
+			if (el !== target) {
 				var parent = target.parentNode;
 				if (parent) {
 					return inner(parent);
 				}
 			}
 
+		} else {
+			if (t_target === 'control') {
+
+			}
 		}
 	}
 

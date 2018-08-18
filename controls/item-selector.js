@@ -20,6 +20,23 @@ const List = require('./list');
 
 const mx_popup = require('../control_mixins/popup');
 
+// Post construct compose and activate
+//  Want to be able to run same code on client and server.
+//  Want code to respond to list changes
+
+// Definitely want a post compose and activate function.
+//  Maybe would need to call it from the constructor.
+
+// .setup?
+//  .finalize?
+//  .finish
+
+// Respond to control changes...
+//  Don't just want this on activation, as they are not DOM events, though many would originate there.
+
+
+
+
 class Item_Selector extends Control {
     constructor(spec) {
         spec.__type_name = spec.__type_name || 'item_selector';
@@ -46,7 +63,14 @@ class Item_Selector extends Control {
         // A loop option.
         if (!spec.el) {
             this.compose_item_selector();
+
+            this.finish_item_selector();
         }
+    }
+    finish_item_selector() {
+        this.item_list.on('change', e_change => {
+            console.log('item_list e_change', e_change);
+        });
     }
     compose_item_selector() {
         // In combo mode normally.
@@ -184,7 +208,8 @@ class Item_Selector extends Control {
         // Then the item view needs to respond to the item change.
     }
     activate() {
-        if (!this._active) {
+        let ctrl = this;
+        if (!this.__active) {
             super.activate();
 
 
@@ -194,12 +219,14 @@ class Item_Selector extends Control {
             // touchstart - bring up the list
 
             let has_moved_away = false;
+            let t = false;
 
             this.on('touchstart', ets => {
                 //console.log('ets', ets);
                 // Then cancel the event.
+                t = true;
 
-                item_list.show();
+                item_list.popup();
 
                 //console.log('Object.keys(ets)', Object.keys(ets));
                 // Returning false from such a DOM event should cancel the event propagation.
@@ -222,8 +249,52 @@ class Item_Selector extends Control {
             });
             this.on('click', ec => {
                 //item_list.show();
-                item_list.popup();
+
+                if (!t) {
+                    let replace = item_list.popup();
+                    // Event propagation has stopped? :(
+
+                    // then click elsewhere...
+
+                    // best done with body event (delegation)
+
+                    let body = this.context.map_controls['body_0'];
+
+                    let body_click_handler = (e_click) => {
+                        console.log('e_click', e_click);
+
+                        let target_ctrl = this.context.map_controls[e_click.target.getAttribute('data-jsgui-id')];
+                        console.log('target_ctrl', target_ctrl);
+
+                        //let anc = item_list.ancestor(e_click.ctrl);
+                        let anc = target_ctrl.ancestor(item_list);
+                        //console.log('anc', anc);
+
+                        if (anc) {
+                            // Select that item.
+
+
+                        } else {
+                            body.off('click', body_click_handler);
+                            replace();
+                        }
+
+
+                    }
+                    setTimeout(() => {
+                        body.on('click', body_click_handler);
+                    }, 0);
+                }
+
+
+
+
+
             });
+
+
+
+            this.finish_item_selector();
 
         }
     }

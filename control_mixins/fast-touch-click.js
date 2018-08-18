@@ -12,7 +12,6 @@ let fast_touch_click = (ctrl) => {
     // Could have an emulate_clicks option.
 
     let has_moved_away = false;
-    let _date;
 
     ctrl.on('touchstart', ets => {
         //console.log('ets', ets);
