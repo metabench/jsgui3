@@ -95,21 +95,30 @@ class Month_View extends Grid {
     activate() {
         // respond to a date / cell being selected.
         super.activate();
-
         // want a selector for .something. Select by class
-
         // selection_change event?
-
         //each(this.$('control'), control
-
         let cells = this.$('gridcell');
         //console.log('cells.length', cells.length);
-        
         each(cells, cell => {
             //console.log('cell', cell);
-            cell.on('select', () => {
+            ///console.log('cell.selectable', cell.selectable);
+            //cell.selectable = true;
 
+            cell.on('change', e_change => {
+                if (e_change.name === 'selected') {
+                    if (e_change.value) {
+                        if (is_defined(cell.value)) this.day = cell.value;
+                    }
+                }
+            });
+
+            /*
+
+            cell.on('select', () => {
                 // day of month change.
+
+                console.log('cell selected');
 
                 if (is_defined(cell.value)) this.day = cell.value;
 
@@ -118,19 +127,16 @@ class Month_View extends Grid {
                     value: cell
                 })
             })
+            */
         });
         // want to go through all cells / controls.
-
     }
     compose_month_view() {
         // go through the month in question.
-
         // get date for 1st of that month
-
         // Put rows into the header.
         this.add_class('month-view');
         //this.add_class('month');
-
         let days_row = this._arr_rows[0];
         days_row.add_class('days');
         days_row.add_class('header');
@@ -139,9 +145,7 @@ class Month_View extends Grid {
 
         // Creates new spans here.
         //  At other points, we need to change the values in those spans.
-
         // Consider composition of spans separate to filling their data in.
-
         each(days_row.content._arr, (ctrl_header_cell, i) => {
             //console.log('ctrl_header_cell', ctrl_header_cell);
             let day_span = new jsgui.span({
@@ -154,7 +158,6 @@ class Month_View extends Grid {
 
         // Need to go through the days of the month, putting the number in the appropriate cell.
         //  To start with, need to find the cell for the 1st of the month.
-
         // this.rows[x]?
 
         let cell_pos = [0, 1];
@@ -204,6 +207,8 @@ class Month_View extends Grid {
                 text: ''
             });
             cell.add(day_span);
+            cell.selectable = false;
+            cell.select_unique = true;
 
             cell.background.color = bgc_disabled;
             cell_pos[0]++;
@@ -242,6 +247,8 @@ class Month_View extends Grid {
             });
             cell.add(day_span);
             //cell.selectable = true;
+            cell.selectable = false;
+            cell.select_unique = true;
 
             cell.background.color = bgc_disabled;
             cell_pos[0]++;
@@ -260,6 +267,8 @@ class Month_View extends Grid {
                     text: ''
                 });
                 cell.add(day_span);
+                cell.selectable = false;
+                cell.select_unique = true;
                 //cell.selectable = true;
 
                 //console.log('cell.selectable', cell.selectable);
@@ -294,7 +303,7 @@ class Month_View extends Grid {
 
         this.each_cell((cell, cell_pos) => {
             //console.log('cell_pos', cell_pos);
-            
+
 
             let [x, y] = cell_pos;
             if (y > 0) {

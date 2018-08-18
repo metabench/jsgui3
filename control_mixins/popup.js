@@ -53,7 +53,7 @@ const popup = (ctrl) => {
     // ctrl_document
     ctrl.popup = () => {
         let popup_layer = context_ensure_popup_layer(context);
-        let parent;
+        let parent, placeholder;
         setTimeout(() => {
 
             // Esnure the page context / body has got 
@@ -84,7 +84,7 @@ const popup = (ctrl) => {
             //    (no dom update)
             
 
-            let placeholder = new Control({
+            placeholder = new Control({
                 'context': context,
                 '__type_name': 'placeholder'
             });

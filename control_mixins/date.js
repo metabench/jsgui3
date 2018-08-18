@@ -43,6 +43,52 @@ let date = (ctrl, spec) => {
             configurable: false
         });
 
+        Object.defineProperty(ctrl, `year`, {
+            get() {
+                return _year;
+            },
+            set(value) {
+                let old = _year;
+                _year = value;
+                // Handling the change may be best here though.
+                if (typeof document === 'undefined') {
+                    ctrl._fields = ctrl._fields || {};
+                    ctrl._fields['year'] = value;
+                }
+                ctrl.raise('change', {
+                    'name': 'year',
+                    'old': old,
+                    //'new': _disabled,
+                    'value': _year
+                });
+            },
+            enumerable: true,
+            configurable: false
+        });
+
+        Object.defineProperty(ctrl, `month`, {
+            get() {
+                return _month;
+            },
+            set(value) {
+                let old = _month;
+                _month = value;
+                // Handling the change may be best here though.
+                if (typeof document === 'undefined') {
+                    ctrl._fields = ctrl._fields || {};
+                    ctrl._fields['month'] = value;
+                }
+                ctrl.raise('change', {
+                    'name': 'month',
+                    'old': old,
+                    //'new': _disabled,
+                    'value': _month
+                });
+            },
+            enumerable: true,
+            configurable: false
+        });
+
         Object.defineProperty(ctrl, `day`, {
             get() {
                 return _day;

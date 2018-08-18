@@ -9,6 +9,7 @@ var get_a_sig = jsgui.get_a_sig,
 var Control_Core = require('./control-core');
 //var Resize_Handle = require('../controls/resize-handle')
 var tof = jsgui.tof;
+const def = jsgui.is_defined;
 // get_a_sig
 
 
@@ -161,7 +162,7 @@ class Control extends Control_Core {
 				//  a selectable property would help here.
 				//  would assign such a property.
 
-				//console.log('1) this.selectable', this.selectable);
+				//console.log('1) props', props);
 
 				//extend(spec, props);
 				//Object.assign(spec, props);
@@ -867,9 +868,9 @@ class Control extends Control_Core {
 				}
 
 				//console.log('this.selectable', this.selectable);
-				if (this.selectable) {
+				if (def(this.selectable)) {
 					mx_selectable(this);
-					this.selectable = true;
+					//this.selectable = this.selectable;
 				}
 			}
 

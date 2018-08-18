@@ -40,10 +40,8 @@ class List extends Control {
     constructor(spec, add, make) {
         // Wont fields have been set?
         //console.log('init list');
-
         super(spec);
         var that = this;
-
         // Can take an image
         // Can take some text.
         //  That's all I'll have in the tree node for now.
@@ -84,12 +82,8 @@ class List extends Control {
         // Want the Item and the List to be convenient UI components. They need to make it simple to represent some data.
         //  Items and Lists could potentially use templates to quickly render data.
 
-
         // Any need to send the list as a jsgui field?
-
         // listen for changes to the list. represent those changes in the UI controls. Then these get automatically changed in the DOM by other code.
-
-
         // This is where a Collection could help a lot.
         /*
 
@@ -105,33 +99,26 @@ class List extends Control {
             }
         });
         */
-
         // A system to share objects sent to the client by reference.
         //  Could tag an object to send to the client, assign it an id, and then only need to send it once.
-
         // A system of objects-to-client
-
-        
-
         if (!spec.el) {
             let ss = this.context.new_selection_scope(this);
             this.compose_list();
         }
-
         // the selection scope could just be a number on the server.
-
-
-
-
     }
 
     'compose_list' () {
-        each(this.items, item => {
+        each(this.items, (item, index) => {
             //console.log('item', item);
             var ctrl_item = new Item({
                 'context': this.context,
                 'value': item
             });
+            ctrl_item._fields = ctrl_item._fields || {};
+            ctrl_item._fields.index = index;
+            
             //console.log('ctrl_item.selectable', ctrl_item.selectable);
             mx_selectable(ctrl_item);
             ctrl_item.selectable = true;
@@ -149,6 +136,10 @@ class List extends Control {
         if (!this.__active) {
             super.activate();
 
+            each(this.$('item'), item => {
+                item.selectable = true;
+            })
+
 
             let ss = this.find_selection_scope();
             if (ss.on) {
@@ -156,6 +147,16 @@ class List extends Control {
 
                 ss.on('change', e_change => {
                     //console.log('1) list ss e_change', e_change);
+
+                    let item = e_change.value;
+                    //console.log('item', item);
+
+                    this.selected_index = item.index;
+
+                    this.raise('change', {
+                        'name': 'selection',
+                        'value': item.index
+                    })
                 })
             }
         }

@@ -78,6 +78,7 @@ class Date_Picker extends Control {
 
         if (!spec.el) {
             this.compose_date_picker();
+            this.finish_date_picker();
         }
 
         // Should have a Date object of its own.
@@ -92,7 +93,35 @@ class Date_Picker extends Control {
         // will have various properties, get other controls to change their properties based on changes here.
 
 
+    }
+    finish_date_picker() {
+        this.year_picker.on('change', e_change => {
+            //console.log('yp change', e_change);
+            let year = e_change.value;
+            this.year = year;
+        });
+        this.month_picker.on('change', e_change => {
+            //console.log('yp change', e_change);
+            let month = e_change.index;
+            this.month = month;
+        })
 
+        // then the change for the year.
+        //  will then need to set the year for other controls.
+
+        this.on('change', e_change => {
+            console.log('Date_Picker e_change', e_change);
+            if (e_change.name === 'year') {
+                //this.year_picker.year = e_change.value;
+                this.month_view.year = e_change.value;
+                this.month_view.refresh_month_view();
+            }
+            if (e_change.name === 'month') {
+                //this.year_picker.year = e_change.value;
+                this.month_view.month = e_change.value;
+                this.month_view.refresh_month_view();
+            }
+        })
 
     }
     compose_date_picker() {
@@ -188,24 +217,21 @@ class Date_Picker extends Control {
             });
 
             this.month_view.on('change', emv_change => {
-                console.log('emv_change', emv_change);
+                //console.log('emv_change', emv_change);
                 let cell = emv_change.value;
                 let day_of_month = cell.value;
 
-                console.log('day_of_month', day_of_month);
-                console.log('this.month_view.day', this.month_view.day);
-
+                //console.log('day_of_month', day_of_month);
+                //console.log('this.month_view.day', this.month_view.day);
 
                 if (emv_change.name === 'day') {
                     this.day = day_of_month;
                 };
-
-
             });
 
+            this.finish_date_picker();
+
             // month view change date...
-
-
         }
     }
 }

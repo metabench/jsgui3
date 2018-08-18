@@ -347,15 +347,17 @@ class Grid extends Control {
 
 
             // load the cells
-            /*
+            
             var load_cells = () => {
-                each(_arr_rows, (row) => {
-                    each(row, (cell) => {
-
+                each(this._arr_rows, (row) => {
+                    each(row.content._arr, (cell) => {
+                        //mx_selectable(cell);
+                        //cell.selectable = cell.selectable;
                     })
                 })
             }
-            */
+            //load_cells();
+            
 
 
         }

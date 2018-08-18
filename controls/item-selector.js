@@ -69,7 +69,26 @@ class Item_Selector extends Control {
     }
     finish_item_selector() {
         this.item_list.on('change', e_change => {
-            console.log('item_list e_change', e_change);
+            //console.log('item_list e_change', e_change);
+            if (e_change.name === 'selection') {
+                let selected_index = e_change.value;
+                this.item_index = selected_index;
+                this.current_item_view.item = this.items[selected_index];
+
+                this.raise('change', {
+                    'name': 'value',
+                    'value': this.items[selected_index],
+                    'index': selected_index
+                });
+
+                this.value = this.items[selected_index];
+
+
+
+                setTimeout(() => {
+                    this.item_list.hide();
+                }, 120);
+            }
         });
     }
     compose_item_selector() {
@@ -221,6 +240,12 @@ class Item_Selector extends Control {
             let has_moved_away = false;
             let t = false;
 
+            /*
+            this.item_list.on('change', e_change => {
+                console.log('item_list e_change', e_change);
+            })
+            */
+
             this.on('touchstart', ets => {
                 //console.log('ets', ets);
                 // Then cancel the event.
@@ -261,10 +286,10 @@ class Item_Selector extends Control {
                     let body = this.context.map_controls['body_0'];
 
                     let body_click_handler = (e_click) => {
-                        console.log('e_click', e_click);
+                        //console.log('e_click', e_click);
 
                         let target_ctrl = this.context.map_controls[e_click.target.getAttribute('data-jsgui-id')];
-                        console.log('target_ctrl', target_ctrl);
+                        //console.log('target_ctrl', target_ctrl);
 
                         //let anc = item_list.ancestor(e_click.ctrl);
                         let anc = target_ctrl.ancestor(item_list);
